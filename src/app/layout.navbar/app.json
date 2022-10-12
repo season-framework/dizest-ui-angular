@@ -1,9 +1,11 @@
 {
-    "title": "navbar",
     "mode": "layout",
+    "id": "layout.navbar",
+    "title": "navbar",
     "namespace": "navbar",
+    "viewuri": "",
     "category": "theme",
-    "id": "layout.header1",
+    "controller": "",
     "ng.build": {
         "id": "layout.navbar",
         "name": "LayoutNavbarComponent",

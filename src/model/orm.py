@@ -35,7 +35,7 @@ class Model:
         kwargs['dump'] = 1
         data = self.rows(**kwargs)
         if len(data) > 0:
-            return season.stdClass(data[0])
+            return season.util.std.stdClass(data[0])
 
     def count(self, groupby=None, like=None, **where):
         db = self.orm

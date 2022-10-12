@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from "ngx-loading";
 
 @NgModule({
     declarations: [
@@ -14,6 +15,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         AppRoutingModule,
         FormsModule,
         NgbModule,
+        NgxLoadingModule.forRoot({
+            animationType: ngxLoadingAnimationTypes.cubeGrid,
+            backdropBackgroundColour: "rgba(0,0,0,0.1)",
+            primaryColour: "#3843D0",
+            secondaryColour: "#3843D0",
+            tertiaryColour: "#3843D0",
+        }),
         '@wiz.imports'
     ],
     providers: [],

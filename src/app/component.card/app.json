@@ -18,5 +18,6 @@
         ],
         "outputs": []
     },
-    "template": "wiz-component-card([title]=\"\", [text]=\"\")"
+    "template": "wiz-component-card([title]=\"\", [text]=\"\")",
+    "controller": ""
 }

@@ -1,3 +1,41 @@
-body {
+.wiz-nav-page {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    >.wiz-view {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        overflow: auto;
+        background-color: var(--wiz-color-light-1);
+
+        >* {
+            flex: auto;
+        }
+
+        .wiz-footer {
+            flex: none;
+            color: #888;
+            background: #3a3a3a;
+            font-size: 16px;
+            padding-top: 32px;
+            padding-bottom: 32px;
+
+            small {
+                font-size: 14px;
+            }
+
+            a {
+                color: #888;
+            }
+
+            a.color {
+                color: var(--wiz-color-red);
+                cursor: pointer;
+            }
+        }
+    }
 }

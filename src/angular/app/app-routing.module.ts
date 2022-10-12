@@ -1,4 +1,4 @@
-const INDEX_PAGE = "main";
+const INDEX_PAGE = "hub/dashboard";
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';

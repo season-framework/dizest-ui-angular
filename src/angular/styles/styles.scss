@@ -1,1 +1,53 @@
-@import "styles/sample"
+:root {
+    // component color
+    --wiz-color-background: #fff;
+    --wiz-color-text: #1e293b;
+    --wiz-color-border: #d9d9d9;
+    --wiz-color-scroll-background: #F5F5F5;
+    --wiz-color-scroll-thumb: #ababab;
+
+    // key color
+    --wiz-color-light: rgba(116, 108, 112, .1);
+    --wiz-color-light-1: rgba(116, 108, 112, .05);
+    --wiz-color-light-2: rgba(116, 108, 112, .2);
+    --wiz-color-light-3: rgba(116, 108, 112, .3);
+
+    --wiz-color-blue: rgba(56, 67, 208, 1);
+    --wiz-color-blue-hover: rgba(56, 67, 208, .9);
+    --wiz-color-blue-light: rgba(32, 107, 196, .05);
+
+    --wiz-color-red: rgba(235, 82, 103, 1);
+    --wiz-color-red-hover: rgba(235, 82, 103, .9);
+    --wiz-color-red-light: rgba(235, 82, 103, .05);
+
+    --wiz-color-gray: rgba(161, 162, 183, 1);
+    --wiz-color-gray-hover: rgba(161, 162, 183, .9);
+    --wiz-color-gray-light: rgba(161, 162, 183, .05);
+
+    --wiz-color-skyblue: rgba(77, 166, 255, 1);
+    --wiz-color-skyblue-hover: rgba(77, 166, 255, .9);
+    --wiz-color-skyblue-light: rgba(77, 166, 255, .05);
+}
+
+html,
+body,
+app-root {
+    font-family: 'wiz-r';
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: block;
+}
+
+router-outlet {
+    display: none;
+}
+
+@import "font/spoqa";
+@import "styles/base";
+@import "styles/background";
+@import "styles/button";
+@import "styles/form";
+@import "styles/text";
+@import "styles/workspace";
