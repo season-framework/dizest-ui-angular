@@ -5,6 +5,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from "ngx-loading";
+import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { SortablejsModule } from '@wiz/libs/ngx-sortablejs';
 
 @NgModule({
     declarations: [
@@ -15,6 +17,8 @@ import { NgxLoadingModule, ngxLoadingAnimationTypes } from "ngx-loading";
         AppRoutingModule,
         FormsModule,
         NgbModule,
+        NuMonacoEditorModule.forRoot(),
+        SortablejsModule,
         NgxLoadingModule.forRoot({
             animationType: ngxLoadingAnimationTypes.cubeGrid,
             backdropBackgroundColour: "rgba(0,0,0,0.1)",
