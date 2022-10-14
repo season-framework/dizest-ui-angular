@@ -1,0 +1,125 @@
+.workspace.area-round
+    .workspace-header
+        .page-header.d-print-none
+            .row.align-items-center
+                .col-auto.if-desktop
+                    span.status-indicator.status-indicator-animated([ngClass]="display.status()")
+                        span.status-indicator-circle
+                        span.status-indicator-circle
+                        span.status-indicator-circle
+                .col
+                    h2.page-title
+                        span {{data.workflow.title}}
+
+                .col-auto.actions
+                    a.btn.btn-white.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{data.workflow.kernel}}
+
+                    a.btn.btn-white.if-desktop(*ngIf="workflow.isnot('stop')", (click)="workflow.kill()")
+                        i.fa-solid.fa-stop.mr-2
+                        span Stop Kernel
+                    
+                    a.btn.btn-white(ng-click="workflow.refresh()")
+                        i.fa-solid.fa-refresh
+                    
+                    a.btn.btn-white(*ngIf="workflow.is('running')", (click)="workflow.stop()")
+                        i.fa-solid.fa-stop
+
+                    a.btn.btn-white.btn-circle(*ngIf="workflow.isnot('running')", (click)="workflow.run()")
+                        i.fa-solid.fa-play
+
+                    a.btn.btn-white.if-desktop((click)="workflow.save()")
+                        i.fa-solid.fa-save
+
+                    a.btn.btn-white.if-desktop((click)="workflow.download()")
+                        i.fa-solid.fa-cloud-arrow-down
+
+                    a.btn.btn-white.btn-circle([routerLink]="[wpReturnUrl]")
+                        i.fa-solid.fa-xmark
+    
+    .workspace-body
+        .show-toggle.if-desktop((click)="browser.toggle()", *ngIf="!browser.show")
+            i.fa-solid.fa-caret-right
+
+        .zone-browser.if-desktop(*ngIf="browser.show")
+            .hide-toggle((click)="browser.toggle()")
+                i.fa-solid.fa-caret-left
+
+            .browser-header
+                .browser-margin
+                .browser-action((click)="browser.tab('app')", [class.active]="browser.is('app')")
+                    .action-btn
+                        i.fa-solid.fa-cubes
+                    .action-border
+                .browser-action((click)="browser.tab('drive')", [class.active]="browser.is('drive')")
+                    .action-btn
+                        i.fa-solid.fa-hdd
+                    .action-border
+                .browser-margin
+            
+            .browser-content(*ngIf="initialized")
+                wiz-component-dizest-apps(*ngIf="browser.is('app')", [workflow]="workflow")
+        
+        .zone-drawflow(*ngIf="initialized")
+            wiz-component-dizest-drawflow([workflow]="workflow")
+        
+        .zone-menuapp(*ngIf="menubar.isnot('')", [ngStyle]="menubar.style")
+            wiz-component-dizest-info-workflow(*ngIf="menubar.is('info')", [workflow]="workflow")
+            wiz-component-dizest-codeflow(*ngIf="menubar.is('codeflow')", [workflow]="workflow")
+
+        .zone-menu.if-desktop
+            .d-block
+                .btn((click)="menubar.toggle('info')", [class.btn-blue]="menubar.is('info')")
+                    i.fa-solid.fa-book
+                    .hover-area
+                        span Workflow Info
+                        .sidemenu-icon
+                            i.fa-solid.fa-book
+            
+            .d-block
+                .btn((click)="menubar.toggle('cron')", [class.btn-blue]="menubar.is('cron')")
+                    i.fa-solid.fa-stopwatch
+                    .hover-area
+                        span Scheduler
+                        .sidemenu-icon
+                            i.fa-solid.fa-stopwatch
+            
+            .d-block
+                .btn((click)="menubar.toggle('codeflow')", [class.btn-blue]="menubar.is('codeflow')")
+                    i.fa-solid.fa-code
+                    .hover-area
+                        span Codeflow
+                        .sidemenu-icon
+                            i.fa-solid.fa-code
+            
+            .d-block(*ngIf="workflow.flow.selected")
+                .btn((click)="menubar.toggle('appinfo')", [class.btn-blue]="menubar.is('appinfo')")
+                    i.fa-solid.fa-info
+                    .hover-area
+                        span App Info
+                        .sidemenu-icon
+                            i.fa-solid.fa-info
+
+                        
+            .d-block(*ngIf="workflow.flow.selected")
+                .btn((click)="menubar.toggle('uimode')", [class.btn-blue]="menubar.is('uimode')")
+                    i.fa-solid.fa-display
+                    .hover-area
+                        span UI Mode
+                        .sidemenu-icon
+                            i.fa-solid.fa-display
+
+div.
+    <svg viewBox="0 0 202.9 45.5" >
+        <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
+            <path  d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
+                c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
+                c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
+        </clipPath>
+    </svg>
+
+ng-container(*ngIf="workflow.is('stop')")
+    wiz-component-dizest-kernel-selector(
+        [list]="data.kernel", 
+        [kernel]="data.workflow.kernel", 
+        [returnUrl]="wpReturnUrl", 
+        (onStart)="workflow.start($event)")

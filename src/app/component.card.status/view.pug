@@ -1,0 +1,12 @@
+.info-box
+    h3.mb-4.text-center.text-dark {{ title }}
+    
+    ng-container(*ngIf="items.length > 0")
+        table(*ngFor="let item of items")
+            tr
+                td.title.w-1 {{item.key}}
+                td.spare
+                td.w-1
+                    span(*ngIf="!item.format") {{item.value}}
+                    span(*ngIf="item.format") {{item.value | number: item.format}}
+                    span.ms-1(*ngIf="item.unit") {{item.unit}}

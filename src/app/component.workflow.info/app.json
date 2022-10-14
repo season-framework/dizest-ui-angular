@@ -1,0 +1,25 @@
+{
+    "mode": "component",
+    "id": "component.workflow.info",
+    "title": "Workflow Info",
+    "namespace": "workflow.info",
+    "viewuri": "",
+    "category": "workflow",
+    "controller": "user",
+    "ng.build": {
+        "id": "component.workflow.info",
+        "name": "ComponentWorkflowInfoComponent",
+        "path": "./component.workflow.info/component.workflow.info.component"
+    },
+    "ng": {
+        "selector": "wiz-component-workflow-info",
+        "inputs": [
+            "item"
+        ],
+        "outputs": [
+            "close",
+            "open"
+        ]
+    },
+    "template": "wiz-component-workflow-info([item]=\"\", (close)=\"\", (open)=\"\")"
+}

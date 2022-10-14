@@ -1,0 +1,47 @@
+.workspace-area
+    .workspace-list
+        .workspace-list-header
+            .page-header.d-print-none
+                .row.align-items-center
+                    .col-auto
+                        .text-blue.mr-1(style="font-size: 28px;")
+                            i.fa-solid.fa-table-columns
+                    .col
+                        h2.page-title Workflow
+                        .text-muted
+                            ul.list-inline.list-inline-dots.mb-0
+                                li.list-inline-item My Workflow
+
+                    .col-auto.actions.area-round.if-desktop
+                        input.form-control(style="width: 240px;" placeholder="Enter for search")
+                    
+                    .col-auto.actions.area-round.if-desktop
+                        a.btn.btn-blue
+                            i.fa-solid.fa-cloud-arrow-up
+                        a.btn.btn-blue
+                            i.fa-solid.fa-plus
+
+        .workspace-list-item
+            .container.pt-4
+                .row.row-deck.row-cards
+                    .p-3.col-md-3(*ngFor="let item of list")
+                        .workflow-card(
+                            [ngClass]="item.id == selected.id ? 'selected' : ''", 
+                            [ngStyle]="selectedStyle")
+                            wiz-component-card-workflow(
+                                [title]="item.title", 
+                                [updated]="item.updated", 
+                                [logo]="item.logo", 
+                                [cover]="item.featured", 
+                                [status]="item.status", 
+                                (click)="select(item)")
+        
+        .workspace-list-pagenation(*ngIf="pagenation.end > 1")
+            wiz-component-pagenation(
+                [current]="search.page", 
+                [start]="pagenation.start", 
+                [end]="pagenation.end", 
+                (pageMove)="pageMove($event)")
+
+    .workspace-tab(*ngIf="selected.id")
+        wiz-component-workflow-info([item]="selected", (close)="close($event)")

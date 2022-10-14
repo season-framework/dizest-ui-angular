@@ -1,0 +1,18 @@
+.wiz-aside-page
+    wiz-component-nav-aside
+    
+    .wiz-content
+        .wiz-top-menu
+            .ml-auto
+                a.text-dark.me-3(routerLink="/hub/mypage")
+                    span.nav-link-title My Page
+                a.text-dark.me-3(href="/auth/logout")
+                    span.nav-link-title Logout
+
+        .wiz-view
+            router-outlet
+
+ngx-loading([show]="loading", [config]="{backdropBackgroundColour: 'rgba(0,0,0,.7)'}")
+
+.block-page(*ngIf="service.auth.allow(false)")
+    ngx-loading(show="true")

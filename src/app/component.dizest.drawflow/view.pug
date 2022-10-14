@@ -1,0 +1,20 @@
+.dizest-drawflow((drop)="event.drop($event)", (dragover)="event.dragover($event)")
+    .workflow-canvas.noselect
+        #drawflow
+
+    .workflow-position
+        a.text-muted.btn-link.cursor-pointer((click)="drawflow.init_pos()")
+            span (
+            span {{-drawflow.position.x}}
+            span.mr-1.ml-1 ,
+            span {{-drawflow.position.y}}
+            span )
+
+    .workflow-zoom
+        .btn-group
+            .btn.btn-blue((click)="drawflow.drawflow.zoom_out()")
+                i.fa-solid.fa-magnifying-glass-minus
+            .btn.btn-blue((click)="drawflow.drawflow.zoom_reset()")
+                i.fa-solid.fa-magnifying-glass
+            .btn.btn-blue((click)="drawflow.drawflow.zoom_in()")
+                i.fa-solid.fa-magnifying-glass-plus

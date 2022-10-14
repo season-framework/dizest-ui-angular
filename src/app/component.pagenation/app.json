@@ -1,0 +1,26 @@
+{
+    "mode": "component",
+    "id": "component.pagenation",
+    "title": "Pagenation",
+    "namespace": "pagenation",
+    "viewuri": "",
+    "category": "pagenation",
+    "controller": "",
+    "ng.build": {
+        "id": "component.pagenation",
+        "name": "ComponentPagenationComponent",
+        "path": "./component.pagenation/component.pagenation.component"
+    },
+    "ng": {
+        "selector": "wiz-component-pagenation",
+        "inputs": [
+            "current",
+            "start",
+            "end"
+        ],
+        "outputs": [
+            "pageMove"
+        ]
+    },
+    "template": "wiz-component-pagenation([current]=\"\", [start]=\"\", [end]=\"\", (pageMove)=\"\")"
+}

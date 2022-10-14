@@ -1,0 +1,33 @@
+.info-box {
+    width: 100%;
+    background: #fff;
+    padding: 16px;
+    font-size: 14px;
+    margin: 24px 12px;
+    border-radius: 14px;
+    flex: auto;
+
+    table {
+        margin-bottom: 8px;
+        width: 100%;
+
+        td {
+            padding: 0;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .title {
+            font-weight: 800;
+        }
+
+        .spare {
+            border-bottom: 2px dotted rgba(116, 108, 112, .1);
+        }
+    }
+
+    &.process-list {
+        padding: 0;
+        overflow: auto;
+    }
+}

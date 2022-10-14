@@ -1,0 +1,54 @@
+.bg-blue {
+    background: var(--wiz-color-blue) !important;
+    color: white !important;
+
+    td,
+    th {
+        background: var(--wiz-color-blue) !important;
+        color: white !important;
+    }
+}
+
+.bg-blue-lt {
+    background: var(--wiz-color-blue-light) !important;
+    color: var(--wiz-color-blue) !important;
+
+    td,
+    th {
+        background: var(--wiz-color-blue-light) !important;
+        color: var(--wiz-color-blue) !important;
+    }
+}
+
+.bg-red {
+    background: var(--wiz-color-red) !important;
+    color: white !important;
+
+    td,
+    th {
+        background: var(--wiz-color-red) !important;
+        color: white !important;
+    }
+}
+
+.bg-red-lt {
+    background: var(--wiz-color-red-light) !important;
+    color: var(--wiz-color-red) !important;
+
+    td,
+    th {
+        background: var(--wiz-color-red-light) !important;
+        color: var(--wiz-color-red) !important;
+    }
+}
+
+.bg-light {
+    background: var(--wiz-color-light) !important;
+    color: var(--wiz-color-text) !important;
+
+    td,
+    th {
+        background: var(--wiz-color-light) !important;
+        color: var(--wiz-color-text) !important;
+    }
+}

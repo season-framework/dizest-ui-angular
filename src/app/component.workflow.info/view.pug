@@ -1,0 +1,35 @@
+.info-container
+    .card.card-info
+        .fab((click)="closeInfo()")
+            i.fa-solid.fa-xmark
+        .card-body.p-4.text-center(style="background-image: url({{item.featured}});")
+            .info-box
+                span.avatar.avatar-xl.mb-3.avatar-rounded(style="background-image: url({{item.logo}}); border-radius: 24px;")
+                h3.m-0.mb-1 {{ item.title }}
+                .text-muted {{ item.updated }}
+            
+        .d-flex
+            a.card-btn(href="/hub/workflow/item/{{item.id}}")
+                span Open
+                i.fa-solid.fa-square-arrow-up-right.ml-3
+
+            a.card-btn((click)="run()")
+                span Run
+                i.fa-solid.fa-play.ml-3
+            
+            a.card-btn((click)="stop()")
+                span Stop
+                i.fa-solid.fa-stop.ml-3
+
+    .description.p-5(*ngIf="item.description", [innerHtml]="showdown(item.description)")
+    .description.p-5.text-center(*ngIf="!item.description")
+        h2 No description
+    
+    .actions.p-3.border-top.area-round.text-center
+        .btn.btn-outline-blue
+            span Duplicate
+            i.fa-solid.fa-clone.ml-3
+        .mr-3
+        .btn.btn-outline-red
+            span Delete
+            i.fa-solid.fa-trash.ml-3

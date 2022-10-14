@@ -1,0 +1,598 @@
+.parent-drawflow {
+    display: flex;
+    overflow: hidden;
+    touch-action: none;
+    outline: none;
+}
+
+.drawflow {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    user-select: none;
+    perspective: 0;
+}
+
+.drawflow .parent-node {
+    position: relative;
+
+}
+
+.drawflow .drawflow-node {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    background: cyan;
+    width: 160px;
+    min-height: 40px;
+    border-radius: 4px;
+    border: 2px solid black;
+    color: black;
+    z-index: 2;
+    padding: 15px;
+}
+
+.drawflow .drawflow-node.selected {
+    background: red;
+}
+
+.drawflow .drawflow-node:hover {
+    cursor: move;
+}
+
+.drawflow .drawflow-node .inputs,
+.drawflow .drawflow-node .outputs {
+    width: 0px;
+}
+
+.drawflow .drawflow-node .drawflow_content_node {
+    width: 100%;
+    display: block;
+}
+
+.drawflow .drawflow-node .input,
+.drawflow .drawflow-node .output {
+
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid black;
+    cursor: crosshair;
+    z-index: 1;
+    margin-bottom: 5px;
+}
+
+.drawflow .drawflow-node .input {
+    left: -27px;
+    top: 2px;
+    background: yellow;
+}
+
+.drawflow .drawflow-node .output {
+    right: -3px;
+    top: 2px;
+}
+
+.drawflow svg {
+    z-index: 0;
+    position: absolute;
+    overflow: visible !important;
+}
+
+.drawflow .connection {
+    position: absolute;
+    pointer-events: none;
+}
+
+.drawflow .connection .main-path {
+    fill: none;
+    stroke-width: 5px;
+    stroke: steelblue;
+    pointer-events: all;
+}
+
+.drawflow .connection .main-path:hover {
+    stroke: #1266ab;
+    cursor: pointer;
+}
+
+.drawflow .connection .main-path.selected {
+    stroke: #43b993;
+}
+
+.drawflow .connection .point {
+    cursor: move;
+    stroke: black;
+    stroke-width: 2;
+    fill: white;
+    pointer-events: all;
+}
+
+.drawflow .connection .point.selected,
+.drawflow .connection .point:hover {
+    fill: #1266ab;
+}
+
+.drawflow .main-path {
+    fill: none;
+    stroke-width: 5px;
+    stroke: steelblue;
+}
+
+.drawflow-delete {
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: black;
+    color: white;
+    z-index: 4;
+    border: 2px solid white;
+    line-height: 30px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    font-family: monospace;
+    cursor: pointer;
+}
+
+.drawflow>.drawflow-delete {
+    margin-left: -15px;
+    margin-top: 15px;
+}
+
+.parent-node .drawflow-delete {
+    right: -15px;
+    top: -15px;
+}
+
+#drawflow {
+    cursor: grab;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    background-size: 25px 25px;
+    background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px), linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+    border: none;
+
+    :active{
+        cursor: grabbing;
+    }
+
+    .progress {
+        display: none;
+        background-color: var(--wiz-color-light);
+    }
+
+    .drawflow-delete {
+        font-family: 'wiz-eb';
+        border: 2px solid var(--wiz-color-red);
+        background: var(--wiz-color-red);
+        color: #fff;
+        -webkit-box-shadow: 0 2px 20px 2px var(--wiz-color-red);
+        box-shadow: 0 2px 20px 2px var(--wiz-color-red);
+        line-height: 2;
+    }
+
+    .drawflow {
+        .drawflow-node {
+            display: block;
+            background: #fff;
+            border: 1px solid var(--wiz-color-light);
+            -webkit-box-shadow: 0 2px 15px 2px var(--wiz-color-light);
+            box-shadow: 0 2px 15px 2px var(--wiz-color-light);
+            padding: 0px;
+            width: 260px;
+
+            .drawflow-delete {
+                display: none;
+            }
+
+            .avatar-sm {
+                width: 20px;
+                height: 20px;
+            }
+
+            .actions {
+                .status-indicator {
+                    width: 50px;
+                    display: none;
+                    height: 32px;
+                    border-right: 1px solid var(--wiz-color-border);
+
+                    .status-indicator-circle {
+                        --tblr-status-circle-size: 8px;
+                    }
+                }
+
+                .action-btn {
+                    flex: auto;
+                    text-align: center;
+                    padding: 6px 8px;
+                    border-right: 1px solid var(--wiz-color-border);
+                    background: var(--wiz-color-blue-light);
+                    color: var(--wiz-color-blue);
+                    cursor: pointer;
+
+                    i {
+                        width: 20px;
+                        text-align: center;
+                    }
+
+                    &:hover {
+                        background: var(--wiz-color-blue);
+                        color: #fff;
+                    }
+
+                    &:last-child {
+                        border-right: none;
+                    }
+                }
+
+                .action-btn-stop,
+                .action-btn-play {
+                    border-right: none;
+                }
+
+                .action-btn-stop {
+                    display: none;
+                }
+            }
+
+            &.selected {
+                background: white;
+                border: 1px solid var(--wiz-color-border);
+                -webkit-box-shadow: 0 2px 20px 2px var(--wiz-color-border);
+                box-shadow: 0 2px 20px 2px var(--wiz-color-border);
+
+                .title-box {
+                    color: #22598c;
+                    border-bottom: 1px solid var(--wiz-color-border);
+                }
+            }
+
+            .variable-header {
+                display: flex;
+                width: 100%;
+
+                >div {
+                    width: 50%;
+                    text-align: center;
+                    border-top: 1px solid var(--wiz-color-border);
+                    background-color: var(--wiz-color-light);
+                    padding: 2px;
+                    font-weight: 1000;
+                    font-size: 12px;
+
+                    &:first-child {
+                        border-right: 1px solid var(--wiz-color-border);
+                    }
+                }
+            }
+
+            .variable-container {
+                width: 100% !important;
+                display: flex;
+
+                .input-container,
+                .output-container {
+                    width: 50%;
+                    background: repeating-linear-gradient(-45deg, var(--wiz-color-light), var(--wiz-color-light) 2px, #fff 0, #fff 6px);
+
+                    .input-text,
+                    .output-text {
+                        cursor: default;
+                        border-bottom: 1px solid var(--wiz-color-border);
+
+                        &:last-child {
+                            border-bottom: none;
+                        }
+
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        font-size: 12px;
+                        height: 25px;
+                        background: #fff;
+
+                        &.disabled {
+                            background: transparent;
+                        }
+                    }
+
+                    .input-text {
+                        padding: 4px;
+                        padding-left: 10px;
+                        padding-right: 5px;
+                    }
+
+                    .output-text {
+                        text-align: right;
+                        padding: 4px;
+                        padding-left: 5px;
+                        padding-right: 10px;
+                    }
+
+                    .inputs,
+                    .outputs {
+                        width: 0px;
+
+                        .input,
+                        .output {
+                            top: 5px;
+                            margin-bottom: 10px;
+                            height: 15px;
+                            width: 15px;
+                            border: 2px solid var(--wiz-color-light);
+                            cursor: pointer;
+                            background: white;
+
+                            &:hover {
+                                background: #4ea9ff;
+                            }
+                        }
+                    }
+
+                    .inputs {
+                        position: absolute;
+                        left: 18px;
+                    }
+
+                    .outputs {
+                        position: absolute;
+                        right: 10px;
+                    }
+                }
+            }
+
+            .input-container {
+                border-right: 1px solid var(--wiz-color-border);
+            }
+
+            textarea,
+            select {
+                border: none;
+
+                &:hover,
+                &:focus {
+                    border: none;
+                    box-shadow: none;
+                }
+            }
+
+            .debug-message {
+                font-size: 12px;
+                border: none;
+                background: #fff;
+                border-top: 1px solid var(--wiz-color-border);
+                padding: 6px;
+                max-height: 200px;
+                overflow: auto;
+                cursor: auto;
+                white-space: nowrap;
+                border-radius: 0;
+                // word-break: break-all;
+
+                -webkit-touch-callout: text;
+                -webkit-user-select: text;
+                -khtml-user-select: text;
+                -moz-user-select: text;
+                -ms-user-select: text;
+                user-select: text;
+
+                margin: 0;
+                line-height: 16px;
+                font-family: 'wiz-r';
+            }
+        }
+
+        .connection {
+            .main-path {
+                stroke: var(--wiz-color-border);
+                stroke-width: 3px;
+
+                &.selected {
+                    stroke: #4ea9ff;
+                }
+            }
+
+            .point {
+                stroke: none;
+                fill: transparent;
+
+                &.selected,
+                &:hover {
+                    stroke: var(--wiz-color-border);
+                    fill: #4ea9ff !important;
+                    cursor: pointer;
+                }
+            }
+
+            &.selected .point {
+                stroke: var(--wiz-color-border);
+                fill: #fff;
+            }
+        }
+
+        .card-header {
+            background: var(--wiz-color-blue);
+            color: #fff;
+            padding: 6px 8px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+            &.bg-blue-lt {
+                color: var(--wiz-color-blue) !important;
+
+                .text-white {
+                    color: var(--wiz-color-blue) !important;
+                }
+            }
+
+            .card-title {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .btn.btn-sm {
+                color: var(--wiz-color-blue);
+                padding: 4px 8px;
+                font-size: 12px;
+                border-radius: 32px;
+            }
+        }
+
+        .value-container {
+            .value-header {
+                font-size: 12px;
+                font-weight: 1000;
+                padding: 2px;
+                background-color: var(--wiz-color-light);
+                border-bottom: 1px solid var(--wiz-color-border);
+                text-align: center;
+            }
+
+            .value-wrapper {
+                display: flex;
+                border-bottom: 1px solid var(--wiz-color-border);
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                .value-title {
+                    border-right: 1px solid var(--wiz-color-border);
+                    padding: 4px 8px;
+                    width: 100px;
+                    font-size: 12px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .value-data {
+                    flex: auto;
+
+                    textarea,
+                    select,
+                    input {
+                        width: 100%;
+                        height: auto;
+                        min-height: 24px;
+                    }
+                }
+
+                input {
+                    border: none;
+                    border-radius: 0;
+                    box-shadow: none;
+
+                    &:hover {
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+:root {
+    --animate-duration: 1s;
+    --animate-delay: 1s;
+    --animate-repeat: 1;
+}
+
+@keyframes heartBeat {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    25% {
+        -webkit-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+
+    50% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    75% {
+        -webkit-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+.drawflow-node {
+    &[status='pending'] {
+        .pending-indicator {
+            display: block !important;
+        }
+
+        .action-btn-play {
+            display: none !important;
+        }
+
+        .action-btn-stop {
+            display: block !important;
+        }
+    }
+
+    &[status='finish'] {
+        .finish-indicator {
+            display: block !important;
+            padding-top: 9px;
+            text-align: center;
+            font-size: 12px;
+            background: rgba(47, 179, 68, .1);
+            color: #2fb344;
+            font-weight: 1000;
+        }
+    }
+
+    &[status='running'] {
+        .action-btn-play {
+            display: none !important;
+        }
+
+        .action-btn-stop {
+            display: block !important;
+        }
+
+        .progress {
+            display: flex !important;
+        }
+    }
+
+    &[status='error'] {
+        border: none !important;
+        box-shadow: 0 2px 20px 2px var(--wiz-color-red) !important;
+    }
+}
+
+#drawflow.selected {
+    .drawflow-node {
+        opacity: 0.3;
+
+        &.selected {
+            opacity: 1;
+        }
+    }
+}
+
+#drawflow.app-hover {
+    .drawflow-node {
+        opacity: 0.1 !important;
+
+        &.app-hover {
+            opacity: 1 !important;
+        }
+    }
+}

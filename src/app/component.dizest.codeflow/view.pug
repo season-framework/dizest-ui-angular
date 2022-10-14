@@ -1,0 +1,136 @@
+.workspace-tab.codeflow
+    .workspace-tab-header
+        .workspace-tab-header-title
+            i.fa-solid.fa-code.mr-2
+            span Codeflow
+
+        .ml-auto
+
+        .text-white.close-btn.mr-3
+            i.fa-solid([class.fa-book-open]="!isDescriptionHidden", [class.fa-book]="isDescriptionHidden", (click)="toggleDescription()")
+
+        .text-white.close-btn((click)="workflow.menubar.toggle('codeflow')")
+            i.fa-solid.fa-xmark
+
+    .codeflow-body
+        ng-container(*ngFor="let item of codeflow.data")
+            .card([class.codeflow-selected]="item.selected()", (click)="item.select()", [attr.id]="'codeflow-' + item.id")
+                .codeflow-header
+                    span.badge.badge-sm.mr-1(
+                        [class.bg-white]="item.flow().inactive",
+                        [class.text-blue]="item.flow().inactive",
+                        [class.bg-blue]="!item.flow().inactive",
+                        [class.text-white]="!item.flow().inactive",
+                        (click)="item.toggle()")
+                        span {{item.flow().inactive ? 'manual' : 'auto'}}
+
+                    input([(ngModel)]="item.flow().title", [attr.placeholder]="item.app().title")
+
+                    .ml-auto
+                    .btn.btn-sm.btn-white.sortable-handle
+                        i.fa-solid.fa-up-down-left-right
+                    .btn.btn-sm.btn-white
+                        i.fa-solid.fa-arrow-up
+                    .btn.btn-sm.btn-white
+                        i.fa-solid.fa-arrow-down
+                    .btn.btn-sm.btn-blue((click)="item.delete()")
+                        i.fa-solid.fa-xmark
+
+                .codeflow-desc(*ngIf="!isDescriptionHidden")
+                    table.table.card-table.table-sm(*ngIf="item.selected()")
+                        thead
+                            tr
+                                th.nowrap Note
+                                th.w-1.text-right
+                                    button.btn.btn-blue.btn-sm((click)="item.desc.toggle()")
+                                        i.fa-solid([class.fa-edit]="!item.desc.isEditable()", [class.fa-book]="item.desc.isEditable()")
+                
+                    .codeflow-descarea.p-3.pb-2(*ngIf="!item.desc.isEditable()", [innerHtml]="showdown(item.flow().description)")
+                    
+                    .codeflow-descarea(*ngIf="item.desc.isEditable()")
+                        .item-body
+                            nu-monaco-editor([(ngModel)]="item.flow().description", [options]="monacomd", [height]="'auto'", (event)="init($event)")
+
+                .codeflow-item
+                    table.table.card-table.table-sm
+                        thead
+                            tr
+                                th.w-1.nowrap
+                                    span.mr-2 [{{item.flow().index}}]
+                                    span Code
+                    .codeflow-codearea
+                        .item-body
+                            nu-monaco-editor([(ngModel)]="item.app().code", [options]="monacopy", [height]="'auto'", (event)="init($event)")
+                
+                
+                .codeflow-options
+                    table.table.card-table.table-sm
+                        thead
+                            tr
+                                th.text-left(colspan=4) Input
+                                th.text-right
+                                    button.btn.btn-blue.btn-sm((click)="item.app().inputs.push({})")
+                                        i.fa-solid.fa-plus
+                        tbody(*ngIf="item.app().inputs.length == 0")
+                            tr
+                                td.pl-2(colspan=5)
+                                    span.text-muted No input
+
+                        tbody([sortablejs]="item.app().inputs", [sortablejsOptions]="{ animation: 150, handle: '.draggable' }")
+                            tr(*ngFor="let obj of item.app().inputs")
+                                td.w-1(style="width: 120px !important;")
+                                    select.form-select([(ngModel)]="obj.type")
+                                        option(value="variable") Variable
+                                        option(value="output") Output
+
+                                td.w-1(style="width: 120px !important;")
+                                    select.form-select([(ngModel)]="obj.inputtype", *ngIf="obj.type == 'variable'")
+                                        option(value="text") Text
+                                        option(value="textarea") Textarea
+                                        option(value="password") Password
+                                        option(value="number") Number
+                                        option(value="file") File
+                                        option(value="folder") Folder
+                                        option(value="date") Date
+                                        option(value="list") List
+                                td.w-1
+                                    input.form-control(style="width: 160px;", placeholder="Input Name", [(ngModel)]="obj.name")
+                                td
+                                    textarea.form-control([attr.placeholder]="obj.inputtype == 'list' ? 'samsung: 005930,\nkakao: 035720' : 'Description'", [(ngModel)]="obj.description")
+                                td.w-1.nowrap
+                                    button.btn.btn-white.btn-sm(style="margin-top: 6px; margin-right: 4px;", (click)="item.app().inputs.remove(obj)")
+                                        i.fa-solid.fa-xmark
+                                    .draggable.btn.btn-white.btn-sm(style="margin-top: 6px; margin-right: 4px;")
+                                        i.fa-solid.fa-up-down-left-right
+                
+                .codeflow-options
+                    table.table.card-table.table-sm
+                        thead
+                            tr
+                                th.w-1.nowrap(colspan=2) Output 
+                                th.w-1.nowrap.text-right
+                                    button.btn.btn-blue.btn-sm((click)="item.app().outputs.push({})")
+                                        i.fa-solid.fa-plus
+
+                        tbody(*ngIf="item.app().outputs.length == 0")
+                            tr
+                                td.pl-2(colspan=5)
+                                    span.text-muted No Output
+
+                        tbody([sortablejs]="item.app().outputs", [sortablejsOptions]="{ animation: 150, handle: '.draggable' }")
+                            tr(*ngFor="let obj of item.app().outputs")
+                                td.w-1
+                                    input.form-control(style="width: 160px;", placeholder="Output Name", [(ngModel)]="obj.name")
+                                td
+                                    textarea.form-control(placeholder="Description", [(ngModel)]="obj.description")
+                                td.w-1.nowrap
+                                    button.btn.btn-white.btn-sm(style="margin-top: 6px; margin-right: 4px;", (click)="item.app().outputs.remove(obj)")
+                                        i.fa-solid.fa-xmark
+                                    .draggable.btn.btn-white.btn-sm(style="margin-top: 6px; margin-right: 4px;")
+                                        i.fa-solid.fa-up-down-left-right
+                
+
+        .btn.btn-blue.btn-block((click)="create()")
+            i.fa-solid.fa-plus
+        
+        .margin-bottom

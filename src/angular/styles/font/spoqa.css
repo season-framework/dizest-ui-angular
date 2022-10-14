@@ -1,0 +1,35 @@
+@font-face {
+    font-family: 'wiz-eb';
+    font-weight: 700;
+    src: local('Spoqa Han Sans Neo Bold'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Bold.woff2') format('woff2'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Bold.woff') format('woff'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'wiz-b';
+    font-weight: 500;
+    src: local('Spoqa Han Sans Neo Medium'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Medium.woff2') format('woff2'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Medium.woff') format('woff'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'wiz-r';
+    font-weight: 400;
+    src: local('Spoqa Han Sans Neo Regular'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Regular.woff2') format('woff2'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Regular.woff') format('woff'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'wiz-sub';
+    font-weight: 300;
+    src: local('Spoqa Han Sans Neo Light'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Light.woff2') format('woff2'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Light.woff') format('woff'),
+        url('/assets/font/spoqa/SpoqaHanSansNeo-Light.ttf') format('truetype');
+}

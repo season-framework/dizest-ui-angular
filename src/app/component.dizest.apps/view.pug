@@ -1,0 +1,26 @@
+.app
+    .app-search
+        input.form-control.search-form(placeholder="enter for search", [(ngModel)]="keyword", (ngModelChange)="search()")
+        button.btn.btn-blue.ml-1((click)="import()")
+            i.fa-solid.fa-upload
+        button.btn.btn-blue.ml-1((click)="create()")
+            i.fa-solid.fa-plus
+
+    .app-list
+        .no-items.text-center.p-6(*ngIf="workflow.app.list().length == 0")
+            i.fa-solid.fa-cube
+            .mt-2 No Apps
+
+        ng-container(*ngFor="let item of workflow.app.list()")
+            .app-info(*ngIf="match(item, keyword)", [attr.data-id]="item.id", draggable="true", (dragstart)="drag($event, item)", (mouseenter)="hoverin(item)", (mouseleave)="hoverout(item)")
+                .avatar-area.avatar-area-sm.mr-3
+                    .avatar-container
+                        span.avatar([ngStyle]="{ 'background-image' : 'url(' + item.logo + ')'}")
+                .title-area
+                    input.app-header.mb-1([(ngModel)]="item.title")
+                    .app-namespace.text-muted {{item.version}}
+                .ml-auto
+                    button.btn.btn-white.btn-sm.mr-1((click)="delete(item)")
+                        i.fa-solid.fa-xmark
+                    button.btn.btn-blue.btn-sm((click)="add(item)")
+                        i.fa-solid.fa-plus
