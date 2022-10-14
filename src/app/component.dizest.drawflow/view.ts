@@ -290,8 +290,11 @@ export class Component implements OnInit, AfterViewInit {
     })();
 
     public event: any = ((obj: any = {}) => {
-        obj.info = async (app_id: string) => {
-            console.log(app_id);
+        obj.info = async (flow_id: string) => {
+            if (this.workflow.menubar.isnot('appinfo')) {
+                await this.workflow.menubar.toggle("appinfo");
+                await this.service.render();
+            }
         };
 
         obj.code = async (flow_id: string) => {
@@ -303,7 +306,10 @@ export class Component implements OnInit, AfterViewInit {
         };
 
         obj.ui = async (flow_id: string) => {
-            console.log(flow_id);
+            if (this.workflow.menubar.isnot('uimode')) {
+                await this.workflow.menubar.toggle("uimode");
+                await this.service.render();
+            }
         };
 
         obj.delete = async (flow_id: string) => {
@@ -320,7 +326,7 @@ export class Component implements OnInit, AfterViewInit {
         };
 
         obj.drive = async (element: any, inputtype: string, valiablename: string) => {
-            console.log(element);
+            // TODO Drive
         };
 
         obj.drop = async ($event) => {

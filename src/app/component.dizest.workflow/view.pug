@@ -58,13 +58,17 @@
             
             .browser-content(*ngIf="initialized")
                 wiz-component-dizest-apps(*ngIf="browser.is('app')", [workflow]="workflow")
+                wiz-component-dizest-drive(*ngIf="browser.is('drive')", [workflow]="workflow")
         
         .zone-drawflow(*ngIf="initialized")
             wiz-component-dizest-drawflow([workflow]="workflow")
         
         .zone-menuapp(*ngIf="menubar.isnot('')", [ngStyle]="menubar.style")
             wiz-component-dizest-info-workflow(*ngIf="menubar.is('info')", [workflow]="workflow")
+            wiz-component-dizest-cron(*ngIf="menubar.is('cron')", [workflow]="workflow")
             wiz-component-dizest-codeflow(*ngIf="menubar.is('codeflow')", [workflow]="workflow")
+            wiz-component-dizest-info-app(*ngIf="menubar.is('appinfo')", [workflow]="workflow")
+            wiz-component-dizest-uimode(*ngIf="menubar.is('uimode')", [workflow]="workflow")
 
         .zone-menu.if-desktop
             .d-block
@@ -79,7 +83,7 @@
                 .btn((click)="menubar.toggle('cron')", [class.btn-blue]="menubar.is('cron')")
                     i.fa-solid.fa-stopwatch
                     .hover-area
-                        span Scheduler
+                        span Timer
                         .sidemenu-icon
                             i.fa-solid.fa-stopwatch
             

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import Crypto from './crypto';
 import Auth from './auth';
+import File from './file';
 
 @Injectable({ providedIn: 'root' })
 export class Service {
     public auth: Auth;
+    public file: File;
     public app: any;
 
     constructor() {
         this.crypto = new Crypto();
         this.auth = new Auth(this);
+        this.file = new File(this);
     }
 
     public async init(app: any) {

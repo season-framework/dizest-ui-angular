@@ -3,7 +3,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid var(--wiz-color-border);
     background: var(--wiz-color-light);
 
     .workspace-tab-header {
@@ -26,8 +25,11 @@
     }
 
     .workspace-tab-body {
-        padding: 16px;
-        overflow: auto;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        flex: auto;
+        position: relative;
 
         .card {
             border-radius: 12px;
@@ -43,6 +45,9 @@
     .codeflow-body {
         padding: 16px;
         overflow: auto;
+        position: absolute;
+        width: 100%;
+        height: 100%;
 
         .card {
             margin-bottom: 24px;

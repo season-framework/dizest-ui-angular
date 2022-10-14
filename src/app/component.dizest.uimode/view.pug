@@ -1,0 +1,35 @@
+.workspace-tab.uimode
+    .workspace-tab-header
+        .workspace-tab-header-title
+            i.fa-solid.fa-display.mr-2
+            span {{data.title}}
+        .ml-auto
+    //     .dropdown.mr-3.if-desktop
+    //         button.btn.btn-white.btn-sm.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+    //             span Code
+            
+    //         ul.dropdown-menu.dropdown-menu-dark
+    //             li(ng-repeat="(name, tab) in uimode.tab" ng-if="!tab.active")
+    //                 a.dropdown-item(ng-click="tab.open()") {{uimode.tab[name].name}}
+        
+    //     .text-white.close-btn.mr-3.if-desktop(ng-click="uimode.maximize(!uimode.maximized)")
+    //         i.fa-solid.fa-up-right-and-down-left-from-center(ng-if="!uimode.maximized")
+    //         i.fa-solid.fa-down-left-and-up-right-to-center(ng-if="uimode.maximized")
+
+    //     .text-white.close-btn.mr-3(ng-click="uimode.render()")
+    //         i.fa-solid.fa-refresh
+
+    //     .text-white.close-btn(ng-click="menubar.toggle('uimode')")
+    //         i.fa-solid.fa-xmark
+    
+    // .workspace-tab-body.p-0(ng-if="workflow.data.apps[node.selected.app_id].pug && !kernel.is('running')")
+    //     iframe#uimode-iframe(ng-if="uimode.iframe" ng-show="uimode.iframe_loaded")
+    //     div(ng-if="!uimode.iframe_loaded" style="width: 100%; height: 100%;")
+    //         table(style="width: 100%; height: 100%;")
+    //             tr
+    //                 td.text-center(style="height: 100%; vertical-align: middle;")
+    //                     .spinner-border.text-blue
+    
+    // .workspace-tab-body.p-6.text-center(ng-if="!workflow.data.apps[node.selected.app_id].pug || kernel.is('running')")
+    //     h2(ng-if="!kernel.is('running')") Not support UI
+    //     h2(ng-if="kernel.is('running')") UI is not available while the kernel is running

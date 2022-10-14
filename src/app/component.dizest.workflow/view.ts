@@ -96,7 +96,7 @@ export class Component implements OnInit, OnDestroy {
         obj.current = '';
         obj.style = { 'max-width': '720px' };
 
-        obj.toggle = async (target: string) => {
+        obj.toggle = async (target: string = '') => {
             if (obj.current == target) obj.current = '';
             else obj.current = target;
             await scope.service.render();
@@ -358,6 +358,11 @@ export class Component implements OnInit, OnDestroy {
             $('.drawflow-node').removeClass('selected');
             $('.drawflow .connection path').removeClass('selected');
             obj.flow.selected = null;
+
+            if (scope.menubar.is("appinfo") || scope.menubar.is("uimode")) {
+                scope.menubar.toggle();
+            }
+
             await scope.service.render();
         }
 

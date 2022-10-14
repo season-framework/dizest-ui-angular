@@ -1,7 +1,7 @@
 {
     "mode": "component",
     "id": "component.dizest.cron",
-    "title": "Cron",
+    "title": "Timer",
     "namespace": "dizest.cron",
     "viewuri": "",
     "category": "dizest",
@@ -13,8 +13,10 @@
     },
     "ng": {
         "selector": "wiz-component-dizest-cron",
-        "inputs": [],
+        "inputs": [
+            "workflow"
+        ],
         "outputs": []
     },
-    "template": "wiz-component-dizest-cron()"
+    "template": "wiz-component-dizest-cron([workflow]=\"\")"
 }

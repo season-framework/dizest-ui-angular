@@ -3,7 +3,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid var(--wiz-color-border);
     background: var(--wiz-color-light);
 
     .workspace-tab-header {
@@ -25,9 +24,18 @@
         }
     }
 
+    .workspace-tab-body-wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        flex: 1;
+    }
+
     .workspace-tab-body {
         padding: 16px;
-        height: calc(100% - 40px);
+        height: 100%;
+        width: 100%;
+        position: absolute;
         overflow: auto;
 
         .card {

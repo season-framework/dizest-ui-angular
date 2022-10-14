@@ -1,0 +1,22 @@
+{
+    "mode": "component",
+    "id": "component.dizest.drive",
+    "title": "Drive",
+    "namespace": "dizest.drive",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "ng.build": {
+        "id": "component.dizest.drive",
+        "name": "ComponentDizestDriveComponent",
+        "path": "./component.dizest.drive/component.dizest.drive.component"
+    },
+    "ng": {
+        "selector": "wiz-component-dizest-drive",
+        "inputs": [
+            "workflow"
+        ],
+        "outputs": []
+    },
+    "template": "wiz-component-dizest-drive([workflow]=\"\")"
+}
