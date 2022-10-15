@@ -158,7 +158,7 @@
     background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px), linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
     border: none;
 
-    :active{
+    :active {
         cursor: grabbing;
     }
 
@@ -579,7 +579,7 @@
 
 #drawflow.selected {
     .drawflow-node {
-        opacity: 0.3;
+        opacity: 0.5;
 
         &.selected {
             opacity: 1;
@@ -594,5 +594,22 @@
         &.app-hover {
             opacity: 1 !important;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .drawflow {
+        .action-btn {
+            display: none !important;
+        }
+
+        .action-btn-play,
+        .action-btn-stop {
+            display: block !important;
+        }
+    }
+
+    .zone-app-variables, .zone-menuapp {
+        display: none !important;
     }
 }

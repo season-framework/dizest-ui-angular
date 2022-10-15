@@ -1,7 +1,12 @@
+.monaco-editor .find-widget.visible {
+    display: none;
+}
+
 .codeflow-selected {
     .monaco-editor .find-widget.visible {
+        display: block;
         position: fixed !important;
-        top: 83px !important;
+        top: 39px !important;
         right: 42px !important;
     }
 }

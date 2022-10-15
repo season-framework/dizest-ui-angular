@@ -44,6 +44,14 @@ router-outlet {
     display: none;
 }
 
+.dropdown-menu.show {
+    top: 36px;
+
+    .dropdown-item {
+        cursor: pointer;
+    }
+}
+
 @import "dizest/drawflow";
 @import "dizest/codeflow";
 @import "font/spoqa";

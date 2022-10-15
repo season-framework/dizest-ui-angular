@@ -1,7 +1,13 @@
 .workspace.area-round
-    .workspace-header
-        .page-header.d-print-none
-            .row.align-items-center
+    .workspace-body
+        .show-toggle.if-desktop((click)="browser.toggle()", *ngIf="!browser.show")
+            i.fa-solid.fa-caret-right
+
+        .zone-browser.if-desktop(*ngIf="browser.show", [ngStyle]="browser.style")
+            .hide-toggle((click)="browser.toggle()")
+                i.fa-solid.fa-caret-left
+
+            .row.align-items-center.bg-blue.text-white
                 .col-auto.if-desktop
                     span.status-indicator.status-indicator-animated([ngClass]="display.status()")
                         span.status-indicator-circle
@@ -10,39 +16,6 @@
                 .col
                     h2.page-title
                         span {{data.workflow.title}}
-
-                .col-auto.actions
-                    a.btn.btn-white.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{data.workflow.kernel}}
-
-                    a.btn.btn-white.if-desktop(*ngIf="workflow.isnot('stop')", (click)="workflow.kill()")
-                        i.fa-solid.fa-stop.mr-2
-                        span Stop Kernel
-                    
-                    a.btn.btn-white(ng-click="workflow.refresh()")
-                        i.fa-solid.fa-refresh
-                    
-                    a.btn.btn-white(*ngIf="workflow.is('running')", (click)="workflow.stop()")
-                        i.fa-solid.fa-stop
-
-                    a.btn.btn-white.btn-circle(*ngIf="workflow.isnot('running')", (click)="workflow.run()")
-                        i.fa-solid.fa-play
-
-                    a.btn.btn-white.if-desktop((click)="workflow.save()")
-                        i.fa-solid.fa-save
-
-                    a.btn.btn-white.if-desktop((click)="workflow.download()")
-                        i.fa-solid.fa-cloud-arrow-down
-
-                    a.btn.btn-white.btn-circle([routerLink]="[wpReturnUrl]")
-                        i.fa-solid.fa-xmark
-    
-    .workspace-body
-        .show-toggle.if-desktop((click)="browser.toggle()", *ngIf="!browser.show")
-            i.fa-solid.fa-caret-right
-
-        .zone-browser.if-desktop(*ngIf="browser.show")
-            .hide-toggle((click)="browser.toggle()")
-                i.fa-solid.fa-caret-left
 
             .browser-header
                 .browser-margin
@@ -60,13 +33,17 @@
                 wiz-component-dizest-apps(*ngIf="browser.is('app')", [workflow]="workflow")
                 wiz-component-dizest-drive(*ngIf="browser.is('drive')", [workflow]="workflow")
         
-        .zone-drawflow(*ngIf="initialized")
-            wiz-component-dizest-drawflow([workflow]="workflow")
-        
-        .zone-menuapp(*ngIf="menubar.isnot('')", [ngStyle]="menubar.style")
+        .zone-editor(*ngIf="initialized")
+            .zone-drawflow
+                wiz-component-dizest-drawflow([workflow]="workflow")
+
+            .zone-app-variables(*ngIf="workflow.flow.selected && menubar.is('codeflow')")
+                wiz-component-dizest-variables([workflow]="workflow")
+
+        .zone-menuapp(*ngIf="initialized", [class.show]="menubar.isnot('')", [ngStyle]="menubar.style")
             wiz-component-dizest-info-workflow(*ngIf="menubar.is('info')", [workflow]="workflow")
             wiz-component-dizest-cron(*ngIf="menubar.is('cron')", [workflow]="workflow")
-            wiz-component-dizest-codeflow(*ngIf="menubar.is('codeflow')", [workflow]="workflow")
+            wiz-component-dizest-codeflow.codeflow([class.show]="menubar.is('codeflow')", [workflow]="workflow")
             wiz-component-dizest-info-app(*ngIf="menubar.is('appinfo')", [workflow]="workflow")
             wiz-component-dizest-uimode(*ngIf="menubar.is('uimode')", [workflow]="workflow")
 
@@ -127,3 +104,5 @@ ng-container(*ngIf="workflow.is('stop')")
         [kernel]="data.workflow.kernel", 
         [returnUrl]="wpReturnUrl", 
         (onStart)="workflow.start($event)")
+
+ng-keyboard-shortcuts([shortcuts]="shortcuts")

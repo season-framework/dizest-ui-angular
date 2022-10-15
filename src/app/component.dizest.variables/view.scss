@@ -1,0 +1,55 @@
+.workspace-variables {
+    overflow: hidden;
+    background-color: #fff;
+    width: 100%;
+    border-top: 1px solid var(--wiz-color-border);
+
+    .table {
+        th {
+            padding: 4px;
+
+            .btn {
+                width: 32px;
+                height: 20px;
+            }
+        }
+
+        td {
+            padding: 0;
+
+            .form-selectgroup-item {
+                display: inline-block !important;
+                padding-top: 6px;
+
+                .form-selectgroup-label {
+                    padding: 3px 12px !important;
+                    font-size: 12px;
+                }
+            }
+
+            .form-select {
+                border: none !important;
+                box-shadow: none !important;
+                text-align: left;
+            }
+
+            .form-control {
+                border: none !important;
+                background: transparent !important;
+                text-align: left;
+                min-height: 32px;
+
+                &:focus {
+                    outline: none !important;
+                    box-shadow: none !important;
+                }
+            }
+        }
+    }
+
+    .variables {
+        height: 120px;
+        overflow: auto;
+    }
+
+}

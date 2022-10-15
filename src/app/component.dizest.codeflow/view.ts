@@ -44,6 +44,10 @@ export class Component implements OnInit, OnDestroy {
         }
     }
 
+    public status: any = {
+        drag: false
+    }
+
     constructor(public service: Service) { }
 
     public async ngOnInit() {
@@ -100,10 +104,24 @@ export class Component implements OnInit, OnDestroy {
         await this.service.render();
     }
 
-    public async create() {
+    public async create(index: number = -1) {
         let app_id = this.workflow.app.create();
-        let flow = this.workflow.flow.create(app_id);
+        let flow = this.workflow.flow.create(app_id, {}, index);
         await flow.select();
+    }
+
+    public async drag(status: boolean, item: any) {
+        this.status.drag = status;
+        await this.service.render();
+
+        if (status == false) {
+            await item.select();
+            await this.workflow.position.codeflow(item.id);
+        }
+    }
+
+    public app() {
+        return this.workflow.flow.selected.app().spec();
     }
 
     public codeflow: any = ((scope: any, obj: any = {}) => {
@@ -162,6 +180,16 @@ export class Component implements OnInit, OnDestroy {
                 await item.select();
             }
 
+            item.up = async () => {
+                obj.data.up(item);
+                await scope.service.render();
+            }
+
+            item.down = async () => {
+                obj.data.down(item);
+                await scope.service.render();
+            }
+
             return item;
         }
 
@@ -193,11 +221,46 @@ export class Component implements OnInit, OnDestroy {
             obj.data.splice(removeItemIndex, 1);
         }
 
-        obj.add = (flow: any) => {
+        obj.add = (flow: any, position: number = -1) => {
             let flow_id = flow.id();
             let order = new Date().getTime();
             let item = obj.item(flow_id, order);
-            obj.data.push(item);
+            if (position < 0)
+                obj.data.push(item);
+            else
+                obj.data.splice(position + 1, 0, item);
+        }
+
+        obj.first = () => {
+            if (obj.data[0])
+                return obj.data[0].id;
+            return null;
+        }
+
+        obj.next = (flow_id: string) => {
+            let idx: number = -2;
+            for (let i = 0; i < obj.data.length; i++) {
+                if (obj.data[i].id == flow_id) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (obj.data[idx + 1])
+                return obj.data[idx + 1].id;
+            return null;
+        }
+
+        obj.prev = (flow_id: string) => {
+            let idx: number = -2;
+            for (let i = 0; i < obj.data.length; i++) {
+                if (obj.data[i].id == flow_id) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (obj.data[idx - 1])
+                return obj.data[idx - 1].id;
+            return null;
         }
 
         return obj;

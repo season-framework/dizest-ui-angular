@@ -6,13 +6,17 @@ import $ from "jquery";
 export class Component implements OnInit, AfterViewInit {
     @Input() workflow: any;
 
+    public initialized: boolean = false;
+
     constructor(public service: Service) { }
 
     public async ngOnInit() {
     }
 
     public async ngAfterViewInit() {
+        this.initialized = true;
         await this.service.render();
+
         await this.drawflow.render();
         this.workflow.drawflow = this.drawflow;
     }
@@ -63,14 +67,14 @@ export class Component implements OnInit, AfterViewInit {
                 let opts = "";
                 for (let j = 0; j < vals.length; j++) {
                     vals[j] = vals[j].split(":");
-                    if (vals[j].length != 2) continue;
-
                     let listkey = vals[j][0].trim();
                     let listval = listkey;
-                    if (vals[j].length > 1) {
+                    if (vals[j].length == 1) {
+                        opts = opts + "<option value='" + listval + "'>" + listkey + "</option>"
+                    } else if (vals[j].length == 2) {
                         listval = vals[j][1].trim();
+                        opts = opts + "<option value='" + listval + "'>" + listkey + "</option>"
                     }
-                    opts = opts + "<option value='" + listval + "'>" + listkey + "</option>"
                 }
                 opts = '<div class="value-data"><select class="form-select form-select-sm" df-' + value.name + '>' + opts + "</select></div>";
                 return opts;
@@ -78,7 +82,7 @@ export class Component implements OnInit, AfterViewInit {
 
             templates['file'] = templates['folder'] = (value) => `
                 <div onclick="dizest.drive(this, '${value.inputtype}', '${value.name}')" class="value-data">
-                    <input style="cursor: pointer;" class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}/>'
+                    <input style="cursor: pointer;" class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}/>
                 </div>`;
 
             templates['textarea'] = (value) => `<div class="value-data"><textarea rows=5 class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}></textarea></div>`;
@@ -115,7 +119,7 @@ export class Component implements OnInit, AfterViewInit {
                         </span>
                     </span>
                     
-                    <div class="action-btn" onclick="dizest.info('${app.id()}')">
+                    <div class="action-btn" onclick="dizest.info('${flow.id()}')">
                         <i class="fa-solid fa-info"></i>
                     </div>
 
@@ -186,8 +190,8 @@ export class Component implements OnInit, AfterViewInit {
         }
 
         obj.render = async () => {
-            let position: any = null;
-            if (obj.instance) {
+            let position: any = { canvas_x: 0, canvas_y: 0 };
+            if (obj.drawflow) {
                 position = {
                     canvas_x: obj.drawflow.canvas_x,
                     canvas_y: obj.drawflow.canvas_y,
@@ -202,7 +206,7 @@ export class Component implements OnInit, AfterViewInit {
 
             $("#drawflow").html('');
             obj.drawflow = new Drawflow(document.getElementById("drawflow"));
-            obj.position = { x: 0, y: 0 };
+            obj.position = { x: Math.round(position.canvas_x), y: Math.round(position.canvas_y) };
 
             obj.init_pos = async () => {
                 obj.position.x = 0;
@@ -278,12 +282,18 @@ export class Component implements OnInit, AfterViewInit {
             obj.drawflow.on("nodeDataChanged", id => this.event.changed([id]));
 
             obj.drawflow.on("nodeSelected", async (id) => {
-                this.workflow.flow.select(id);
+                await this.workflow.flow.select(id);
             });
 
             obj.drawflow.on("nodeUnselected", async () => {
-                this.workflow.flow.unselect();
+                await this.workflow.flow.unselect();
             });
+
+            await this.workflow.refresh(true);
+
+            if (this.workflow.flow.selected) {
+                await this.workflow.flow.selected.select();
+            }
         }
 
         return obj;
@@ -291,6 +301,7 @@ export class Component implements OnInit, AfterViewInit {
 
     public event: any = ((obj: any = {}) => {
         obj.info = async (flow_id: string) => {
+            await this.workflow.flow.select(flow_id);
             if (this.workflow.menubar.isnot('appinfo')) {
                 await this.workflow.menubar.toggle("appinfo");
                 await this.service.render();
@@ -298,14 +309,17 @@ export class Component implements OnInit, AfterViewInit {
         };
 
         obj.code = async (flow_id: string) => {
+            await this.workflow.flow.select(flow_id);
             if (this.workflow.menubar.isnot('codeflow')) {
                 await this.workflow.menubar.toggle("codeflow");
-                await this.service.render(3000);
+                await this.service.render();
+                await this.service.render(500);
             }
             this.workflow.position.codeflow(flow_id);
         };
 
         obj.ui = async (flow_id: string) => {
+            await this.workflow.flow.select(flow_id);
             if (this.workflow.menubar.isnot('uimode')) {
                 await this.workflow.menubar.toggle("uimode");
                 await this.service.render();
@@ -314,6 +328,7 @@ export class Component implements OnInit, AfterViewInit {
 
         obj.delete = async (flow_id: string) => {
             this.workflow.flow.delete(flow_id);
+            await this.workflow.flow.unselect();
             await this.service.render();
         };
 
@@ -326,6 +341,7 @@ export class Component implements OnInit, AfterViewInit {
         };
 
         obj.drive = async (element: any, inputtype: string, valiablename: string) => {
+            console.log(element, inputtype, valiablename);
             // TODO Drive
         };
 

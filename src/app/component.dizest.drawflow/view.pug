@@ -1,16 +1,16 @@
-.dizest-drawflow((drop)="event.drop($event)", (dragover)="event.dragover($event)")
+.dizest-drawflow(*ngIf="initialized", (drop)="event.drop($event)", (dragover)="event.dragover($event)")
     .workflow-canvas.noselect
         #drawflow
 
-    .workflow-position
-        a.text-muted.btn-link.cursor-pointer((click)="drawflow.init_pos()")
-            span (
-            span {{-drawflow.position.x}}
-            span.mr-1.ml-1 ,
-            span {{-drawflow.position.y}}
-            span )
-
     .workflow-zoom
+        .workflow-position
+            a.text-muted.btn-link.cursor-pointer((click)="drawflow.init_pos()")
+                span (
+                span {{-drawflow.position.x}}
+                span.mr-1.ml-1 ,
+                span {{-drawflow.position.y}}
+                span )
+
         .btn-group
             .btn.btn-blue((click)="drawflow.drawflow.zoom_out()")
                 i.fa-solid.fa-magnifying-glass-minus
@@ -18,3 +18,28 @@
                 i.fa-solid.fa-magnifying-glass
             .btn.btn-blue((click)="drawflow.drawflow.zoom_in()")
                 i.fa-solid.fa-magnifying-glass-plus
+
+    .workspace-actions.area-round
+        a.btn.btn-blue((click)="workflow.returnUrl()")
+            i.fa-solid.fa-list-ul
+
+        a.btn.btn-outline-blue.bg-white.text-blue.kernel.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{workflow.kernel()}}
+
+        a.btn.btn-blue((click)="workflow.refresh()")
+            i.fa-solid.fa-refresh
+
+        a.btn.btn-blue.if-desktop(*ngIf="workflow.isnot('stop')", (click)="workflow.kill()")
+            i.fa-solid.fa-power-off
+        
+        a.btn.btn-blue(*ngIf="workflow.is('running')", (click)="workflow.stop()")
+            i.fa-solid.fa-stop
+
+        a.btn.btn-blue(*ngIf="workflow.isnot('running')", (click)="workflow.run()")
+            i.fa-solid.fa-play
+
+        a.btn.btn-blue.if-desktop((click)="workflow.update()")
+            i.fa-solid.fa-save
+
+        a.btn.btn-blue.if-desktop((click)="workflow.download()")
+            i.fa-solid.fa-cloud-arrow-down
+
