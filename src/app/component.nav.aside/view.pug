@@ -49,20 +49,8 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
             
             ng-container(*ngIf="service.auth.allow('admin')")
                 li.nav-item.nav-item-header Admin
-                
-                li.nav-item(routerLink='/hub/admin/setting', routerLinkActive="active")
-                    .d-flex
-                        span.nav-icon
-                            i.fa-solid.fa-cogs
-                        a.nav-link
-                            span.nav-link-title Setting
-                    .nav-indicator
-                        span.status-indicator.status-indicator-animated.status-primary
-                            span.status-indicator-circle
-                            span.status-indicator-circle
-                            span.status-indicator-circle
 
-                li.nav-item(routerLink='/hub/admin/users', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/users', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-users
@@ -73,8 +61,33 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
                             span.status-indicator-circle
+                
+                li.nav-item(routerLink='/admin/setting/kernel', routerLinkActive="active")
+                    .d-flex
+                        span.nav-icon
+                            i.fa-solid.fa-microchip
+                        a.nav-link
+                            span.nav-link-title Kernel
+                    .nav-indicator
+                        span.status-indicator.status-indicator-animated.status-primary
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+                
 
-                li.nav-item(routerLink='/hub/admin/package', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/setting/database', routerLinkActive="active")
+                    .d-flex
+                        span.nav-icon
+                            i.fa-solid.fa-database
+                        a.nav-link
+                            span.nav-link-title Database
+                    .nav-indicator
+                        span.status-indicator.status-indicator-animated.status-primary
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+
+                li.nav-item(routerLink='/admin/packages', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-boxes-packing
@@ -86,7 +99,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
                 
-                li.nav-item(routerLink='/hub/admin/release', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/release', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-book

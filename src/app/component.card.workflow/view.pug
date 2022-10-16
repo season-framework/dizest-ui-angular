@@ -1,6 +1,6 @@
 .card
     .card-body.p-0.featured-area
-        .status-area(*ngIf="status && status != 'stop'", [ngClass]="statusClass")
+        .status-area(*ngIf="status && status != 'stop'", [ngClass]="statusClass[status]")
             span.text-white {{status}}
             
         .img-responsive([ngStyle]="coverStyle")

@@ -8,11 +8,14 @@ export class Component implements OnInit {
     @Input() status: string = "";
     @Input() link: string = "";
 
-    public statusClass: string;
+    public statusClass: any = {
+        running: 'bg-blue',
+        error: 'bg-red',
+        ready: 'bg-yellow'
+    };
     public coverStyle: any = {};
 
     public ngOnInit() {
-        this.statusClass = (this.status == 'running' ? 'bg-blue' : 'bg-yellow');
         this.coverStyle = {
             position: "relative",
             'background-image': "url('" + this.cover + "')"

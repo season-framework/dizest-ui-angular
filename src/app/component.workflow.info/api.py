@@ -1,9 +1,10 @@
 namespace = "workflow"
 user = wiz.session.get("id")
-server_id = namespace + "-" + user
-workflow_id = wiz.request.query("workflow_id", True)
-
 db = wiz.model("orm").use(namespace)
+
+if wiz.request.uri().split("/")[4] not in ['get']:
+    server_id = namespace + "-" + user
+    workflow_id = wiz.request.query("workflow_id", True)
 
 def run():
     server = wiz.model("dizest").load(server_id).server(user=user)
@@ -17,7 +18,11 @@ def run():
         wpdata = db.get(id=workflow_id)
         workflow = server.workflow(wpdata)
 
-    workflow.spawn(kernel_name=spec)
+    if workflow.status() == 'stop':
+        workflow.spawn(kernel_name=spec)
+
+    if workflow.status() != 'running':
+        workflow.run()
     wiz.response.status(200)
 
 def stop():
@@ -29,3 +34,10 @@ def stop():
     except:
         pass
     wiz.response.status(200)
+
+def get():
+    workflow_id = wiz.request.query("id", True)
+    item = db.get(id=workflow_id)
+    if item['visibility'] != 'public' and item['user_id'] != user:
+        wiz.response.status(404)    
+    wiz.response.status(200, item)

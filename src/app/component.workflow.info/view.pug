@@ -8,16 +8,16 @@
                 h3.m-0.mb-1 {{ item.title }}
                 .text-muted {{ item.updated }}
             
-        .d-flex
+        .d-flex(*ngIf="actions")
             a.card-btn(href="/hub/workflow/item/{{item.id}}")
                 span Open
                 i.fa-solid.fa-square-arrow-up-right.ml-3
 
-            a.card-btn((click)="run()")
+            a.card-btn(*ngIf="item.status != 'running'", (click)="run()")
                 span Run
                 i.fa-solid.fa-play.ml-3
             
-            a.card-btn((click)="stop()")
+            a.card-btn(*ngIf="item.status != 'stop'", (click)="stop()")
                 span Stop
                 i.fa-solid.fa-stop.ml-3
 
@@ -25,11 +25,13 @@
     .description.p-5.text-center(*ngIf="!item.description")
         h2 No description
     
-    .actions.p-3.border-top.area-round.text-center
-        .btn.btn-outline-blue
-            span Duplicate
+    .actions.p-3.border-top.area-round.text-center(*ngIf="full || download")
+        .btn.btn-outline-blue.mr-3(*ngIf="full", (click)="cloneInfo()")
+            span Clone
             i.fa-solid.fa-clone.ml-3
-        .mr-3
-        .btn.btn-outline-red
+        .btn.btn-outline-blue(*ngIf="download", (click)="downloadInfo()")
+            span Download
+            i.fa-solid.fa-download.ml-3
+        .btn.btn-outline-red.ml-3(*ngIf="full", (click)="deleteInfo()")
             span Delete
             i.fa-solid.fa-trash.ml-3

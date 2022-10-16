@@ -2,6 +2,25 @@ import { OnInit, AfterViewInit, OnDestroy, Input } from '@angular/core';
 import { Service } from '@wiz/libs/season/service';
 import $ from "jquery";
 
+import toastr from 'toastr';
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": true,
+    "progressBar": false,
+    "positionClass": "toast-bottom-center",
+    "preventDuplicates": true,
+    "onclick": null,
+    "showDuration": 300,
+    "hideDuration": 500,
+    "timeOut": 1500,
+    "extendedTimeOut": 1000,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+
 @dependencies({
     KeyboardShortcutsModule: 'ng-keyboard-shortcuts',
     SortablejsModule: '@wiz/libs/ngx-sortablejs'
@@ -573,6 +592,70 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             return true;
         }
 
+        obj.validate = async (data: any) => {
+            data = JSON.parse(JSON.stringify(data));
+            if (!data.title || data.title.length == 0) {
+                toastr.error("App title is not filled.");
+                return false;
+            }
+
+            let checker = {};
+            for (let i = 0; i < data.inputs.length; i++) {
+                if (!data.inputs[i].name || data.inputs[i].name.length == 0) {
+                    toastr.error("Input name must be filled");
+                    return false;
+                }
+
+                if (data.inputs[i].name.includes(" ")) {
+                    toastr.error("Input name only allow alphabet and digits.");
+                    return false;
+                }
+
+                if (data.inputs[i].name.match(/[^a-z0-9_]/gi)) {
+                    toastr.error("Input name only allow alphabet and digits.");
+                    return false;
+                }
+
+                if (checker[data.inputs[i].name]) {
+                    toastr.error("Input name must be unique.");
+                    return false;
+                }
+
+                checker[data.inputs[i].name] = true;
+            }
+
+            checker = {};
+            for (let i = 0; i < data.outputs.length; i++) {
+                if (!data.outputs[i].name || data.outputs[i].name.length == 0) {
+                    await $loading.hide();
+                    toastr.error("Output name must be filled");
+                    return false;
+                }
+
+                if (data.outputs[i].name.includes(" ")) {
+                    await $loading.hide();
+                    toastr.error("Output name only allow alphabet and digits.");
+                    return false;
+                }
+
+                if (data.outputs[i].name.match(/[^a-z0-9_]/gi)) {
+                    await $loading.hide();
+                    toastr.error("Output name only allow alphabet and digits.");
+                    return false;
+                }
+
+                if (checker[data.outputs[i].name]) {
+                    await $loading.hide();
+                    toastr.error("Output name must be unique.");
+                    return false;
+                }
+
+                checker[data.outputs[i].name] = true;
+            }
+
+            return true;
+        }
+
         obj.update = async (render: boolean = true) => {
             let codeflow = this.workflow.codeflow.data;
             let orderindex = {};
@@ -580,6 +663,12 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 orderindex[codeflow[i].id] = i + 1;
             let spec: any = obj.spec();
             let data: any = JSON.parse(JSON.stringify(spec));
+
+            for (let app_id in data.apps) {
+                if (await obj.validate(data.apps[app_id]) == false) {
+                    return;
+                }
+            }
 
             for (let flow_id in data.flow) {
                 delete data.flow[flow_id].log;

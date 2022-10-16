@@ -14,12 +14,17 @@
     "ng": {
         "selector": "wiz-component-workflow-info",
         "inputs": [
-            "item"
+            "item",
+            "full",
+            "actions",
+            "download"
         ],
         "outputs": [
             "close",
-            "open"
+            "open",
+            "delete",
+            "clone"
         ]
     },
-    "template": "wiz-component-workflow-info([item]=\"\", (close)=\"\", (open)=\"\")"
+    "template": "wiz-component-workflow-info([item]=\"\", [full]=\"\", [actions]=\"\", [download]=\"\", (close)=\"\", (open)=\"\", (delete)=\"\", (clone)=\"\")"
 }

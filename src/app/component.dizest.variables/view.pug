@@ -18,12 +18,12 @@
                 tbody([sortablejs]="app().inputs", [sortablejsOptions]="{ animation: 150, handle: '.draggable' }")
                     tr(*ngFor="let obj of app().inputs")
                         td.w-1(style="width: 120px !important;")
-                            select.form-select([(ngModel)]="obj.type")
+                            select.form-select([(ngModel)]="obj.type", (ngModelChange)="service.render()")
                                 option(value="variable") Variable
                                 option(value="output") Output
 
                         td.w-1(style="width: 120px !important;")
-                            select.form-select([(ngModel)]="obj.inputtype", *ngIf="obj.type == 'variable'")
+                            select.form-select([(ngModel)]="obj.inputtype", *ngIf="obj.type == 'variable'", (ngModelChange)="service.render()")
                                 option(value="text") Text
                                 option(value="textarea") Textarea
                                 option(value="password") Password

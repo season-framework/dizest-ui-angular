@@ -45,6 +45,7 @@ def list():
     res = []
     for i in range(len(rows)):
         rows[i] = db.get(fields="updated,id,featured,logo,title", id=rows[i], user_id=user)
+        if rows[i] is None: continue
         wp = server.workflow_by_id(rows[i]['id'])
         if wp is not None:
             rows[i]['status'] = wp.status()

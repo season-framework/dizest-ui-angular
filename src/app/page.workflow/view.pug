@@ -5,7 +5,7 @@
                 .row.align-items-center
                     .col-auto
                         .text-blue.mr-1(style="font-size: 28px;")
-                            i.fa-solid.fa-table-columns
+                            i.fa-solid.fa-cubes
                     .col
                         h2.page-title Workflow
                         .text-muted
@@ -13,12 +13,14 @@
                                 li.list-inline-item My Workflow
 
                     .col-auto.actions.area-round.if-desktop
-                        input.form-control(style="width: 240px;" placeholder="Enter for search")
+                        input.form-control(style="width: 240px;", placeholder="Enter for search", [(ngModel)]="search.text", (keyup.enter)="load(1)")
                     
                     .col-auto.actions.area-round.if-desktop
-                        a.btn.btn-blue
+                        a.btn.btn-blue((click)="load(1)")
+                            i.fa-solid.fa-magnifying-glass
+                        a.btn.btn-blue((click)="import()")
                             i.fa-solid.fa-cloud-arrow-up
-                        a.btn.btn-blue
+                        a.btn.btn-blue((click)="create()")
                             i.fa-solid.fa-plus
 
         .workspace-list-item
@@ -44,5 +46,68 @@
                 [end]="pagenation.end", 
                 (pageMove)="pageMove($event)")
 
-    .workspace-tab(*ngIf="selected.id")
-        wiz-component-workflow-info([item]="selected", (close)="close($event)")
+    .workspace-tab(*ngIf="selected.id && !created")
+        wiz-component-workflow-info(
+            [item]="selected", 
+            [full]="true", 
+            (close)="close($event)", 
+            (clone)="clone($event)", 
+            (delete)="delete($event)")
+
+    .workspace-tab.area-round.create-tab(*ngIf="created")
+        .workspace-tab-body
+            .container
+                .card.m-4
+                    .card-body
+                        .form-group.row.mb-3
+                            label.form-label.col-3.col-form-label Title
+                            .col
+                                input.form-control(type="text", placeholder="Workflow Title", [(ngModel)]="created.title")
+                        
+                        .form-group.row.mb-3
+                            label.form-label.col-3.col-form-label Version
+                            .col
+                                input.form-control(type="text", placeholder="1.0.0", [(ngModel)]="created.version")
+
+                        .form-group.row
+                            label.form-label.col-3.col-form-label Visibility
+                            .col
+                                .form-selectgroup
+                                    label.form-selectgroup-item
+                                        input.form-selectgroup-input(type="radio", name="visibility", value="public", [(ngModel)]="created.visibility")
+                                        span.form-selectgroup-label
+                                            i.fa-solid.fa-share-nodes.mr-2
+                                            span Public
+
+                                    label.form-selectgroup-item
+                                        input.form-selectgroup-input(type="radio", name="visibility", value="private", [(ngModel)]="created.visibility")
+                                        span.form-selectgroup-label
+                                            i.fa-solid.fa-lock.mr-2
+                                            span Private
+                
+                    .card-footer.d-flex.p-2
+                        button.btn(style="border-radius: 16px;", type="button", (click)="cancel()")
+                            span Cancel
+                        .mr-auto
+                        button.btn.btn-blue(style="border-radius: 16px;", type="button", (click)="requestCreate(created)")
+                            span Create
+
+    .wiz-modal(*ngIf="modal.isshow")
+        .modal
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    .btn-close(type='button', (click)="modal.hide()")
+                    .modal-status.bg-danger
+                    .modal-body.text-center.py-4
+                        h3 Are you sure?
+                        .text-muted Do you really want to remove app? What you've done cannot be undone.
+                    .modal-footer
+                        .w-100
+                            .row
+                                .col
+                                    a.btn.w-100((click)="modal.hide()")
+                                        | Cancel
+                                        
+                                .col
+                                    a.btn.btn-danger.w-100((click)="modal.action()")
+                                        | Delete

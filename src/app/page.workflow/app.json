@@ -1,7 +1,7 @@
 {
     "mode": "page",
     "id": "page.workflow",
-    "title": "Workflow",
+    "title": "Workflow List",
     "namespace": "workflow",
     "viewuri": "/hub/workflow/list",
     "category": "workspace",

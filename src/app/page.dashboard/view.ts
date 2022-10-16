@@ -19,6 +19,8 @@ export class Component implements OnInit, OnDestroy {
         }
     };
 
+    public interval_id: number = 0;
+
     public async ngOnInit() {
         await this.service.init();
         this.service.auth.allow(true, '/auth/login');
