@@ -47,18 +47,6 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                         span.status-indicator-circle
                         span.status-indicator-circle
             
-            li.nav-item(routerLink='/hub/drive', routerLinkActive="active")
-                .d-flex
-                    span.nav-icon
-                        i.fa-solid.fa-hard-drive
-                    a.nav-link
-                        span.nav-link-title Drive
-                .nav-indicator
-                    span.status-indicator.status-indicator-animated.status-primary
-                        span.status-indicator-circle
-                        span.status-indicator-circle
-                        span.status-indicator-circle
-            
             ng-container(*ngIf="service.auth.allow('admin')")
                 li.nav-item.nav-item-header Admin
                 

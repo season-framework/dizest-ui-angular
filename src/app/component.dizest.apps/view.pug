@@ -24,3 +24,23 @@
                         i.fa-solid.fa-xmark
                     button.btn.btn-blue.btn-sm((click)="add(item)")
                         i.fa-solid.fa-plus
+
+    .wiz-modal(*ngIf="modal.isshow")
+        .modal
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    .btn-close(type='button', (click)="modal.hide()")
+                    .modal-status.bg-danger
+                    .modal-body.text-center.py-4
+                        h3 Are you sure?
+                        .text-muted Do you really want to remove app? What you've done cannot be undone.
+                    .modal-footer
+                        .w-100
+                            .row
+                                .col
+                                    a.btn.w-100((click)="modal.hide()")
+                                        | Cancel
+                                        
+                                .col
+                                    a.btn.btn-danger.w-100((click)="modal.action()")
+                                        | Delete

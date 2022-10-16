@@ -17,7 +17,7 @@
                     .form-group.row.mb-3(*ngIf="data.id")
                         label.form-label.col-3.col-form-label App ID
                         .col
-                            input.form-control(type="text", [(ngModel)]="data.id" disabled="disabled")
+                            input.form-control(type="text", [(ngModel)]="data.id", disabled="disabled")
                     
                     .form-group.row.mb-3
                         label.form-label.col-3.col-form-label App Title
@@ -28,6 +28,11 @@
                         label.form-label.col-3.col-form-label App Version
                         .col
                             input.form-control(type="text", placeholder="1.0.0", [(ngModel)]="data.version")
+                    
+                    .form-group.row.mb-3
+                        label.form-label.col-3.col-form-label App Category
+                        .col
+                            input.form-control(type="text", placeholder="model", [(ngModel)]="data.category")
 
                     .form-group.row.mb-3
                         label.form-label.col-3.col-form-label Download App

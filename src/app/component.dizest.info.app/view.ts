@@ -82,14 +82,16 @@ export class Component implements OnInit {
 
         await monaco_auto_height();
         editor.onDidChangeModelDecorations(monaco_auto_height);
+    }
 
-        // TODO: Update Shortcut
+    public async download(data: any) {
+        await this.service.file.download(data, data.title + ".dwa");
     }
 
     public upload: any = ((obj: any = {}) => {
         obj.logo = async () => {
             try {
-                this.data.logo = await this.service.file.upload({ type: 'image', accept: 'image/*', width: 40, quality: 1 });
+                this.data.logo = await this.service.file.read({ type: 'image', accept: 'image/*', width: 40, quality: 1 });
                 this.style.logo = { 'background-image': 'url(' + this.data.logo + ')' };
                 await this.service.render();
             } catch (e) {

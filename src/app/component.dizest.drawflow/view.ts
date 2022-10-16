@@ -46,13 +46,13 @@ export class Component implements OnInit, AfterViewInit {
             // set position
             let pos = new DOMMatrixReadOnly(drawflow.precanvas.style.transform);
             if (!pos_x) {
-                pos_x = -pos.m41 + 24
+                pos_x = -pos.m41 + $('#drawflow').width() / 2 - 130;
             } else if (isdrop) {
                 pos_x = pos_x * (drawflow.precanvas.clientWidth / (drawflow.precanvas.clientWidth * drawflow.zoom)) - (drawflow.precanvas.getBoundingClientRect().x * (drawflow.precanvas.clientWidth / (drawflow.precanvas.clientWidth * drawflow.zoom)));
             }
 
             if (!pos_y) {
-                pos_y = -pos.m42 + 24
+                pos_y = -pos.m42 + $('#drawflow').height() / 3;
             } else if (isdrop) {
                 pos_y = pos_y * (drawflow.precanvas.clientHeight / (drawflow.precanvas.clientHeight * drawflow.zoom)) - (drawflow.precanvas.getBoundingClientRect().y * (drawflow.precanvas.clientHeight / (drawflow.precanvas.clientHeight * drawflow.zoom)));
             }
@@ -110,7 +110,7 @@ export class Component implements OnInit, AfterViewInit {
                 </div>
 
                 <div class="card-body actions d-flex p-0">
-                    <span class="finish-indicator status-indicator"></span>
+                    <span class="finish-indicator status-indicator" onclick="dizest.status('${flow.id()}')"></span>
                     <span class="pending-indicator status-indicator status-yellow status-indicator-animated">
                         <span class="status-indicator-circle">
                             <span class="status-indicator-circle"></span>
@@ -202,9 +202,14 @@ export class Component implements OnInit, AfterViewInit {
                     zoom: obj.drawflow.zoom,
                     zoom_last_value: obj.drawflow.zoom_last_value
                 };
+
+                obj.drawflow.removeListener();
+                obj.drawflow.inactive = true;
+                delete obj.drawflow;
             }
 
-            $("#drawflow").html('');
+            $("#drawflow-container").html('<div id="drawflow"></div>');
+
             obj.drawflow = new Drawflow(document.getElementById("drawflow"));
             obj.position = { x: Math.round(position.canvas_x), y: Math.round(position.canvas_y) };
 
@@ -308,6 +313,10 @@ export class Component implements OnInit, AfterViewInit {
             }
         };
 
+        obj.status = async (flow_id) => {
+            $('#drawflow #node-' + flow_id + ' .debug-message').toggleClass('hide');
+        }
+
         obj.code = async (flow_id: string) => {
             await this.workflow.flow.select(flow_id);
             if (this.workflow.menubar.isnot('codeflow')) {
@@ -341,15 +350,19 @@ export class Component implements OnInit, AfterViewInit {
         };
 
         obj.drive = async (element: any, inputtype: string, valiablename: string) => {
-            console.log(element, inputtype, valiablename);
-            // TODO Drive
+            let file = await this.modal.show({ element, inputtype, valiablename });
+            let filepath = file.path.substring(2);
+            $(element).find("input").val(filepath);
+            let event = {}
+            event.target = $(element).find("input")[0];
+            this.drawflow.drawflow.updateNodeValue(event);
         };
 
         obj.drop = async ($event) => {
             $event.preventDefault();
             let app_id = $event.dataTransfer.getData("app-id");
             if (!app_id) return;
-            this.workflow.flow.create(app_id, { x: $event.clientX, y: $event.clientY, drop: true });
+            this.workflow.flow.create(app_id, { x: $event.clientX, y: $event.clientY, drop: true }, -1);
             await this.service.render();
         }
 
@@ -390,4 +403,37 @@ export class Component implements OnInit, AfterViewInit {
 
         return obj;
     })();
+
+    public modal: any = ((obj: any = {}) => {
+        obj.isshow = false;
+        obj.callback = null;
+        obj.hide = async () => { }
+        obj.action = async () => { }
+        obj.binding = {};
+
+        obj.show = async (reqinfo: any) => {
+            obj.isshow = true;
+            obj.binding.selected = null;
+            await this.service.render();
+
+            let fn = () => new Promise((resolve) => {
+                obj.hide = async () => {
+                    obj.isshow = false;
+                    await this.service.render();
+                    resolve(false);
+                }
+
+                obj.action = async (node: any) => {
+                    obj.isshow = false;
+                    await this.service.render();
+                    resolve(node);
+                }
+            });
+
+            return await fn();
+        }
+
+        return obj;
+    })();
+
 }

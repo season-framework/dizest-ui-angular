@@ -5,7 +5,8 @@ export class Component implements OnInit {
     @Input() updated: string = "";
     @Input() logo: string = "";
     @Input() cover: string = "";
-    @Input() status?: string = "";
+    @Input() status: string = "";
+    @Input() link: string = "";
 
     public statusClass: string;
     public coverStyle: any = {};
@@ -16,6 +17,11 @@ export class Component implements OnInit {
             position: "relative",
             'background-image': "url('" + this.cover + "')"
         };
+    }
+
+    public move() {
+        if (this.link)
+            location.href = this.link;
     }
 
 }

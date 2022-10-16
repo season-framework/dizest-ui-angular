@@ -14,9 +14,11 @@
     "ng": {
         "selector": "wiz-component-dizest-drive",
         "inputs": [
-            "workflow"
+            "workflow",
+            "mode",
+            "binding"
         ],
         "outputs": []
     },
-    "template": "wiz-component-dizest-drive([workflow]=\"\")"
+    "template": "wiz-component-dizest-drive([workflow]=\"\", [mode]=\"\", [binding]=\"\")"
 }

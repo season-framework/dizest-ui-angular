@@ -1,35 +1,77 @@
-.workspace-tab.uimode
-    .workspace-tab-header
-        .workspace-tab-header-title
-            i.fa-solid.fa-display.mr-2
-            span {{data.title}}
-        .ml-auto
-    //     .dropdown.mr-3.if-desktop
-    //         button.btn.btn-white.btn-sm.dropdown-toggle(type="button" data-bs-toggle="dropdown" aria-expanded="false")
-    //             span Code
+.main-container([class.maximized]="maximized", [class.editmode]="edit")
+    .workspace-tab.code-area(*ngIf="edit")
+        .workspace-tab-header
+            .workspace-tab-header-title
+                i.fa-solid.fa-code.mr-2
+                span UI Component
+            .ml-auto
+
+            .btn-group.mr-3
+                .btn([class.btn-blue]="enabled.head", (click)="toggle('head')") head
+                .btn([class.btn-blue]="enabled.body", (click)="toggle('body')") body
+                .btn([class.btn-blue]="enabled.js", (click)="toggle('js')") js
+                .btn([class.btn-blue]="enabled.scss", (click)="toggle('scss')") scss
+                .btn([class.btn-blue]="enabled.api", (click)="toggle('api')") api
             
-    //         ul.dropdown-menu.dropdown-menu-dark
-    //             li(ng-repeat="(name, tab) in uimode.tab" ng-if="!tab.active")
-    //                 a.dropdown-item(ng-click="tab.open()") {{uimode.tab[name].name}}
+            .close-btn((click)="code(false)")
+                i.fa-solid.fa-xmark
         
-    //     .text-white.close-btn.mr-3.if-desktop(ng-click="uimode.maximize(!uimode.maximized)")
-    //         i.fa-solid.fa-up-right-and-down-left-from-center(ng-if="!uimode.maximized")
-    //         i.fa-solid.fa-down-left-and-up-right-to-center(ng-if="uimode.maximized")
+        .code-area-body
+            .code-container(*ngIf="enabled.head")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.head", [options]="monacopug", height="100%")
+                .code-label Head (Pug)
 
-    //     .text-white.close-btn.mr-3(ng-click="uimode.render()")
-    //         i.fa-solid.fa-refresh
+            .code-container(*ngIf="enabled.body")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.pug", [options]="monacopug", height="100%")
+                .code-label Body (Pug)
+            
+            .code-container(*ngIf="enabled.js")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.js", [options]="monacojs", height="100%")
+                .code-label Javascript
 
-    //     .text-white.close-btn(ng-click="menubar.toggle('uimode')")
-    //         i.fa-solid.fa-xmark
-    
-    // .workspace-tab-body.p-0(ng-if="workflow.data.apps[node.selected.app_id].pug && !kernel.is('running')")
-    //     iframe#uimode-iframe(ng-if="uimode.iframe" ng-show="uimode.iframe_loaded")
-    //     div(ng-if="!uimode.iframe_loaded" style="width: 100%; height: 100%;")
-    //         table(style="width: 100%; height: 100%;")
-    //             tr
-    //                 td.text-center(style="height: 100%; vertical-align: middle;")
-    //                     .spinner-border.text-blue
-    
-    // .workspace-tab-body.p-6.text-center(ng-if="!workflow.data.apps[node.selected.app_id].pug || kernel.is('running')")
-    //     h2(ng-if="!kernel.is('running')") Not support UI
-    //     h2(ng-if="kernel.is('running')") UI is not available while the kernel is running
+            .code-container(*ngIf="enabled.scss")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.scss", [options]="monacoscss", height="100%")
+                .code-label SCSS
+            
+            .code-container(*ngIf="enabled.api")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.api", [options]="monacopy", height="100%")
+                .code-label API
+
+    .workspace-tab.uimode
+        .workspace-tab-header
+            .workspace-tab-header-title
+                i.fa-solid.fa-display.mr-2
+                span {{data.title}}
+            .ml-auto
+            
+            .text-white.close-btn.mr-3.if-desktop(*ngIf="!edit", (click)="code(true)")
+                i.fa-solid.fa-code
+
+            .text-white.close-btn.mr-3.if-desktop((click)="maximize(!maximized)")
+                i.fa-solid(
+                    [class.fa-up-right-and-down-left-from-center]='!maximized',
+                    [class.fa-down-left-and-up-right-to-center]='maximized')
+
+            .text-white.close-btn.mr-3((click)="render()")
+                i.fa-solid.fa-refresh
+
+            .text-white.close-btn((click)="workflow.menubar.toggle('uimode')")
+                i.fa-solid.fa-xmark
+        
+        .workspace-tab-body-wrapper
+            .workspace-tab-body.p-0(*ngIf="data.pug && workflow.isnot('running')")
+                iframe#uimode-iframe(*ngIf="iframe", (show)="iframe_loaded")
+                div(*ngIf="!iframe_loaded", style="width: 100%; height: 100%;")
+                    table(style="width: 100%; height: 100%;")
+                        tr
+                            td.text-center(style="height: 100%; vertical-align: middle;")
+                                .spinner-border.text-blue
+            
+            .workspace-tab-body.p-6.text-center(*ngIf="!data.pug || workflow.is('running')")
+                h2(*ngIf="workflow.isnot('running')") Not support UI
+                h2(*ngIf="workflow.is('running')") UI is not available while the kernel is running

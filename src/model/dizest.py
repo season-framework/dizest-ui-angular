@@ -62,8 +62,8 @@ class Model:
 
         server = dizest.server(name, **server_options)
 
-        host = config.socket_host
-        if config.socket_host is None:
+        host = config.host
+        if config.host is None:
             host = urllib.parse.urlparse(wiz.request.request().base_url)
             host = f"{host.scheme}://{host.netloc}"
 

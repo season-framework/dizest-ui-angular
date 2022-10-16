@@ -13,5 +13,5 @@
                 span.avatar(style="background-image: url({{logo}});")
         .text-area
             h3.card-title.mb-0
-                a.text-reset {{ title }}
+                a.text-reset((click)="move(); $event.stopPropagation();") {{ title }}
             small.text-muted {{ updated }}

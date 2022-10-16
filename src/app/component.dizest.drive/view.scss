@@ -2,12 +2,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 }
 
 .side-heading {
     display: flex;
     padding: 8px 16px;
-    padding-top: 16px;
     background: var(--wiz-color-blue-light);
     color: var(--wiz-color-blue);
     align-items: center;
@@ -114,4 +114,28 @@
 .dropdown-menu.show {
     top: 28px;
     right: 0px;
+}
+
+.donothover {
+    .mat-tree-node:hover {
+        color: var(--wiz-color-text);
+        background: transparent;
+    }
+}
+
+.wiz-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+
+    .modal {
+        display: block;
+        position: absolute;
+        width: 96%;
+        left: 2%;
+        top: 10%;
+    }
 }

@@ -20,6 +20,7 @@ export class FileNode {
     public isLoading: boolean = false;
     public editable: boolean = false;
     public extended: boolean = false;
+    public active: boolean = false;
 }
 
 export class FileDataSource implements DataSource<FileNode> {

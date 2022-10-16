@@ -124,9 +124,18 @@ export class Component implements OnInit, OnDestroy {
         return this.workflow.flow.selected.app().spec();
     }
 
+    public initialized: boolean = true;
+
     public codeflow: any = ((scope: any, obj: any = {}) => {
 
         obj.data = [];
+
+        obj.render = async () => {
+            scope.initialized = false;
+            await scope.service.render();
+            scope.initialized = true;
+            await scope.service.render();
+        }
 
         obj.item = (id: string, order: number) => {
             let item: any = {

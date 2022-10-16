@@ -1,5 +1,5 @@
-.side-container
-    .side-heading.area-round
+.side-container((drop)="drop($event)", (dragover)="dragover($event)", (dragleave)="dragleave($event)", (dragenter)="dragenter($event)", [class.donothover]="donothover")
+    .side-heading.area-round([ngStyle]="rootStyle")
         h3.nowrap.m-0(style="max-width: 220px; overflow: hidden; text-overflow: ellipsis;")
             span Drive
         .ml-auto
@@ -7,13 +7,13 @@
             i.fa-solid.fa-refresh.text-blue
         .btn.btn-white.btn-sm.me-1((click)="create(null, 'folder');")
             i.fa-solid.fa-folder-plus.text-blue
-        .btn.btn-white.btn-sm.me-1((click)="upload(null, 'file');")
+        .btn.btn-white.btn-sm.me-1((click)="file();")
             i.fa-solid.fa-upload.text-blue
 
     .side-body.area-round
         mat-tree.file-tree([dataSource]="dataSource", [treeControl]="treeControl")
             mat-tree-node(*matTreeNodeDef="let node", matTreeNodePadding="", matTreeNodePaddingIndent="16px", (click)="open(node)", [ngClass]="active(node) ? 'active' : ''")
-                i.tree-icon.fa-regular.fa-file-lines.mr-2((click)="node.editable = !node.editable; $event.stopPropagation(); scope.render()")
+                i.tree-icon.fa-regular.fa-file-lines.mr-2((click)="node.editable = !node.editable; $event.stopPropagation(); service.render()")
                 .file-title(style="flex: auto; overflow: hidden;") 
                     span(*ngIf="!node.editable") {{node.name}}
                     input.form-control.form-control-sm([(ngModel)]="node.rename", placeholder="{{node.type.split('.')[1]}} name", (keyup.enter)="move(node);", *ngIf="node.editable", (click)="$event.stopPropagation();")
@@ -28,19 +28,35 @@
                 i.icon-action-always.fa-solid.fa-xmark((click)="delete(node); $event.stopPropagation();")
                 i.icon-action-always.fa-solid.fa-check((click)="create(node); $event.stopPropagation();")
 
-            mat-tree-node(*matTreeNodeDef="let node; when: isFolder", matTreeNodePadding="", matTreeNodeToggle="", matTreeNodePaddingIndent="16px", [ngClass]="active(node) ? 'active' : ''")
-                i.tree-icon.mr-2([ngClass]="node.extended ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'", (click)="node.editable = !node.editable; $event.stopPropagation(); scope.render()")
+            mat-tree-node(*matTreeNodeDef="let node; when: isFolder", matTreeNodePadding="", matTreeNodeToggle="", matTreeNodePaddingIndent="16px", [ngClass]="active(node) ? 'active' : ''", (drop)="drop($event, node)", (dragover)="dragover($event, node)", (dragleave)="dragleave($event, node)", (dragenter)="dragenter($event, node)", (click)="select(node)")
+                i.tree-icon.mr-2([ngClass]="node.extended ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'", (click)="node.editable = !node.editable; $event.stopPropagation(); service.render()")
                 .file-title(style="flex: auto; overflow: hidden;")
                     span(*ngIf="!node.editable") {{node.name}}
                     input.form-control.form-control-sm([(ngModel)]="node.rename", placeholder="{{node.type.split('.')[1]}} name", (keyup.enter)="move(node);", *ngIf="node.editable", (click)="$event.stopPropagation();")
                 
                 i.icon-action.fa-solid.fa-trash-can((click)="delete(node); $event.stopPropagation();")
-                i.icon-action.fa-solid.fa-arrow-up-from-bracket((click)="upload(node, 'file'); $event.stopPropagation();")
+                i.icon-action.fa-solid.fa-arrow-up-from-bracket((click)="file(node); $event.stopPropagation();")
                 i.icon-action.fa-solid.fa-download((click)="download(node); $event.stopPropagation();")
                 i.icon-action.fa-solid.fa-folder-plus((click)="create(node, 'folder'); $event.stopPropagation();")
 
-div(style="display: none;")
-    form#file-form
-        input#file-upload.form-control(*ngIf="upload_mode == 'file'", type='file', name='file[]', (change)="upload_file()", multiple)
+    .wiz-modal(*ngIf="modal.isshow")
+        .modal
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    .btn-close(type='button', (click)="modal.hide()")
+                    .modal-status.bg-danger
+                    .modal-body.text-center.py-4
+                        h3 Are you sure?
+                        .text-muted Do you really want to remove files? What you've done cannot be undone.
+                    .modal-footer
+                        .w-100
+                            .row
+                                .col
+                                    a.btn.w-100((click)="modal.hide()")
+                                        | Cancel
+                                        
+                                .col
+                                    a.btn.btn-danger.w-100((click)="modal.action()")
+                                        | Delete
 
 ngx-loading([show]="loading")

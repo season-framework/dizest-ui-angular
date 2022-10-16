@@ -4,11 +4,33 @@ import { Service } from '@wiz/libs/season/service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { FileNode, FileDataSource } from '@wiz/libs/dizest/file';
 
+import toastr from 'toastr';
+
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": true,
+    "progressBar": false,
+    "positionClass": "toast-bottom-left",
+    "preventDuplicates": true,
+    "onclick": null,
+    "showDuration": 300,
+    "hideDuration": 500,
+    "timeOut": 1500,
+    "extendedTimeOut": 1000,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+
 @dependencies({
     MatTreeModule: '@angular/material/tree'
 })
 export class Component implements OnInit {
     @Input() workflow: any;
+    @Input() mode: any = 'browser';
+    @Input() binding: any = {};
 
     public API: any;
     public path: string = '.';
@@ -22,6 +44,7 @@ export class Component implements OnInit {
     private isExpandable = (node: FileNode) => node.extended;
     private isFolder = (_: number, node: FileNode) => node.type == 'folder';
     private isNew = (_: number, node: FileNode) => node.type == 'new.folder' || node.type == 'new.file';
+    public rootStyle = { 'padding-top': '16px' };
 
     constructor(public service: Service) { }
 
@@ -33,6 +56,10 @@ export class Component implements OnInit {
     }
 
     public active(node: FileNode | null) {
+        if (this.mode == 'browser')
+            return node.active;
+        if (this.binding.selected)
+            return this.binding.selected.path == node.path;
         return false;
     }
 
@@ -48,10 +75,20 @@ export class Component implements OnInit {
         return data;
     }
 
+    public async select(node: FileNode) {
+        this.binding.selected = node;
+        await this.service.render();
+    }
+
     public async open(node: FileNode) {
-        if (!node) node = this.rootNode;
-        let url = this.API.url('download/' + node.path);
-        window.open(url, '_blank');
+        this.binding.selected = node;
+        if (this.mode == 'browser') {
+            if (!node) node = this.rootNode;
+            let url = this.API.url('download/' + node.path);
+            window.open(url, '_blank');
+        } else {
+            await this.service.render();
+        }
     }
 
     public async download(node: FileNode | null) {
@@ -61,7 +98,11 @@ export class Component implements OnInit {
     }
 
     public async delete(node: FileNode) {
-        await this.API.call(`remove/${node.parent.path}`, { name: node.name });
+        if (node.type != "new.folder" && node.type != "new.file") {
+            let res = await this.modal.show();
+            if (!res) return;
+            await this.API.call(`remove/${node.parent.path}`, { name: node.name });
+        }
         await this.dataSource.delete(node);
     }
 
@@ -82,7 +123,7 @@ export class Component implements OnInit {
             }
 
             await this.dataSource.delete(node);
-            await this.refresh(node);
+            await this.refresh(node.parent);
         } else {
             if (!this.treeControl.isExpanded(node))
                 await this.dataSource.toggle(node, true);
@@ -92,21 +133,25 @@ export class Component implements OnInit {
     }
 
     public async refresh(node: FileNode | null = null) {
-        if (node && node.parent) {
-            await this.dataSource.toggle(node.parent, false);
-            await this.dataSource.toggle(node.parent, true);
+        if (node) {
+            await this.dataSource.toggle(node, false);
+            await this.dataSource.toggle(node, true);
         } else {
             let data = await this.list(this.rootNode);
             this.dataSource.data = data;
         }
+        await this.service.render();
     }
 
     public async loader(status) {
         this.loading = status;
-        await this.scope.render();
+        await this.service.render();
     }
 
     public async ngOnInit() {
+        if (this.mode != 'browser')
+            this.rootStyle = {};
+
         this.API = this.workflow.DRIVE_API;
         this.rootNode = new FileNode('root', this.path, 'folder');
         this.treeControl = new FlatTreeControl<FileNode>(this.getLevel, this.isExpandable);
@@ -114,5 +159,123 @@ export class Component implements OnInit {
         let data = await this.list(this.rootNode);
         this.dataSource.data = data;
     }
+
+    public donothover: boolean = false;
+
+    public async move(node: FileNode) {
+        let { name, rename, path } = node;
+        if (name == rename) {
+            node.editable = false;
+            return;
+        }
+
+        let to: any = path.split("/");
+        to[to.length - 1] = rename;
+        to = to.join("/");
+        let parent_path = to.split("/").slice(0, to.split("/").length - 1).join("/");
+
+        let { code } = await this.API.call(`rename/${node.parent.path}`, { name: name, rename: rename });
+
+        if (code !== 200) {
+            toastr.error("Error on change path");
+            return;
+        }
+
+        node.parent = null;
+        for (let i = 0; i < this.dataSource.data.length; i++) {
+            if (this.dataSource.data[i].path == parent_path) {
+                node.parent = this.dataSource.data[i];
+                break;
+            }
+        }
+
+        await this.dataSource.delete(node);
+        await this.refresh(node.parent);
+    }
+
+    public async upload(node: FileNode, files: any) {
+        await this.loader(true);
+        let fd = new FormData();
+        let filepath = [];
+        for (let i = 0; i < files.length; i++) {
+            if (!files[i].filepath) files[i].filepath = files[i].name;
+            fd.append('file[]', files[i]);
+            filepath.push(files[i].filepath);
+        }
+        fd.append("filepath", JSON.stringify(filepath));
+
+        let url = this.API.url('upload/' + node.path);
+        await this.service.file.upload(url, fd);
+        await this.refresh(node);
+        await this.loader(false);
+    }
+
+    public async file(node: FileNode | null = null) {
+        if (!node) node = this.rootNode;
+        let files = await this.service.file.select();
+        await this.upload(node, files);
+    }
+
+    public async drop($event, node: FileNode | null = null) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        if (!node) node = this.rootNode;
+        let files = await this.service.file.drop($event);
+        await this.upload(node, files);
+    }
+
+    public async dragover($event, node: FileNode | null = null) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        if (!node) node = this.rootNode;
+    }
+
+    public async dragenter($event, node: FileNode | null = null) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        if (!node) node = this.rootNode;
+        node.active = true;
+        this.donothover = true;
+        await this.service.render();
+    }
+
+    public async dragleave($event, node: FileNode | null = null) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        if (!node) node = this.rootNode;
+        node.active = false;
+        this.donothover = false;
+        await this.service.render();
+    }
+
+    public modal: any = ((obj: any = {}) => {
+        obj.isshow = false;
+        obj.callback = null;
+        obj.hide = async () => { }
+        obj.action = async () => { }
+
+        obj.show = async () => {
+            obj.isshow = true;
+            await this.service.render();
+
+            let fn = () => new Promise((resolve) => {
+                obj.hide = async () => {
+                    obj.isshow = false;
+                    await this.service.render();
+                    resolve(false);
+                }
+
+                obj.action = async () => {
+                    obj.isshow = false;
+                    await this.service.render();
+                    resolve(true);
+                }
+            });
+
+            return await fn();
+        }
+
+        return obj;
+    })();
 
 }

@@ -49,15 +49,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px 0;
+            height: 32px;
 
             .btn {
                 display: none;
             }
 
             &:hover {
-                padding: 6px 0;
-
                 .btn {
                     display: block;
                 }

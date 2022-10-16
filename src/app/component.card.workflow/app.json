@@ -18,9 +18,10 @@
             "updated",
             "logo",
             "cover",
-            "status?"
+            "status",
+            "link"
         ],
         "outputs": []
     },
-    "template": "wiz-component-card-workflow([title]=\"\", [updated]=\"\", [logo]=\"\", [cover]=\"\", [status?]=\"\")"
+    "template": "wiz-component-card-workflow([title]=\"\", [updated]=\"\", [logo]=\"\", [cover]=\"\", [status]=\"\", [link]=\"\")"
 }

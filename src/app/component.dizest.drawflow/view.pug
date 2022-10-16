@@ -1,6 +1,6 @@
 .dizest-drawflow(*ngIf="initialized", (drop)="event.drop($event)", (dragover)="event.dragover($event)")
     .workflow-canvas.noselect
-        #drawflow
+        #drawflow-container
 
     .workflow-zoom
         .workflow-position
@@ -25,9 +25,6 @@
 
         a.btn.btn-outline-blue.bg-white.text-blue.kernel.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{workflow.kernel()}}
 
-        a.btn.btn-blue((click)="workflow.refresh()")
-            i.fa-solid.fa-refresh
-
         a.btn.btn-blue.if-desktop(*ngIf="workflow.isnot('stop')", (click)="workflow.kill()")
             i.fa-solid.fa-power-off
         
@@ -37,9 +34,22 @@
         a.btn.btn-blue(*ngIf="workflow.isnot('running')", (click)="workflow.run()")
             i.fa-solid.fa-play
 
+        a.btn.btn-blue((click)="workflow.refresh()")
+            i.fa-solid.fa-refresh
+
         a.btn.btn-blue.if-desktop((click)="workflow.update()")
             i.fa-solid.fa-save
 
-        a.btn.btn-blue.if-desktop((click)="workflow.download()")
-            i.fa-solid.fa-cloud-arrow-down
-
+    .wiz-modal(*ngIf="modal.isshow")
+        .modal
+            .modal-dialog.modal-sm(role='document')
+                .modal-content
+                    .modal-status.bg-blue
+                    .modal-body.p-0
+                        wiz-component-dizest-drive([workflow]="workflow", mode="modal", [binding]="modal.binding")
+                    .modal-footer.border-top.pt-2.pb-2.d-flex
+                        a.btn((click)="modal.hide()")
+                            | Cancel
+                        .ml-auto
+                        a.btn.btn-blue(*ngIf="modal.binding.selected", (click)="modal.action(modal.binding.selected)")
+                            | Select

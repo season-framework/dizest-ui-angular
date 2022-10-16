@@ -13,7 +13,7 @@
             i.fa-solid.fa-xmark
 
     .workspace-tab-body([class.isdragging]="status.drag")
-        .codeflow-body
+        .codeflow-body(*ngIf="initialized")
             div([sortablejs]="codeflow.data", [sortablejsOptions]="{ animation: 150, handle: '.sortable-handle' }")
                 div(*ngFor="let item of codeflow.data; let idx = index", (dragstart)="drag(true, item)", (dragend)="drag(false, item)")
                     .card([class.codeflow-selected]="item.selected()", (click)="item.select()", [attr.id]="'codeflow-' + item.id")

@@ -385,6 +385,10 @@
                 margin: 0;
                 line-height: 16px;
                 font-family: 'wiz-r';
+
+                &.hide {
+                    display: none;
+                }
             }
         }
 
@@ -554,6 +558,7 @@
             background: rgba(47, 179, 68, .1);
             color: #2fb344;
             font-weight: 1000;
+            cursor: pointer;
         }
     }
 
@@ -583,6 +588,7 @@
 
         &.selected {
             opacity: 1;
+            z-index: 2000;
         }
     }
 }

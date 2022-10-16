@@ -34,8 +34,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
 
         this.workflow.menubar = this.menubar;
         this.workflow.browser = this.browser;
-
-        this.menubar.toggle('codeflow');
+        this.workflow.request = this.request;
     }
 
     public async ngAfterViewInit() {
@@ -51,9 +50,6 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             command: async () => {
                 if (!this.workflow.flow.selected) return;
                 this.workflow.run(this.workflow.flow.selected.id());
-                await this.workflow.flow.next();
-                $('#drawflow').click();
-                $('#drawflow').focus();
             }
         }, {
             key: ["cmd + r", "ctrl + r"],
@@ -106,26 +102,26 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
 
     public request: any = ((scope: any, obj: any = {}) => {
         obj.info = async () => {
-            let data: any = await this.requester("get");
+            let data: any = await scope.requester("get");
             for (let key in data.flow) {
                 data.flow[key].log = "";
                 data.flow[key].status = "";
                 data.flow[key].index = "";
             }
-            this.data.workflow = data;
+            scope.data.workflow = data;
         };
 
         obj.kernel = async () => {
-            this.data.kernel = await this.requester("kernel");
+            scope.data.kernel = await scope.requester("kernel");
         };
 
         obj.status = async (log: boolean = false) => {
-            let wpstatus = await this.requester("status", { log });
-            let flows = this.workflow.flow.list();
+            let wpstatus = await scope.requester("status", { log });
+            let flows = scope.workflow.flow.list();
             for (let flow_id of flows) {
                 let flow_status = wpstatus[flow_id];
                 if (!flow_status) continue;
-                let flow = this.workflow.flow(flow_id);
+                let flow = scope.workflow.flow(flow_id);
                 let { status, index, log } = flow_status;
                 if (log) {
                     flow.log.clear();
@@ -134,8 +130,17 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 flow.status(status);
                 flow.index(index);
             }
-            await this.service.render();
+            await scope.service.render();
         };
+
+        obj.post = async (fnname: string, opt: any = {}) => {
+            return await scope.requester(fnname, opt, true);
+        }
+
+        obj.uimode = {};
+        obj.uimode.render = (fnname) => {
+            return wiz.url('render/' + this.wpNamespace + "/" + this.wpID + "/" + fnname);
+        }
 
         return obj;
     })(this);
@@ -167,7 +172,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
 
     public browser: any = ((scope: any, obj: any = {}) => {
         obj.show = true;
-        obj.target = 'drive';
+        obj.target = 'app';
         obj.style = { 'max-width': '320px' };
 
         obj.toggle = async () => {
@@ -199,6 +204,9 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             if (obj.current == target) obj.current = '';
             else obj.current = target;
             await scope.service.render();
+            if (scope.workflow.codeflow) {
+                await scope.workflow.codeflow.render();
+            }
         }
 
         obj.is = (target: string | null) => {
@@ -332,6 +340,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         }
 
         obj.kernel = () => scope.data.workflow.kernel;
+        obj.kernels = () => scope.data.kernel;
 
         // app controller
         obj.app = (app_id: string) => {
@@ -349,14 +358,9 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             return apps;
         }
 
-        obj.app.create = () => {
-            let wpdata = obj.spec();
-            let app_id = this.service.random();
-            while (wpdata.apps[app_id])
-                app_id = this.service.random();
-
+        obj.app.create = (specstruct: any = {}) => {
             let spec = {
-                id: app_id,
+                id: '',
                 title: 'new app',
                 version: '1.0.0',
                 description: '',
@@ -370,6 +374,17 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 css: '',
                 logo: ''
             };
+
+            for (let key in specstruct) {
+                spec[key] = specstruct[key];
+            }
+
+            let wpdata = obj.spec();
+            let app_id = this.service.random();
+            while (wpdata.apps[app_id])
+                app_id = this.service.random();
+            spec.id = app_id;
+
             wpdata.apps[app_id] = spec;
             return app_id;
         }
@@ -433,6 +448,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             if (obj.codeflow)
                 obj.codeflow.add(newflow, position);
             scope.service.render();
+            obj.flow.select(flow_id);
             return newflow
         }
 
@@ -454,6 +470,8 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             let flow = obj.flow(flow_id);
             if (!flow) return;
 
+            $('#drawflow').removeClass('app-hover');
+            $('#drawflow .drawflow-node').removeClass('app-hover');
             $('#drawflow').addClass('selected');
             $('.drawflow-node').removeClass('selected');
             $('.drawflow .connection path').removeClass('selected');
@@ -558,10 +576,8 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         obj.update = async (render: boolean = true) => {
             let codeflow = this.workflow.codeflow.data;
             let orderindex = {};
-            for (let i = 0; i < codeflow.length; i++) {
-                codeflow[i].order = i + 1;
+            for (let i = 0; i < codeflow.length; i++)
                 orderindex[codeflow[i].id] = i + 1;
-            }
             let spec: any = obj.spec();
             let data: any = JSON.parse(JSON.stringify(spec));
 
@@ -579,6 +595,10 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             await scope.requester("update", { data }, true);
             if (render) {
                 await obj.drawflow.render();
+            }
+
+            if (obj.uimodeRender) {
+                await obj.uimodeRender();
             }
         }
 

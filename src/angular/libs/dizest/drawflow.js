@@ -5,6 +5,7 @@ import $ from 'jquery';
 export default class Drawflow {
     constructor(container, render = null, parent = null) {
         this.events = {};
+        this.inactive = false;
         this.container = container;
         this.precanvas = null;
         this.nodeId = 1;
@@ -1366,9 +1367,11 @@ export default class Drawflow {
         }
 
         const header = create_obj("variable-header");
-        header.appendChild(create_obj("input-header", "Input"));
-        header.appendChild(create_obj("output-header", "Output"));
-        node.appendChild(header);
+        if (num_out.length > 0 || num_in.length > 0) {
+            header.appendChild(create_obj("input-header", "Input"));
+            header.appendChild(create_obj("output-header", "Output"));
+            node.appendChild(header);
+        }
 
         const variable_container = create_obj("variable-container");
         const input_container = create_obj("input-container");
@@ -2094,11 +2097,15 @@ export default class Drawflow {
 
     removeListener(event, callback) {
         // Check if this event not exists
+        if (!event)
+            for (let key in this.events)
+                delete this.events[key];
         if (!this.events[event]) return false;
         const listeners = this.events[event].listeners;
         const listenerIndex = listeners.indexOf(callback);
         const hasListener = listenerIndex > -1;
         if (hasListener) listeners.splice(listenerIndex, 1);
+        else listeners.splice(0);
     }
 
     dispatch(event, details) {
