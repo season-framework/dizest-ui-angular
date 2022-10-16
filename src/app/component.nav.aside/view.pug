@@ -50,6 +50,18 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
             ng-container(*ngIf="service.auth.allow('admin')")
                 li.nav-item.nav-item-header Admin
 
+                li.nav-item(routerLink='/admin/system', routerLinkActive="active")
+                    .d-flex
+                        span.nav-icon
+                            i.fa-solid.fa-cogs
+                        a.nav-link
+                            span.nav-link-title System
+                    .nav-indicator
+                        span.status-indicator.status-indicator-animated.status-primary
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+
                 li.nav-item(routerLink='/admin/users', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
@@ -60,9 +72,21 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                         span.status-indicator.status-indicator-animated.status-primary
                             span.status-indicator-circle
                             span.status-indicator-circle
-                            span.status-indicator-circle
+                            span.status-indicator-circle                
                 
-                li.nav-item(routerLink='/admin/setting/kernel', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/packages', routerLinkActive="active")
+                    .d-flex
+                        span.nav-icon
+                            i.fa-solid.fa-boxes-packing
+                        a.nav-link
+                            span.nav-link-title Packages
+                    .nav-indicator
+                        span.status-indicator.status-indicator-animated.status-primary
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+                            span.status-indicator-circle
+
+                li.nav-item(routerLink='/admin/kernel', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-microchip
@@ -73,26 +97,13 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
                             span.status-indicator-circle
-                
 
-                li.nav-item(routerLink='/admin/setting/database', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/database', routerLinkActive="active")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-database
                         a.nav-link
                             span.nav-link-title Database
-                    .nav-indicator
-                        span.status-indicator.status-indicator-animated.status-primary
-                            span.status-indicator-circle
-                            span.status-indicator-circle
-                            span.status-indicator-circle
-
-                li.nav-item(routerLink='/admin/packages', routerLinkActive="active")
-                    .d-flex
-                        span.nav-icon
-                            i.fa-solid.fa-boxes-packing
-                        a.nav-link
-                            span.nav-link-title Packages
                     .nav-indicator
                         span.status-indicator.status-indicator-animated.status-primary
                             span.status-indicator-circle
