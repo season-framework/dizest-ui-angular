@@ -23,7 +23,7 @@
         a.btn.btn-blue((click)="workflow.returnUrl()")
             i.fa-solid.fa-list-ul
 
-        a.btn.btn-outline-blue.bg-white.text-blue.kernel.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{workflow.kernel()}}
+        a.btn.btn-outline-blue.bg-white.text-blue.kernel.if-desktop(*ngIf="workflow.isnot('stop')" style="min-width: 120px; overflow: hidden;") {{workflow.kernelname()}}
 
         a.btn.btn-blue.if-desktop(*ngIf="workflow.isnot('stop')", (click)="workflow.kill()")
             i.fa-solid.fa-power-off

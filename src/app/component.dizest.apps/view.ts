@@ -4,8 +4,14 @@ import $ from "jquery";
 
 export class Component implements OnInit {
     @Input() workflow: any;
+    public alert: any;
 
-    constructor(public service: Service) { }
+    constructor(public service: Service) {
+        this.alert = this.service.alert.localize({
+            title: "Are you sure?",
+            message: "Do you really want to remove app? What you've done cannot be undone."
+        });
+    }
 
     public keyword: string = '';
 
@@ -38,7 +44,7 @@ export class Component implements OnInit {
     }
 
     public async delete(item: any) {
-        let res = await this.modal.show();
+        let res = await this.alert.show();
         if (!res) return;
         this.workflow.app.delete(item.id);
         await this.service.render();
@@ -59,33 +65,4 @@ export class Component implements OnInit {
         $('#drawflow .drawflow-node').removeClass('app-hover');
     }
 
-    public modal: any = ((obj: any = {}) => {
-        obj.isshow = false;
-        obj.callback = null;
-        obj.hide = async () => { }
-        obj.action = async () => { }
-
-        obj.show = async () => {
-            obj.isshow = true;
-            await this.service.render();
-
-            let fn = () => new Promise((resolve) => {
-                obj.hide = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(false);
-                }
-
-                obj.action = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(true);
-                }
-            });
-
-            return await fn();
-        }
-
-        return obj;
-    })();
 }

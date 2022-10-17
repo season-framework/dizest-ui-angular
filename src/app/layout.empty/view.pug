@@ -1,4 +1,5 @@
 .wiz-empty-page
     router-outlet
 
-ngx-loading([show]="loading", [config]="{backdropBackgroundColour: 'rgba(0,0,0,.7)'}")
+ngx-loading([show]="service.loading.isshow", [config]="{backdropBackgroundColour: 'rgba(0,0,0,.7)'}")
+wiz-component-modal-alert([model]="service.alert")

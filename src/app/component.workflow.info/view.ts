@@ -50,16 +50,16 @@ export class Component implements OnInit {
 
     public async run() {
         let workflow_id = this.item.id;
-        await this.service.loading(true);
+        await this.service.loading.show();
         await wiz.call('run', { workflow_id });
-        await this.service.loading(false);
+        await this.service.loading.hide();
     }
 
     public async stop() {
         let workflow_id = this.item.id;
-        await this.service.loading(true);
+        await this.service.loading.show();
         await wiz.call('stop', { workflow_id });
-        await this.service.loading(false);
+        await this.service.loading.hide();
     }
 
     public async downloadInfo() {

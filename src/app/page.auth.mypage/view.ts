@@ -37,6 +37,15 @@ export class Component implements OnInit {
         await this.service.auth.allow(true, '/auth/login');
     }
 
+    public async alert(message: string) {
+        return await this.service.alert.show({
+            title: "Error",
+            message: message,
+            cancel: false,
+            action: "Confirm"
+        });
+    }
+
     public async update() {
         let user = {
             username: this.service.auth.username,
@@ -48,7 +57,7 @@ export class Component implements OnInit {
 
         if (!this.checked) {
             let { code, data } = await wiz.call("check", user);
-            if (code != 200) return toastr.error(data);
+            if (code != 200) return await this.alert(data);
             this.checked = true;
             await this.service.render();
             return;
@@ -62,15 +71,15 @@ export class Component implements OnInit {
 
         if (user.password) {
             if (user.password.length < 8)
-                return toastr.error('password must 8 characters or more');
+                return await this.alert('password must 8 characters or more');
             if (!user.repeat_password)
-                return toastr.error('check password');
+                return await this.alert('check password');
             if (user.password != user.repeat_password)
-                return toastr.error('check password');
+                return await this.alert('check password');
         }
 
         let { code, data } = await wiz.call("update", user);
-        if (code != 200) return toastr.error(data);
+        if (code != 200) return await this.alert(data);
 
         this.checked = false;
         this.current = '';

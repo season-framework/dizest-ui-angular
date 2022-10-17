@@ -26,7 +26,7 @@ class Broker:
                 pass
 
 class Model:
-    VERSION = "20221010.0029"
+    VERSION = "20221017.2015"
 
     def __init__(self, name):
         self.name = name

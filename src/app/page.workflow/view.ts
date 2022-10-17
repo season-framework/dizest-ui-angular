@@ -101,16 +101,16 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async delete(item) {
-        let res = await this.modal.show();
+        let res = await this.service.alert.show({message: "Do you really want to remove workflow? What you've done cannot be undone."});
         if (!res) return;
-        await this.service.loading(true);
+        await this.service.loading.show();
         try {
             await wiz.call('delete', { workflow_id: item.id });
         } catch (e) {
         }
         await this.load(this.search.page);
         await this.select();
-        await this.service.loading(false);
+        await this.service.loading.hide();
     }
 
     public async clone(wp) {
@@ -157,35 +157,5 @@ export class Component implements OnInit, OnDestroy {
         this.created = null;
         await this.service.render();
     }
-
-    public modal: any = ((obj: any = {}) => {
-        obj.isshow = false;
-        obj.callback = null;
-        obj.hide = async () => { }
-        obj.action = async () => { }
-
-        obj.show = async () => {
-            obj.isshow = true;
-            await this.service.render();
-
-            let fn = () => new Promise((resolve) => {
-                obj.hide = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(false);
-                }
-
-                obj.action = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(true);
-                }
-            });
-
-            return await fn();
-        }
-
-        return obj;
-    })();
 
 }

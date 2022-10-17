@@ -29,16 +29,18 @@
                     .action-border
                 .browser-margin
             
-            .browser-content(*ngIf="initialized")
-                wiz-component-dizest-apps(*ngIf="browser.is('app')", [workflow]="workflow")
-                wiz-component-dizest-drive(*ngIf="browser.is('drive')", [workflow]="workflow")
+            .browser-content
+                ng-container(*ngIf="initialized")
+                    wiz-component-dizest-apps(*ngIf="browser.is('app')", [workflow]="workflow")
+                    wiz-component-dizest-drive(*ngIf="browser.is('drive')", [workflow]="workflow")
         
-        .zone-editor(*ngIf="initialized")
-            .zone-drawflow
-                wiz-component-dizest-drawflow([workflow]="workflow")
+        .zone-editor
+            ng-container(*ngIf="initialized")
+                .zone-drawflow
+                    wiz-component-dizest-drawflow([workflow]="workflow")
 
-            .zone-app-variables(*ngIf="workflow.flow.selected && menubar.is('codeflow')")
-                wiz-component-dizest-variables([workflow]="workflow")
+                .zone-app-variables(*ngIf="workflow.flow.selected && menubar.is('codeflow')")
+                    wiz-component-dizest-variables([workflow]="workflow")
 
         .zone-menuapp(*ngIf="initialized", [class.show]="menubar.isnot('')", [ngStyle]="menubar.style")
             wiz-component-dizest-info-workflow(*ngIf="menubar.is('info')", [workflow]="workflow")
@@ -80,7 +82,6 @@
                         .sidemenu-icon
                             i.fa-solid.fa-info
 
-                        
             .d-block(*ngIf="workflow.flow.selected")
                 .btn((click)="menubar.toggle('uimode')", [class.btn-blue]="menubar.is('uimode')")
                     i.fa-solid.fa-display

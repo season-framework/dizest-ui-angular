@@ -44,6 +44,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
     ) { }
 
     public async ngOnInit() {
+        await this.service.loading.show();
         await this.request.info();
         await this.request.kernel();
 
@@ -54,6 +55,8 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         this.workflow.menubar = this.menubar;
         this.workflow.browser = this.browser;
         this.workflow.request = this.request;
+
+        await this.service.loading.hide();
     }
 
     public async ngAfterViewInit() {
@@ -360,6 +363,13 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
 
         obj.kernel = () => scope.data.workflow.kernel;
         obj.kernels = () => scope.data.kernel;
+        obj.kernelname = () => {
+            let current = scope.data.workflow.kernel;
+            for (let kernel of scope.data.kernel)
+                if (kernel.name == current)
+                    return kernel.title;
+            return current;
+        };
 
         // app controller
         obj.app = (app_id: string) => {
@@ -700,7 +710,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         }
 
         obj.stop = async () => {
-            await scope.service.loading(true);
+            await scope.service.loading.show();
             let flows = obj.flow.list();
             for (let i = 0; i < flows.length; i++) {
                 let flow = obj.flow(flows[i]);
@@ -711,15 +721,16 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         }
 
         obj.kill = async () => {
-            await scope.service.loading(true);
+            await scope.service.loading.show();
             obj.SIGKILL = true;
             await scope.requester("kill");
             location.reload();
         }
 
         obj.start = async (spec) => {
+            obj.SIGSTART = true;
             scope.data.workflow.status = 'onstart';
-            await scope.service.loading(true);
+            await scope.service.loading.show();
             await scope.requester("start", { spec: spec });
         }
 
@@ -755,15 +766,21 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 if (obj.SIGKILL) return;
                 let { data } = message;
 
+                if (obj.SIGSTART) {
+                    await scope.service.render(1000);
+                    await scope.request.info();
+                    obj.SIGSTART = false;
+                }
+
                 if (scope.data.workflow.status == 'onstart') {
                     if (data == 'ready') {
                         scope.data.workflow.status = data;
-                        await scope.service.loading(false);
+                        await scope.service.loading.hide()
                     }
                 } else {
                     scope.data.workflow.status = data;
                     await scope.service.render(1000);
-                    await scope.service.loading(false);
+                    await scope.service.loading.hide()
                 }
             });
 

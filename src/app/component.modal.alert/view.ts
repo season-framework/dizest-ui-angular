@@ -1,7 +1,7 @@
 import { OnInit, Input } from '@angular/core';
 
 export class Component implements OnInit {
-    @Input() title: any;
+    @Input() model: any;
 
     public async ngOnInit() {
     }

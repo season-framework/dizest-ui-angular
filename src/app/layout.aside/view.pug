@@ -16,3 +16,6 @@ ngx-loading([show]="loading", [config]="{backdropBackgroundColour: 'rgba(0,0,0,.
 
 .block-page(*ngIf="service.auth.allow(false)")
     ngx-loading(show="true")
+
+ngx-loading([show]="service.loading.isshow", [config]="{backdropBackgroundColour: 'rgba(0,0,0,.7)'}")
+wiz-component-modal-alert([model]="service.alert")

@@ -45,8 +45,14 @@ export class Component implements OnInit {
     private isFolder = (_: number, node: FileNode) => node.type == 'folder';
     private isNew = (_: number, node: FileNode) => node.type == 'new.folder' || node.type == 'new.file';
     public rootStyle = { 'padding-top': '16px' };
+    public alert: any;
 
-    constructor(public service: Service) { }
+    constructor(public service: Service) {
+        this.alert = this.service.alert.localize({
+            title: "Are you sure?",
+            message: "Do you really want to remove files? What you've done cannot be undone."
+        });
+    }
 
     // dropdown
     public isOpen: boolean = false;
@@ -99,7 +105,10 @@ export class Component implements OnInit {
 
     public async delete(node: FileNode) {
         if (node.type != "new.folder" && node.type != "new.file") {
-            let res = await this.modal.show();
+            let res = await this.alert.show({
+                title: "Are you sure?",
+                message: "Do you really want to remove files? What you've done cannot be undone."
+            });
             if (!res) return;
             await this.API.call(`remove/${node.parent.path}`, { name: node.name });
         }
@@ -247,35 +256,5 @@ export class Component implements OnInit {
         this.donothover = false;
         await this.service.render();
     }
-
-    public modal: any = ((obj: any = {}) => {
-        obj.isshow = false;
-        obj.callback = null;
-        obj.hide = async () => { }
-        obj.action = async () => { }
-
-        obj.show = async () => {
-            obj.isshow = true;
-            await this.service.render();
-
-            let fn = () => new Promise((resolve) => {
-                obj.hide = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(false);
-                }
-
-                obj.action = async () => {
-                    obj.isshow = false;
-                    await this.service.render();
-                    resolve(true);
-                }
-            });
-
-            return await fn();
-        }
-
-        return obj;
-    })();
 
 }

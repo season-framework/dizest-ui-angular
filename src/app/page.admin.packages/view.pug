@@ -10,7 +10,24 @@
                         h2.page-title Python Packages
                         .text-muted
                             ul.list-inline.list-inline-dots.mb-0
-                                li.list-inline-item Management packages
+                                li.list-inline-item Management pip packages
+
+                    .col-auto.actions.area-round.if-desktop.mr-2
+                        select.form-select([(ngModel)]="selected", (ngModelChange)="load()")
+                            ng-container(*ngFor="let item of kernelspec")
+                                option(value="{{item.name}}", *ngIf="item.package_install") {{item.title}}
+
+                    .col-auto.actions.area-round.if-desktop
+                        input.form-control(style="width: 240px;", [(ngModel)]="text", (keyup.enter)="install()", placeholder="Package name")
+                    
+                    .col-auto.actions.area-round.if-desktop
+                        a.btn.btn-blue(ng-click="install()")
+                            span Install
 
         .workspace-list-item
-            .container.p-4 TEST
+            .container.pt-4(style="max-width: 860px;")
+                .row.packages
+                    ng-container(*ngFor="let item of installed")
+                        .col-md-4.text-left(*ngIf="item.name.toLowerCase().includes(text.toLowerCase())")
+                            b {{item.name}}
+                            span {{"==" + item.version}}

@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { Service } from '@wiz/libs/season/service';
 
 export class Component implements OnInit {
-    public loading: boolean = false;
-    
     constructor(
         public service: Service,
         public ref: ChangeDetectorRef,

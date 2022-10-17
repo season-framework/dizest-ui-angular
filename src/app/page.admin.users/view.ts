@@ -1,25 +1,6 @@
 import { OnInit, ChangeDetectorRef } from "@angular/core";
 import { Service } from '@wiz/libs/season/service';
 
-import toastr from 'toastr';
-toastr.options = {
-    "closeButton": false,
-    "debug": false,
-    "newestOnTop": true,
-    "progressBar": false,
-    "positionClass": "toast-bottom-center",
-    "preventDuplicates": true,
-    "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 500,
-    "timeOut": 1500,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
-
 export class Component implements OnInit {
 
     public list: any = [];
@@ -57,22 +38,31 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
+    public async alert(message: string) {
+        return await this.service.alert.show({
+            title: "Error",
+            message: message,
+            cancel: false,
+            action: "Confirm"
+        });
+    }
+
     public async update() {
         let user = JSON.parse(JSON.stringify(this.selected));
 
         if (user.password) {
             if (user.password.length < 8)
-                return toastr.error('password must 8 characters or more');
+                return await this.alert("password must 8 characters or more");
             if (!user.repeat_password)
-                return toastr.error('check password');
+                return await this.alert("Check password");
             if (user.password != user.repeat_password)
-                return toastr.error('check password');
+                return await this.alert("Check password");
         } else {
             delete user.password;
         }
 
         let { code, data } = await wiz.call("update", user);
-        if (code != 200) return toastr.error(data);
+        if (code != 200) return await this.alert(data);
 
         this.selected = null;
         await this.load();
@@ -92,33 +82,40 @@ export class Component implements OnInit {
 
     public async send() {
         let user = JSON.parse(JSON.stringify(this.created));
-        if (!user.id || user.id.length < 4) return toastr.error('user id must 4 characters or more');
-        if (!user.password) return toastr.error('password must 8 characters or more');
+        if (!user.id || user.id.length < 4) return await this.alert('user id must 4 characters or more');
+        if (!user.password) return await this.alert('password must 8 characters or more');
         if (user.password.length < 8)
-            return toastr.error('password must 8 characters or more');
+            return await this.alert('password must 8 characters or more');
         if (!user.repeat_password)
-            return toastr.error('check password');
+            return await this.alert('check password');
         if (user.password != user.repeat_password)
-            return toastr.error('check password');
+            return await this.alert('check password');
 
-        await this.service.loading(true);
+        await this.service.loading.show();
         let { code, data } = await wiz.call("create", user);
 
         if (code != 200) {
-            await this.service.loading(false);
-            return toastr.error(data);
+            await this.service.loading.hide();
+            return await this.alert(data);
         }
 
         this.created = null;
         await this.load();
         await this.service.render();
-        await this.service.loading(false);
+        await this.service.loading.hide();
     }
 
     public async delete() {
         let user = JSON.parse(JSON.stringify(this.selected));
+
+        let res = await this.service.alert.show({
+            message: `Do you really want to remove user '${user.id}'? What you've done cannot be undone.`,
+            action: "Delete"
+        });
+        if (!res) return;
+
         let { code, data } = await wiz.call("delete", user);
-        if (code != 200) return toastr.error(data);
+        if (code != 200) return await this.alert(data);
         this.selected = null;
         await this.load();
         await this.service.render();

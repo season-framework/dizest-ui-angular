@@ -1,25 +1,6 @@
 import { OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { Service } from '@wiz/libs/season/service';
 
-import toastr from 'toastr';
-toastr.options = {
-    "closeButton": false,
-    "debug": false,
-    "newestOnTop": true,
-    "progressBar": false,
-    "positionClass": "toast-bottom-center",
-    "preventDuplicates": true,
-    "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 500,
-    "timeOut": 1500,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
-
 export class Component implements OnInit, OnDestroy {
     public list: any = [];
 

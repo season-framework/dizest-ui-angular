@@ -1,6 +1,5 @@
 import { OnInit, ChangeDetectorRef } from '@angular/core';
 import { Service } from '@wiz/libs/season/service';
-import toastr from 'toastr';
 
 export class Component implements OnInit {
 
@@ -11,6 +10,15 @@ export class Component implements OnInit {
         public service: Service,
         public ref: ChangeDetectorRef
     ) { }
+
+    public async alert(message: string) {
+        return await this.service.alert.show({
+            title: "Error",
+            message: message,
+            cancel: false,
+            action: "Confirm"
+        });
+    }
 
     public async ngOnInit() {
         await this.service.init(this);
@@ -23,6 +31,6 @@ export class Component implements OnInit {
             location.href = "/";
             return;
         }
-        toastr.error(data);
+        await this.alert(data);
     }
 }

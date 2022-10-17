@@ -1,3 +1,31 @@
+.card {
+    $br: 14px;
+    border-radius: $br;
+
+    .img-responsive {
+        border-top-right-radius: $br;
+        border-top-left-radius: $br;
+    }
+
+    >div:first-child {
+        border-top-right-radius: $br;
+        border-top-left-radius: $br;
+    }
+
+    >div:last-child {
+        border-bottom-right-radius: $br;
+        border-bottom-left-radius: $br;
+    }
+}
+
+td {
+    vertical-align: top;
+}
+
+.badge {
+    padding: 4px 8px;
+}
+
 .user-list {
     flex: 1;
 
