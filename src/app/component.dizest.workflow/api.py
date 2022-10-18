@@ -131,11 +131,9 @@ def status():
                 except:
                     pass
     except Exception as e:
-        print(e)
         pass
 
     wiz.response.status(200, status)
-
 
 # Drive API
 def drive_api(segment):
