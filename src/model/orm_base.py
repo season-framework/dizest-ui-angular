@@ -14,7 +14,7 @@ class Model(pw.Model):
                     opts[key] = config[key]
             database = pw.MySQLDatabase(config.database, **opts)
         else:
-            sqlitedb = os.path.realpath(os.path.join(season.path.project, config.path))
+            sqlitedb = os.path.realpath(os.path.join(wiz.server.path.root, config.path))
             database = pw.SqliteDatabase(sqlitedb)
 
     class PasswordField(pw.TextField):

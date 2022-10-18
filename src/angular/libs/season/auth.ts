@@ -14,12 +14,16 @@ export default class Auth {
     }
 
     public async init() {
-        let now = new Date().getTime();
-        if (this.status && now - this.timestamp < 30000)
-            return;
-
+        this.installed = true;
         let { code, data } = await this.request.post('/auth/check');
-        if (code != 200) return this;
+        if (code != 200) {
+            this.installed = false;
+            if (location.pathname != "/installation") {
+                location.href = "/installation";
+                await this.service.render(3000);
+            }
+            return this;
+        }
 
         this.status = data.status;
         this.id = data.id;

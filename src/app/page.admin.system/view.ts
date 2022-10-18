@@ -47,8 +47,7 @@ export class Component implements OnInit {
     public async update() {
         await this.service.loading.show();
         await wiz.call("update", { data: JSON.stringify(this.data.config) });
-        await this.load();
-        await this.service.loading.hide();
+        location.reload();
     }
 
     public async uploadLogo() {
