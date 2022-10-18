@@ -225,7 +225,7 @@ def cron_remove():
 
 def cron_add():
     try:
-        config = wiz.config("dizest")
+        config = wiz.config("config")
         host = urllib.parse.urlparse(wiz.request.request().base_url)
         host = f"{host.scheme}://{host.netloc}"
         if config.host:

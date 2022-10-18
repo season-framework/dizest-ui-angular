@@ -15,7 +15,7 @@ export class Component implements OnInit {
         await this.service.auth.allow('admin', '/');
 
         this.releases.push({
-            name: "v2022.10.17.1600",
+            name: "v2022.10.18.1547",
             log: [
                 "[workflow] full change ui / ux",
                 "[workflow] angular.js to angular upgrade",

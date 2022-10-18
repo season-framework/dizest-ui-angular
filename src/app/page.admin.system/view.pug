@@ -14,9 +14,9 @@
 
         .workspace-list-item.area-round
             .container.p-4(style="max-width: 860px;", *ngIf="initialized")
-                .card.mt-5.mb-5
+                .card.mt-4.mb-4
                     .card-header
-                        h4.card-title Hub Information
+                        h4.card-title UI Configuration
 
                     .card-body.p-4
                         .form-group.row
@@ -47,6 +47,18 @@
                                 .btn.btn-outline-blue.btn-block((click)="uploadIcon()") Upload
                                 .btn.btn-outline-danger.btn-block.mt-2(*ngIf="data.config.icon", (click)="data.config.icon = ''; service.render();") Delete
                     
+                        .mb-3
+                        
+                    .card-header.border-top
+                        h4.card-title System Configuration
+
+                    .card-body.p-4
+
+                        .form-group.row
+                            label.form-label.col-3.col-form-label Conda Path
+                            .col
+                                input.form-control(type="text", placeholder="/opt/anaconda3", [(ngModel)]="data.config.conda")
+
                     .card-footer.d-flex.p-2
                         .ml-auto
                         a.btn.btn-blue((click)="update()") Update

@@ -26,7 +26,7 @@ class Broker:
                 pass
 
 class Model:
-    VERSION = "20221017.2015"
+    VERSION = "v2022.10.18.1547"
 
     def __init__(self, name):
         self.name = name
@@ -46,7 +46,7 @@ class Model:
                 return None
             user = wiz.session.get("id")
 
-        config = wiz.config("dizest")
+        config = wiz.config("config")
         
         server_options = dict()
         server_options['user'] = user

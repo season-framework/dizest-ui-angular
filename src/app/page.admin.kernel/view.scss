@@ -1,0 +1,30 @@
+.nav-link {
+    cursor: pointer;
+}
+
+.row.row-deck.row-cards {
+    justify-content: start;
+}
+
+a {
+    cursor: pointer;
+}
+
+.card.card-sm.bg-blue {
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    }
+}
+
+.card {
+    min-height: 150px;
+    border-radius: 12px;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

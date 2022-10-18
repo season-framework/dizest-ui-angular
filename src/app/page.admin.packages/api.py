@@ -5,7 +5,7 @@ import sys
 if wiz.session.get("role") != "admin":
     wiz.response.abort(401)
 
-config = wiz.config("dizest")
+config = wiz.config("config")
 kernelspecs = config.kernelspec
 
 kernel_name = wiz.request.query("kernel_name", None)
