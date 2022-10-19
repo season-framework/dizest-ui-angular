@@ -4,5 +4,5 @@
     "route": "/manifest.json",
     "viewuri": "/manifest.json",
     "category": "dizest",
-    "controller": "base"
+    "controller": ""
 }

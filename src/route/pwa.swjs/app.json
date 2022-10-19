@@ -4,5 +4,5 @@
     "route": "/sw.js",
     "viewuri": "/sw.js",
     "category": "dizest",
-    "controller": "base"
+    "controller": ""
 }
