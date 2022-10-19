@@ -11,7 +11,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
         ul.navbar-nav
             li.nav-item.nav-item-header Workspace
               
-            li.nav-item(routerLink='/hub/dashboard', routerLinkActive="active")
+            li.nav-item(routerLink='/hub/dashboard', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                 .d-flex
                     span.nav-icon
                         i.fa-solid.fa-table-columns
@@ -23,7 +23,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                         span.status-indicator-circle
                         span.status-indicator-circle
 
-            li.nav-item(routerLink='/hub/workflow/list', routerLinkActive="active")
+            li.nav-item(routerLink='/hub/workflow/list', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                 .d-flex
                     span.nav-icon
                         i.fa-solid.fa-cubes
@@ -35,7 +35,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                         span.status-indicator-circle
                         span.status-indicator-circle
 
-            li.nav-item(routerLink='/hub/explore', routerLinkActive="active")
+            li.nav-item(routerLink='/hub/explore', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                 .d-flex
                     span.nav-icon
                         i.fa-solid.fa-magnifying-glass
@@ -50,7 +50,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
             ng-container(*ngIf="service.auth.allow('admin')")
                 li.nav-item.nav-item-header Admin
 
-                li.nav-item(routerLink='/admin/system', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/system', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-cogs
@@ -62,7 +62,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
 
-                li.nav-item(routerLink='/admin/users', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/users', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-users
@@ -74,7 +74,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle                
                 
-                li.nav-item(routerLink='/admin/packages', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/packages', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-boxes-packing
@@ -86,7 +86,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
 
-                li.nav-item(routerLink='/admin/kernel', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/kernel', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-microchip
@@ -98,7 +98,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
 
-                li.nav-item(routerLink='/admin/database', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/database', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-database
@@ -110,7 +110,7 @@ aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
                             span.status-indicator-circle
                             span.status-indicator-circle
                 
-                li.nav-item(routerLink='/admin/release', routerLinkActive="active")
+                li.nav-item(routerLink='/admin/release', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
                     .d-flex
                         span.nav-icon
                             i.fa-solid.fa-book
