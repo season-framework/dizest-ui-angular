@@ -1,5 +1,6 @@
 const INDEX_PAGE = "hub/dashboard";
 
+import { URLPattern } from "urlpattern-polyfill";
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
