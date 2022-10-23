@@ -59,7 +59,15 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         await this.service.loading.hide();
     }
 
+    public preventBack(e) {
+        let confirmationMessage = "\o/";
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
+    }
+
     public async ngAfterViewInit() {
+        window.addEventListener("beforeunload", this.preventBack);
+
         this.shortcuts.push({
             key: ["cmd + s", "ctrl + s"],
             preventDefault: true,
@@ -109,6 +117,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
     }
 
     public ngOnDestroy() {
+        window.removeEventListener("beforeunload", this.preventBack);
         this.workflow.unbind();
     }
 
@@ -706,6 +715,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
         }
 
         obj.reload = async () => {
+            window.removeEventListener("beforeunload", this.preventBack);
             location.reload();
         }
 
@@ -724,6 +734,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             await scope.service.loading.show();
             obj.SIGKILL = true;
             await scope.requester("kill");
+            window.removeEventListener("beforeunload", this.preventBack);
             location.reload();
         }
 
@@ -767,15 +778,11 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 let { data } = message;
 
                 if (obj.SIGSTART) {
-                    await scope.service.render(1000);
-                    await scope.request.info();
-                    obj.SIGSTART = false;
-                }
-
-                if (scope.data.workflow.status == 'onstart') {
                     if (data == 'ready') {
+                        obj.SIGSTART = false;
                         scope.data.workflow.status = data;
-                        await scope.service.loading.hide()
+                        await this.request.info();
+                        await scope.service.loading.hide();
                     }
                 } else {
                     scope.data.workflow.status = data;

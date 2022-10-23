@@ -9,6 +9,7 @@ try:
     ucount = testdb.count()
 except:
     pass
+print(ucount)
 if ucount is not None and ucount > 0:
     wiz.response.status(401)
     

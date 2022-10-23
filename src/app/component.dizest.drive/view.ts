@@ -167,6 +167,32 @@ export class Component implements OnInit {
         this.dataSource = new FileDataSource(this);
         let data = await this.list(this.rootNode);
         this.dataSource.data = data;
+        let startpath = "./" + this.binding.target;
+
+        let depth = 0;
+        let isfinded = false;
+        let toggled: any = {};
+        while (!isfinded) {
+            for (let node of this.dataSource.data) {
+                if (toggled[node.path]) continue;
+
+                if (node.path == startpath) {
+                    isfinded = true;
+                    await this.select(node);
+                    break;
+                }
+
+                if (startpath.includes(node.path)) {
+                    await this.dataSource.toggle(node, true);
+                    toggled[node.path] = true;
+                }
+
+            }
+
+            depth++;
+            if (depth > 10) break;
+        }
+
     }
 
     public donothover: boolean = false;

@@ -81,8 +81,11 @@ export class Component implements OnInit, AfterViewInit {
             }
 
             templates['file'] = templates['folder'] = (value) => `
-                <div onclick="dizest.drive(this, '${value.inputtype}', '${value.name}')" class="value-data">
-                    <input style="cursor: pointer;" class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}/>
+                <div class="value-data" style="display: flex;">
+                    <input class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}/>
+                    <span class="badge badge-sm bg-secondary" onclick="dizest.drive(this, '${value.inputtype}', '${value.name}')" style="display: flex; align-item: center; cursor: pointer;">
+                        <i class="fa-solid fa-upload"></i>
+                    </span>
                 </div>`;
 
             templates['textarea'] = (value) => `<div class="value-data"><textarea rows=5 class="form-control form-control-sm text-left" placeholder="${value.description}" df-${value.name}></textarea></div>`;
@@ -352,9 +355,9 @@ export class Component implements OnInit, AfterViewInit {
         obj.drive = async (element: any, inputtype: string, valiablename: string) => {
             let file = await this.modal.show({ element, inputtype, valiablename });
             let filepath = file.path.substring(2);
-            $(element).find("input").val(filepath);
+            $(element).parent().find("input").val(filepath);
             let event = {}
-            event.target = $(element).find("input")[0];
+            event.target = $(element).parent().find("input")[0];
             this.drawflow.drawflow.updateNodeValue(event);
         };
 
@@ -413,6 +416,7 @@ export class Component implements OnInit, AfterViewInit {
 
         obj.show = async (reqinfo: any) => {
             obj.isshow = true;
+            obj.binding.target = $(reqinfo.element).parent().find("input").val();
             obj.binding.selected = null;
             await this.service.render();
 
