@@ -12,7 +12,7 @@
     ng-container(*ngFor="let page of list")
         button.btn.btn-sm(
             (click)="move(page)",
-            [ngClass]="page == current ? 'btn-primary' : ''") {{ page }}
+            [ngClass]="page == current ? 'btn-blue' : ''") {{ page }}
         
     button.btn.btn-sm.btn-white(
         (click)="move(current+1)",

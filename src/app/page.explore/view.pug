@@ -32,7 +32,6 @@
                                 [logo]="item.logo", 
                                 [cover]="item.featured", 
                                 [status]="item.status",
-                                [link]="'/hub/workflow/item/' + item.id",  
                                 (click)="select(item)")
         
         .workspace-list-pagenation(*ngIf="pagenation.end > 1")

@@ -140,6 +140,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
                 data.flow[key].index = "";
             }
             scope.data.workflow = data;
+            document.title = data.title;
         };
 
         obj.kernel = async () => {
@@ -703,6 +704,7 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             await scope.requester("update", { data }, true);
             if (render) {
                 await obj.drawflow.render();
+                toastr.success("Saved");
             }
 
             if (obj.uimodeRender) {

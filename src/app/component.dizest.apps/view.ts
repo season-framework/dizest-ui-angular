@@ -38,6 +38,25 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
+    public drop: any = () => {
+        let scope = this;
+        return async (event) => {
+            for (let i = 0; i < event.dataTransfer.files.length; i++) {
+                let reader = new FileReader();
+                reader.onload = async (readerEvent) => {
+                    try {
+                        let dwa = JSON.parse(readerEvent.target.result);
+                        await scope.workflow.app.create(dwa);
+                        await this.service.render();
+                    } catch (e) {
+                        toastr.error('Not supported file format');
+                    }
+                };
+                reader.readAsText(event.dataTransfer.files[i]);
+            }
+        }
+    }
+
     public async add(item: any) {
         this.workflow.flow.create(item.id, {}, -1);
         await this.service.render();

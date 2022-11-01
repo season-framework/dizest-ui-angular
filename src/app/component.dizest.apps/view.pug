@@ -1,4 +1,4 @@
-.app
+.app([ngDrop]="drop()")
     .app-search
         input.form-control.search-form(placeholder="enter for search", [(ngModel)]="keyword", (ngModelChange)="search()")
         button.btn.btn-blue.ml-1((click)="import()")

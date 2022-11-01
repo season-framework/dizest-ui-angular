@@ -20,6 +20,9 @@ toastr.options = {
     "hideMethod": "fadeOut"
 };
 
+@directives({
+    DropDirective: '@wiz/libs/directives/drop.directive'
+})
 export class Component implements OnInit, OnDestroy {
     public list: any = [];
 
@@ -101,7 +104,7 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async delete(item) {
-        let res = await this.service.alert.show({message: "Do you really want to remove workflow? What you've done cannot be undone."});
+        let res = await this.service.alert.show({ message: "Do you really want to remove workflow? What you've done cannot be undone." });
         if (!res) return;
         await this.service.loading.show();
         try {
@@ -124,6 +127,25 @@ export class Component implements OnInit, OnDestroy {
         if (!data.flow || !data.apps)
             return toastr.error('Not supported file format');
         await this.create(data);
+    }
+
+    public drop: any = () => {
+        let scope = this;
+        return async (event) => {
+            let reader = new FileReader();
+            reader.onload = async (readerEvent) => {
+                try {
+                    let data = JSON.parse(readerEvent.target.result);
+                    if (!data.flow || !data.apps)
+                        return toastr.error('Not supported file format');
+                    await scope.create(data);
+                } catch (e) {
+                    toastr.error('Not supported file format');
+                }
+            };
+
+            reader.readAsText(event.dataTransfer.files[0]);
+        }
     }
 
     public async create(reference: any = {}) {
