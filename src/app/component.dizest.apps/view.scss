@@ -35,6 +35,15 @@
             }
         }
 
+        .app-category {
+            background: var(--wiz-color-light);
+            color: var(--wiz-color-text);
+            padding: 4px 12px;
+            border-bottom: 1px solid var(--wiz-color-border);
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
         .app-info {
             border-bottom: 1px solid var(--wiz-color-border);
             line-height: 1;

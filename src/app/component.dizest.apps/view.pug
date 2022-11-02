@@ -11,18 +11,22 @@
             i.fa-solid.fa-cube
             .mt-2 No Apps
 
-        ng-container(*ngFor="let item of workflow.app.list()")
-            .app-info(*ngIf="match(item, keyword)", [attr.data-id]="item.id", draggable="true", (dragstart)="drag($event, item)", (mouseenter)="hoverin(item)", (mouseleave)="hoverout(item)")
-                .avatar-area.avatar-area-sm.mr-3
-                    .avatar-container
-                        span.avatar([ngStyle]="{ 'background-image' : 'url(' + item.logo + ')'}")
-                .title-area
-                    input.app-header.mb-1([(ngModel)]="item.title")
-                    .app-namespace.text-muted {{item.version}}
-                .ml-auto
-                    button.btn.btn-white.btn-sm.mr-1((click)="delete(item)")
-                        i.fa-solid.fa-xmark
-                    button.btn.btn-blue.btn-sm((click)="add(item)")
-                        i.fa-solid.fa-plus
+        ng-container(*ngFor="let category of workflow.app.categories()")
+            .app-category(*ngIf="workflow.app.categories().length > 1")
+                span {{category}}
+
+            ng-container(*ngFor="let item of workflow.app.list(category)")
+                .app-info(*ngIf="match(item, keyword)", [attr.data-id]="item.id", draggable="true", (dragstart)="drag($event, item)", (mouseenter)="hoverin(item)", (mouseleave)="hoverout(item)")
+                    .avatar-area.avatar-area-sm.mr-3
+                        .avatar-container
+                            span.avatar([ngStyle]="{ 'background-image' : 'url(' + item.logo + ')'}")
+                    .title-area
+                        input.app-header.mb-1([(ngModel)]="item.title")
+                        .app-namespace.text-muted {{item.version}}
+                    .ml-auto
+                        button.btn.btn-white.btn-sm.mr-1((click)="delete(item)")
+                            i.fa-solid.fa-xmark
+                        button.btn.btn-blue.btn-sm((click)="add(item)")
+                            i.fa-solid.fa-plus
 
 wiz-component-modal-alert([model]="alert")

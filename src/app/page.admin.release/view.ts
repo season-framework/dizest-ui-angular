@@ -15,70 +15,91 @@ export class Component implements OnInit {
         await this.service.auth.allow('admin', '/');
 
         this.releases.push({
-            name: "v2022.10.18.1547",
+            name: "3.1.11",
             log: [
-                "[workflow] full change ui / ux",
-                "[workflow] angular.js to angular upgrade",
-                "[core] apply WIZ 2.0"
+                "[ui] support app category"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.25.2154",
+            name: "3.1.10",
             log: [
-                "[workflow] kernelspec error fixed in package install"
+                "[ui] bug fixed",
+                "[ui] support file drop wrokfrom and apps"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.2317",
+            name: "3.1.9",
             log: [
-                "[workflow] timer bug fixed (display by each workflow)"
+                "[ui] Select previous file on workflow"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.2129",
+            name: "3.1.8",
             log: [
-                "[workflow] fold codeflow when block > 5",
-                "[workflow] app title editable",
-                "[workflow] input/output sortable bug fixed"
+                "[core] kernel api update"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.2109",
+            name: "3.1.7",
             log: [
-                "[workflow] customizable codeflow title",
-                "[workflow] drag & drop sorting in codeflow",
-                "[workflow] mobile optimized",
-                "[workflow] enhanced flow status update",
-                "[workflow] auto select kernel when single kernel"
+                "[core] drive api update (filename to download_name)"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.1933",
+            name: "3.1.6",
             log: [
-                "[workflow] add textarea option at flow input"
+                "[ui] kernel display name bug fixed"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.1808",
+            name: "3.1.5",
             log: [
-                "[workflow] input/output validate bug fixed",
-                "[workflow] app asc sorted by title",
-                "[workflow] flow status trigger (for fix error)",
-                "[workflow] support UI Mode on mobile"
+                "[ui] mobile nav bug fixed"
             ]
         });
 
         this.releases.push({
-            name: "v2022.08.23.1536",
+            name: "3.1.4",
             log: [
-                "[admin] Releases Info",
-                "[admin] UI / Core version update on web setting"
+                "[ui] cron bug fixed"
+            ]
+        });
+
+        this.releases.push({
+            name: "3.1.3",
+            log: [
+                "[ui] pwa bug fixed",
+                "[ui] safari bug fixed (URLPattern)"
+            ]
+        });
+
+        this.releases.push({
+            name: "3.1.2",
+            log: [
+                "[core] kernel bug fixed"
+            ]
+        });
+
+        this.releases.push({
+            name: "3.1.1",
+            log: [
+                "[ui] run command bug fixed"
+            ]
+        });
+
+        this.releases.push({
+            name: "3.1.0",
+            log: [
+                "[ui] upgrade to angular",
+                "[ui] full change ui component",
+                "[core] upgrade to wiz 2",
+                "[core] built-in was bundle"
             ]
         });
 

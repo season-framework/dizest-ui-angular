@@ -184,6 +184,14 @@ export class Component implements OnInit, OnDestroy {
                 }
             }
 
+            item.info = async () => {
+                await this.workflow.flow.select(item.id);
+                if (this.workflow.menubar.isnot('appinfo')) {
+                    await this.workflow.menubar.toggle("appinfo");
+                    await this.service.render();
+                }
+            }
+
             item.toggle = async () => {
                 await scope.workflow.flow(item.id).toggle();
                 await item.select();

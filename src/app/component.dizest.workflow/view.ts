@@ -388,12 +388,42 @@ export class Component implements OnInit, OnDestroy, AfterViewInit {
             return null;
         }
 
-        obj.app.list = () => {
+        obj.app.categories = () => {
+            let data = obj.spec();
+            let categories = [];
+
+            for (let app_id in data.apps) {
+                let category = data.apps[app_id].category;
+                if (!category) category = 'undefined';
+                if (categories.indexOf(category) == -1)
+                    categories.push(category);
+            }
+
+            return categories;
+        }
+
+        obj.app.list = (category: boolean = false) => {
             let data = obj.spec();
             let apps = [];
-            for (let app_id in data.apps) {
-                apps.push(data.apps[app_id]);
+            if (category) {
+                for (let app_id in data.apps) {
+                    if (category == 'undefined')
+                        if (!data.apps[app_id].category || data.apps[app_id].category == '')
+                            apps.push(data.apps[app_id]);
+                    if (data.apps[app_id].category == category)
+                        apps.push(data.apps[app_id]);
+                }
+
+            } else {
+                for (let app_id in data.apps) {
+                    apps.push(data.apps[app_id]);
+                }
             }
+
+            apps.sort((a, b) => {
+                return a.title.localeCompare(b.title);
+            });
+
             return apps;
         }
 
