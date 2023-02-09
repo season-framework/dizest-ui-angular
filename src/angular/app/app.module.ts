@@ -16,7 +16,7 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
         AppRoutingModule,
         FormsModule,
         NgbModule,
-        NuMonacoEditorModule.forRoot(),
+        NuMonacoEditorModule.forRoot({ baseUrl: `lib` }),
         NgxLoadingModule.forRoot({
             animationType: ngxLoadingAnimationTypes.cubeGrid,
             backdropBackgroundColour: "rgba(0,0,0,0.1)",
