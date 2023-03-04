@@ -1,64 +1,111 @@
-.workspace-area([ngDrop]="drop()")
-    .workspace-list
-        .workspace-list-header
-            .page-header.d-print-none
-                .row.align-items-center
-                    .col-auto
-                        .text-blue.mr-1(style="font-size: 28px;")
-                            i.fa-solid.fa-cubes
-                    .col
-                        h2.page-title Workflow
-                        .text-muted
-                            ul.list-inline.list-inline-dots.mb-0
-                                li.list-inline-item My Workflow
+.wiz-content-layout([ngDrop]="drop()")
+    .wiz-content-heading
+        .col-auto.pl-3.pr-2
+            .text-blue.mr-1(style="font-size: 28px;")
+                i.fa-solid.fa-cubes
+        .col
+            h2.page-title Workflow
+            .text-muted
+                ul.list-inline.list-inline-dots.mb-0
+                    li.list-inline-item My Workflow
 
-                    .col-auto.actions.area-round.if-desktop
-                        input.form-control(style="width: 240px;", placeholder="Enter for search", [(ngModel)]="search.text", (keyup.enter)="load(1)")
-                    
-                    .col-auto.actions.area-round.if-desktop
-                        a.btn.btn-blue((click)="load(1)")
-                            i.fa-solid.fa-magnifying-glass
-                        a.btn.btn-blue((click)="import()")
-                            i.fa-solid.fa-cloud-arrow-up
-                        a.btn.btn-blue((click)="create()")
-                            i.fa-solid.fa-plus
-
-        .workspace-list-item
-            .container.pt-4
-                .row.row-deck.row-cards
-                    .p-3.col-md-3(*ngFor="let item of list")
-                        .workflow-card(
-                            [ngClass]="item.id == selected.id ? 'selected' : ''", 
-                            [ngStyle]="selectedStyle")
-                            wiz-component-card-workflow(
-                                [title]="item.title", 
-                                [updated]="item.updated", 
-                                [logo]="item.logo", 
-                                [cover]="item.featured", 
-                                [status]="item.status",
-                                [link]="'/hub/workflow/item/' + item.id",  
-                                (click)="select(item)")
+        .col-auto.actions.area-round.d-desktop
+            input.form-control(style="width: 240px;", placeholder="Enter for search", [(ngModel)]="search.text", (keyup.enter)="load(1)")
         
-        .workspace-list-pagenation(*ngIf="pagenation.end > 1")
-            wiz-component-pagenation(
-                [current]="search.page", 
-                [start]="pagenation.start", 
-                [end]="pagenation.end", 
-                (pageMove)="pageMove($event)")
+        .col-auto.actions.area-round.d-desktop.pr-3
+            a.btn.btn-blue((click)="load(1)")
+                i.fa-solid.fa-magnifying-glass
+            a.btn.btn-blue((click)="import()")
+                i.fa-solid.fa-cloud-arrow-up
+            a.btn.btn-blue((click)="create()")
+                i.fa-solid.fa-plus
 
-    .workspace-tab(*ngIf="selected.id && !created")
-        wiz-component-workflow-info(
-            [item]="selected", 
-            [full]="true", 
-            (close)="close($event)", 
-            (clone)="clone($event)", 
-            (delete)="delete($event)")
+    .wiz-content-body
+        .content-main([class.m-hidden]="selected.id || created")
+            .container(style="max-width: 1024px;")
+                .card(*ngIf="!loaded")
+                    ul.list-group.list-group-flush.placeholder-glow
+                        li.list-group-item
+                            .row.align-items-center
+                                .col-auto
+                                    .avatar.avatar-rounded.placeholder
+                                .col-7
+                                    .placeholder.placeholder-xs.col-9
+                                    .placeholder.placeholder-xs.col-7
+                                .col-2.ms-auto.text-end
+                                    .placeholder.placeholder-xs.col-8
+                                    .placeholder.placeholder-xs.col-10
+                        li.list-group-item
+                            .row.align-items-center
+                                .col-auto
+                                    .avatar.avatar-rounded.placeholder
+                                .col-7
+                                    .placeholder.placeholder-xs.col-9
+                                    .placeholder.placeholder-xs.col-7
+                                .col-2.ms-auto.text-end
+                                    .placeholder.placeholder-xs.col-8
+                                    .placeholder.placeholder-xs.col-10
+                        li.list-group-item
+                            .row.align-items-center
+                                .col-auto
+                                    .avatar.avatar-rounded.placeholder
+                                .col-7
+                                    .placeholder.placeholder-xs.col-9
+                                    .placeholder.placeholder-xs.col-7
+                                .col-2.ms-auto.text-end
+                                    .placeholder.placeholder-xs.col-8
+                                    .placeholder.placeholder-xs.col-10
+                        li.list-group-item
+                            .row.align-items-center
+                                .col-auto
+                                    .avatar.avatar-rounded.placeholder
+                                .col-7
+                                    .placeholder.placeholder-xs.col-9
+                                    .placeholder.placeholder-xs.col-7
+                                .col-2.ms-auto.text-end
+                                    .placeholder.placeholder-xs.col-8
+                                    .placeholder.placeholder-xs.col-10
 
-    .workspace-tab.area-round.create-tab(*ngIf="created")
-        .workspace-tab-body
+                .card(*ngIf="loaded")
+                    .card-table.table-responsive(*ngIf="list.length == 0")
+                        table.table.table-vcenter.table-hover
+                            tbody
+                                tr
+                                    td.p-6.text-center
+                                        h2 No Items
+                                        span.text-muted Drop Workflow Here
+
+                    .card-table.table-responsive(*ngIf="list.length > 0")
+                        table.table.table-vcenter.table-hover
+                            tbody
+                                ng-container(*ngFor="let item of list")
+                                    tr.test((click)="select(item)", [ngClass]="selected.id == item.id ? 'bg-blue-lt' : ''")
+                                        td.w-1
+                                            .avatar-area.avatar-area-sm
+                                                .avatar-container
+                                                    span.avatar(style="background-image: url({{item.logo}});")
+                                        td.w-1
+                                            span.ml-2.badge.bg-blue(*ngIf="item.status == 'running'")
+                                            span.ml-2.badge.bg-yellow(*ngIf="item.status == 'idle'")
+                                            span.ml-2.badge.bg-red(*ngIf="item.status == 'pending'")
+                                        td 
+                                            div
+                                                span(routerLink="/workflow/{{item.id}}") {{item.title}}
+                                            small.text-muted {{item.id}}
+                                        td.w-1.text-muted.d-desktop {{item.updated}}
+
+        .content-info(*ngIf="selected.id && !created")
+            wiz-component-workflow-info(
+                [item]="selected", 
+                [full]="true", 
+                (close)="close($event)", 
+                (clone)="clone($event)", 
+                (delete)="delete($event)")
+        
+        .content-info(*ngIf="created")
             .container
                 .card.m-4
-                    .card-body
+                    .card-body.area-round
                         .form-group.row.mb-3
                             label.form-label.col-3.col-form-label Title
                             .col
@@ -68,26 +115,17 @@
                             label.form-label.col-3.col-form-label Version
                             .col
                                 input.form-control(type="text", placeholder="1.0.0", [(ngModel)]="created.version")
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Visibility
-                            .col
-                                .form-selectgroup
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="visibility", value="public", [(ngModel)]="created.visibility")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-share-nodes.mr-2
-                                            span Public
-
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="visibility", value="private", [(ngModel)]="created.visibility")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-lock.mr-2
-                                            span Private
                 
-                    .card-footer.d-flex.p-2
+                    .card-footer.d-flex.pt-2.pb-2
                         button.btn(style="border-radius: 16px;", type="button", (click)="cancel()")
                             span Cancel
                         .mr-auto
                         button.btn.btn-blue(style="border-radius: 16px;", type="button", (click)="requestCreate(created)")
                             span Create
+    
+    .wiz-content-footer(*ngIf="pagenation.end > 1")
+            wiz-component-pagenation(
+                [current]="search.page", 
+                [start]="pagenation.start", 
+                [end]="pagenation.end", 
+                (pageMove)="pageMove($event)")

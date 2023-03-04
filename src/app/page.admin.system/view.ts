@@ -1,47 +1,21 @@
-import { OnInit, ChangeDetectorRef } from "@angular/core";
-import { Service } from '@wiz/libs/season/service';
+import { OnInit } from '@angular/core';
+import { Service } from '@wiz/libs/portal/season/service';
 
 export class Component implements OnInit {
-
-    public initialized: boolean = false;
     public data: any = {};
 
-    constructor(
-        public service: Service,
-        public ref: ChangeDetectorRef
-    ) { }
+    constructor(public service: Service) { }
 
     public async ngOnInit() {
-        await this.service.loading.show();
-        await this.service.init();
-        await this.service.auth.allow('admin', '/');
         await this.load();
-        this.initialized = true;
-        await this.service.loading.hide();
+        await this.service.init();
+        await this.service.auth.allow('admin', "/");
     }
 
     public async load() {
         let { data } = await wiz.call("load");
         this.data = data;
         await this.service.render();
-    }
-
-    public async restart() {
-        await this.service.loading.show();
-        try {
-            await wiz.call("restart");
-        } catch (e) {
-        }
-
-        while (true) {
-            try {
-                await this.load();
-                break;
-            } catch (e) {
-                await this.service.render(500);
-            }
-        }
-        await this.service.loading.hide();
     }
 
     public async update() {

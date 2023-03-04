@@ -1,0 +1,10 @@
+{
+    "mode": "portal",
+    "id": "we.drawflow.node",
+    "title": "Drawflow/Node",
+    "namespace": "we.drawflow.node",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "template": "wiz-portal-dizest-we-drawflow-node()"
+}

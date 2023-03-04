@@ -1,4 +1,4 @@
-fs = wiz.workspace("service").fs("config")
+fs = wiz.workspace("service").fs("config", "dizest")
 config = fs.read.json("config.json", {})
 
 if 'title' not in config:

@@ -1,0 +1,224 @@
+.parent-drawflow {
+    display: flex;
+    overflow: hidden;
+    touch-action: none;
+    outline: none;
+}
+
+.drawflow {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    user-select: none;
+    perspective: 0;
+}
+
+.drawflow .parent-node {
+    position: relative;
+
+}
+
+.drawflow {
+    .drawflow-node {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        width: 160px;
+        min-height: 40px;
+        z-index: 2;
+
+        .drawflow-delete {
+            display: none;
+        }
+
+        .inputs,
+        .outputs {
+            width: 0px;
+        }
+
+        .input,
+        .output {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: crosshair;
+            z-index: 1;
+            margin-bottom: 5px;
+        }
+
+        .input {
+            left: -27px;
+            top: 2px;
+        }
+
+        .output {
+            right: -3px;
+            top: 2px;
+        }
+
+        .drawflow_content_node {
+            width: 100%;
+            display: block;
+        }
+    }
+
+    svg {
+        z-index: 0;
+        position: absolute;
+        overflow: visible !important;
+    }
+
+    .connection {
+        position: absolute;
+        pointer-events: none;
+
+        .main-path {
+            fill: none;
+            stroke-width: 5px;
+            pointer-events: all;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .point {
+            cursor: move;
+            stroke-width: 2;
+            fill: white;
+            pointer-events: all;
+        }
+    }
+
+    .main-path {
+        fill: none;
+        stroke-width: 5px;
+        stroke: steelblue;
+    }
+}
+
+.drawflow-delete {
+    position: absolute;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: black;
+    color: white;
+    z-index: 4;
+    border: 2px solid white;
+    line-height: 1;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    font-family: monospace;
+    cursor: pointer;
+}
+
+.drawflow>.drawflow-delete {
+    margin-left: -15px;
+    margin-top: 15px;
+}
+
+.parent-node .drawflow-delete {
+    right: -15px;
+    top: -15px;
+}
+
+.parent-drawflow {
+    cursor: grab;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    background-size: 25px 25px;
+    background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px), linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+    border: none;
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    .drawflow-delete {
+        font-family: 'main-eb';
+        border: 2px solid var(--wc-red);
+        background: var(--wc-red);
+        color: #fff;
+        -webkit-box-shadow: 0 2px 20px 2px var(--wc-red);
+        box-shadow: 0 2px 20px 2px var(--wc-red);
+        line-height: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .drawflow {
+        .drawflow-node {
+            display: block;
+            padding: 0px;
+            width: auto;
+        }
+
+        .connection {
+            .main-path {
+                stroke: var(--wc-border);
+                stroke-width: 3px;
+
+                &.selected {
+                    stroke: #4ea9ff;
+                }
+            }
+
+            .point {
+                stroke: none;
+                fill: transparent;
+
+                &.selected,
+                &:hover {
+                    stroke: var(--wc-border);
+                    fill: #4ea9ff !important;
+                    cursor: pointer;
+                }
+            }
+
+            &.selected .point {
+                stroke: var(--wc-border);
+                fill: #fff;
+            }
+        }
+    }
+}
+
+:root {
+    --animate-duration: 1s;
+    --animate-delay: 1s;
+    --animate-repeat: 1;
+}
+
+@keyframes heartBeat {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    25% {
+        -webkit-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+
+    50% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+    75% {
+        -webkit-transform: scale(1.02);
+        transform: scale(1.02);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}

@@ -1,5 +1,5 @@
 import { OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Service } from '@wiz/libs/season/service';
+import { Service } from '@wiz/libs/portal/season/service';
 import showdown from 'showdown';
 
 export class Component implements OnInit {
@@ -64,7 +64,7 @@ export class Component implements OnInit {
 
     public async downloadInfo() {
         let workflow_id = this.item.id;
-        let { code, data } = await wiz.call("get", { id: workflow_id });
+        let { code, data } = await wiz.call("get", { workflow_id });
         if (code != 200) return;
         await this.service.file.download(data, data.title + ".dwp");
     }

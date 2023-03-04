@@ -1,0 +1,10 @@
+{
+    "mode": "portal",
+    "id": "workflow.ui",
+    "title": "Workflow UI",
+    "namespace": "workflow.ui",
+    "viewuri": "",
+    "category": "workflow",
+    "controller": "",
+    "template": "wiz-portal-dizest-workflow-ui([zone]=\"\", [workflow_id]=\"\")"
+}

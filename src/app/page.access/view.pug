@@ -1,0 +1,87 @@
+.login-bg
+    .login-box
+        .text-center
+            img.logo(src='/assets/brand/dizest-hub-white.png')
+        
+        .form(*ngIf="status.page == 'login'")
+            .input-box
+                input(type='text', name, required, [(ngModel)]="user.id")
+                label User ID
+            .input-box
+                input(type='password', name, required, [(ngModel)]="user.password", (keyup.enter)="login()")
+                label Password
+            .text-center
+                a((click)="login()")
+                    span
+                    span
+                    span
+                    span
+                    | Login
+
+        .form(*ngIf="status.page == 'install.database'")
+            .etc-box
+                label Database Type
+                .form-selectgroup
+                    label.form-selectgroup-item
+                        input.form-selectgroup-input(type="radio", name="dbtype", value="sqlite", [(ngModel)]="database.type", (ngModelChange)="service.render()")
+                        span.form-selectgroup-label
+                            span sqlite
+                    label.form-selectgroup-item
+                        input.form-selectgroup-input(type="radio", name="dbtype", value="mysql", [(ngModel)]="database.type", (ngModelChange)="service.render()")
+                        span.form-selectgroup-label
+                            span MySQL
+
+            ng-container(*ngIf="database.type == 'sqlite'")
+                .input-box
+                    input(type='text', name, required, [(ngModel)]="database.path")
+                    label Sqlite File Name
+
+            ng-container(*ngIf="database.type == 'mysql'")
+                .input-box
+                    input(type='text', name, required, [(ngModel)]="database.host")
+                    label Database Host
+                .input-box
+                    input(type='number', name, required, [(ngModel)]="database.port")
+                    label Database Port
+                .input-box
+                    input(type='text', name, required, [(ngModel)]="database.user")
+                    label Database User
+                .input-box
+                    input(type='password', name, required, [(ngModel)]="database.password")
+                    label Database Password
+                .input-box
+                    input(type='text', name, required, [(ngModel)]="database.database")
+                    label Database Name
+            
+            .text-center
+                a((click)="check()")
+                    span
+                    span
+                    span
+                    span
+                    | Install
+
+        .form(*ngIf="status.page == 'install.user'")
+            .input-box
+                input(type='text', name, required, [(ngModel)]="user.id")
+                label User ID
+            .input-box
+                input(type='text', name, required, [(ngModel)]="user.email")
+                label Email
+            .input-box
+                input(type='text', name, required, [(ngModel)]="user.username")
+                label Username
+            .input-box
+                input(type='password', name, required, [(ngModel)]="user.password")
+                label Password
+            .input-box
+                input(type='password', name, required, [(ngModel)]="user.password_re")
+                label Password Repeat
+
+            .text-center
+                a((click)="create()")
+                    span
+                    span
+                    span
+                    span
+                    | Create Root User

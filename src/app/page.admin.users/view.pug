@@ -1,162 +1,94 @@
-.workspace-area.area-round
-    .workspace-list
-        .workspace-list-header
-            .page-header.d-print-none
-                .row.align-items-center
-                    .col-auto
-                        .text-blue.mr-1(style="font-size: 28px;")
-                            i.fa-solid.fa-users
-                    .col
-                        h2.page-title Users
-                        .text-muted
-                            ul.list-inline.list-inline-dots.mb-0
-                                li.list-inline-item admin / manage hub user
-                    .col-auto.actions.area-round
-                        a.btn.btn-blue((click)="create()")
-                            i.fa-solid.fa-plus
+.wiz-content-layout
+    .wiz-content-heading
+        .col-auto.pl-3.pr-2
+            .text-blue.mr-1(style="font-size: 28px;")
+                i.fa-solid.fa-users
+        .col
+            h2.page-title Users
+            .text-muted
+                ul.list-inline.list-inline-dots.mb-0
+                    li.list-inline-item admin / manage hub user
+        .col-auto
+            a.btn.btn-blue((click)="select(null, true)")
+                i.fa-solid.fa-plus
+    
+    .wiz-content-body
+        .content-main.area-round([class.m-hidden]="selected")
+            .container(style="max-width: 860px;")
+                .card(*ngIf="list.length > 0")
+                    .card-table.table-responsive
+                        table.table.table-vcenter.table-hover
+                            thead
+                                tr
+                                    th.text-center.width-2 Role
+                                    th.text-center.width-2 ID
+                                    th.text-center.width-2 Username
+                                    th.text-center Email
+                            tbody
+                                ng-container(*ngFor="let item of list")
+                                    tr((click)="select(item)", [class.bg-blue-lt]="selected && selected.id == item.id")
+                                        td.w-1.nowrap
+                                            span.status([class.status-blue]="item.role == 'admin'", [class.status-yellow]="item.role != 'admin'")
+                                                span.status-dot
+                                                span {{item.role}}
+                                        td.w-1.nowrap.text-center {{item.id}}
+                                        td.w-1.nowrap.text-center {{item.username}}
+                                        td.text-center {{item.email}}
 
-        .workspace-list-item
-            .user-list
-                .container.pt-4
+        .content-info.area-round(*ngIf="selected")
+            .content-header
+                h3(*ngIf="isCreate") Create User
+                h3(*ngIf="!isCreate") Update User
+                .ml-auto
+                .text-white.close-btn((click)="select()")
+                    i.fa-solid.fa-xmark
+
+            .workspace-tab-body
+                .container
                     .card
-                        .overflow-x
-                            table.table.table-hover.board-table.table-vcenter.mb-0
-                                thead
-                                    tr
-                                        th.text-center.width-2 Role
-                                        th.text-center.width-2 ID
-                                        th.text-center.width-2 Username
-                                        th.text-center Email
-                                        th.text-center.w-1
+                        .card-body.p-4
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label Role
+                                .col
+                                    .form-selectgroup
+                                        label.form-selectgroup-item
+                                            input.form-selectgroup-input(type="radio", name="userrole", value="user", [(ngModel)]="selected.role" ng-disabled="session.id == selected.id")
+                                            span.form-selectgroup-label
+                                                i.fa-solid.fa-user.mr-2
+                                                span User
+                                        label.form-selectgroup-item
+                                            input.form-selectgroup-input(type="radio", name="userrole", value="admin", [(ngModel)]="selected.role" ng-disabled="session.id == selected.id")
+                                            span.form-selectgroup-label
+                                                i.fa-solid.fa-user-gear.mr-2
+                                                span Admin
 
-                                tbody
-                                    ng-container(*ngFor="let item of list")
-                                        tr((click)="select(item)", [class.bg-blue-lt]="selected && selected.id == item.id")
-                                            td.width-2
-                                                span.status([class.status-blue]="item.role == 'admin'", [class.status-yellow]="item.role != 'admin'")
-                                                    span.status-dot
-                                                    span {{item.role}}
-                                            td.width-2.text-center {{item.id}}
-                                            td.width-2.text-center {{item.username}}
-                                            td.text-center {{item.email}}
-                                            td.w-1.text-right.nowrap
-                                                .btn.btn-circle.btn-white.mr-1(*ngIf="status[item.id].status")
-                                                    i.fa-solid.fa-pause.mr-2
-                                                    span {{status[item.id].count}}
-                                                .btn.btn-circle.btn-white.mr-1(*ngIf="status[item.id].status")
-                                                    i.fa-solid.fa-play.mr-2
-                                                    span {{status[item.id].countrun}}
-                                                .btn.btn-circle.btn-blue((click)="select(item)")
-                                                    i.fa-solid.fa-edit
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label User ID
+                                .col
+                                    input.form-control(type="text", placeholder="user id", [(ngModel)]="selected.id", [disabled]="!isCreate")
+                            
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label Username
+                                .col
+                                    input.form-control(type="text", placeholder="John Doe", [(ngModel)]="selected.username")
 
-    .workspace-tab(*ngIf="created")
-        .workspace-tab-header
-            h3 New User
-            .ml-auto
-            .text-white.close-btn((click)="close()")
-                i.fa-solid.fa-xmark
-
-        .workspace-tab-body
-            .container
-                .card.mt-4
-                    .card-body.p-4
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Role
-                            .col
-                                .form-selectgroup
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="userrole", value="user", [(ngModel)]="created.role")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-user.mr-2
-                                            span User
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="userrole", value="admin", [(ngModel)]="created.role")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-user-gear.mr-2
-                                            span Admin
-
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label User ID
-                            .col
-                                input.form-control(type="text", placeholder="user id", [(ngModel)]="created.id")
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Username
-                            .col
-                                input.form-control(type="text", placeholder="John Doe", [(ngModel)]="created.username")
-
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Email
-                            .col
-                                input.form-control(type="text", placeholder="user@gmail.com", [(ngModel)]="created.email")
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Password
-                            .col
-                                input.form-control(type="password", placeholder="Password", [(ngModel)]="created.password")
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Repeat Password
-                            .col
-                                input.form-control(type="password", placeholder="Repeat Password", [(ngModel)]="created.repeat_password")
-                        
-                    .card-footer.d-flex.p-2
-                        .ml-auto
-                        .btn.btn-blue.btn-circle(style="width: 120px;", (click)="send()") Create
-
-
-    .workspace-tab(*ngIf="selected")
-        .workspace-tab-header
-            h3 Update User
-            .ml-auto
-            .text-white.close-btn((click)="select()")
-                i.fa-solid.fa-xmark
-
-        .workspace-tab-body
-            .container
-                .card.mt-4
-                    .card-body.p-4
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Role
-                            .col
-                                .form-selectgroup
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="userrole", value="user", [(ngModel)]="selected.role" ng-disabled="session.id == selected.id")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-user.mr-2
-                                            span User
-                                    label.form-selectgroup-item
-                                        input.form-selectgroup-input(type="radio", name="userrole", value="admin", [(ngModel)]="selected.role" ng-disabled="session.id == selected.id")
-                                        span.form-selectgroup-label
-                                            i.fa-solid.fa-user-gear.mr-2
-                                            span Admin
-
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label User ID
-                            .col
-                                input.form-control(type="text", placeholder="user id", [(ngModel)]="selected.id", disabled)
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Username
-                            .col
-                                input.form-control(type="text", placeholder="John Doe", [(ngModel)]="selected.username")
-
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Email
-                            .col
-                                input.form-control(type="email", placeholder="user@gmail.com", [(ngModel)]="selected.email")
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Password
-                            .col
-                                input.form-control(type="password", placeholder="Password", [(ngModel)]="selected.password")
-                        
-                        .form-group.row.mb-3
-                            label.form-label.col-3.col-form-label Repeat Password
-                            .col
-                                input.form-control(type="password", placeholder="Repeat Password", [(ngModel)]="selected.repeat_password")
-                        
-                    .card-footer.d-flex.p-2
-                        .btn.btn-outline-red.btn-circle(style="width: 120px;", (click)="delete()", *ngIf="session.id != selected.id") Delete
-                        .ml-auto
-                        .btn.btn-blue.btn-circle(style="width: 120px;", (click)="update()") Update
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label Email
+                                .col
+                                    input.form-control(type="email", placeholder="user@gmail.com", [(ngModel)]="selected.email")
+                            
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label Password
+                                .col
+                                    input.form-control(type="password", placeholder="Password", [(ngModel)]="selected.password")
+                            
+                            .form-group.row.mb-3
+                                label.form-label.col-3.col-form-label Repeat Password
+                                .col
+                                    input.form-control(type="password", placeholder="Repeat Password", [(ngModel)]="selected.repeat_password")
+                            
+                        .card-footer.d-flex.p-2
+                            .btn.btn-outline-red.btn-circle(style="width: 120px;", (click)="delete()", *ngIf="!isCreate && session.id != selected.id") Delete
+                            .ml-auto
+                            .btn.btn-blue.btn-circle(*ngIf="isCreate", style="width: 120px;", (click)="create()") Create
+                            .btn.btn-blue.btn-circle(*ngIf="!isCreate", style="width: 120px;", (click)="update()") Update

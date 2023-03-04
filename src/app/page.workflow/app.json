@@ -1,11 +1,11 @@
 {
     "mode": "page",
     "id": "page.workflow",
-    "title": "Workflow List",
+    "title": "/workflow",
     "namespace": "workflow",
-    "viewuri": "/hub/workflow/list",
-    "category": "workspace",
-    "preview": "/hub/workflow/list",
+    "viewuri": "/workflow",
+    "category": "workflow",
+    "preview": "/workflow",
     "controller": "user",
     "layout": "layout.aside",
     "ng.build": {

@@ -1,0 +1,20 @@
+.kernel-selector.area-round
+    .kernel-select-box
+        h3.text-center Kernel is not started yet
+        .text-center.text-muted select and start kernel for use workflow
+        .mb-4
+        .d-flex
+            .dropdown
+                button.btn.btn-white.dropdown-toggle((click)="toggle()")
+                    span(style="width: 120px; overflow: hidden;", *ngIf="!selected") Select kernel
+                    span(style="width: 120px; overflow: hidden;", *ngIf="selected") {{ selected.name }}
+                
+                .dropdown-menu.dropdown-menu-dark([class.show]="isOpen")
+                    .dropdown-item(*ngFor="let spec of dizest.kernels", (click)="select(spec)") {{spec.name}}
+            .mr-2
+            a.btn.btn-blue((click)="start()")
+                i.fa-solid.fa-play.mr-2
+                span Start
+
+        a.btn.btn-link.btn-block.mt-3.mb-0(href="/auth/logout")
+            span Logout

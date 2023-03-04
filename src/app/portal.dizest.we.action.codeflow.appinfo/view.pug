@@ -1,0 +1,51 @@
+.container.area-round(*ngIf="initialize && app")
+    .card.mb-4.mt-4
+        .card-body.p-4
+            .form-group.row.mb-3
+                label.form-label.col-3.col-form-label App ID
+                .col
+                    input.form-control(type="text", [(ngModel)]="app.spec().id", disabled="disabled")
+            
+            .form-group.row.mb-3
+                label.form-label.col-3.col-form-label App Title
+                .col
+                    input.form-control(type="text", placeholder="App Title", [(ngModel)]="app.spec().title")
+            
+            .form-group.row.mb-3
+                label.form-label.col-3.col-form-label App Version
+                .col
+                    input.form-control(type="text", placeholder="1.0.0", [(ngModel)]="app.spec().version")
+            
+            .form-group.row.mb-3
+                label.form-label.col-3.col-form-label App Category
+                .col
+                    input.form-control(type="text", placeholder="category", [(ngModel)]="app.spec().category")
+
+            .form-group.row.mt-4
+                .col
+                    button.btn.btn-outline-blue.btn-block((click)="download()") Download
+
+    .card.mb-4
+        .card-header
+            h4.card-title Logo
+            .ml-auto
+            .btn.btn-outline-danger.mr-2(*ngIf="app.logo()", (click)="clear.logo()") Delete
+            .btn.btn-blue((click)="upload.logo()") Upload
+
+        .card-body.p-3.text-center(*ngIf="app.logo()")
+            .avatar-area
+                .avatar-container
+                    span.avatar([ngStyle]="style.logo")
+
+    .card.mb-4
+        .card-header
+            h4.card-title Description
+            .ml-auto
+                button.btn.btn-blue((click)="toggleEditable()")
+                    i.fa-solid.fa-book(*ngIf="descriptionEditable")
+                    i.fa-solid.fa-edit(*ngIf="!descriptionEditable")
+        .card-body.p-0
+            .descarea.pb-0.pt-3.pr-3.pl-3(*ngIf="!descriptionEditable && app.spec().description", [innerHtml]="showdown(app.spec().description)")
+            nu-monaco-editor(*ngIf="descriptionEditable", [(ngModel)]="app.spec().description", [options]="monaco", [height]="'auto'", (event)="init($event)")
+        
+        .card-body(style="border-top: none; padding-top: 0;")

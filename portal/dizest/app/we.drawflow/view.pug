@@ -1,0 +1,52 @@
+.dizest-drawflow(*ngIf="initialized", (drop)="drop($event)", (dragover)="dragover($event)")
+    .workflow-canvas.noselect
+        .drawflow-container
+            div('#drawflow'='')
+
+    .workflow-zoom.area-round
+        .workflow-position
+            a.text-muted.btn-link.cursor-pointer((click)="init_pos()")
+                span (
+                span {{-position().x}}
+                span.mr-1.ml-1 ,
+                span {{-position().y}}
+                span )
+
+        .btn-group
+            .btn.btn-blue((click)="zoom_out()")
+                i.fa-solid.fa-magnifying-glass-minus
+            .btn.btn-blue((click)="zoom_reset()")
+                i.fa-solid.fa-magnifying-glass
+            .btn.btn-blue((click)="zoom_in()")
+                i.fa-solid.fa-magnifying-glass-plus
+
+    .workspace-actions.area-round
+        a.btn.btn-red((click)="server_stop()")
+            i.fa-solid.fa-power-off
+        
+        a.btn.btn-blue((click)="run()", *ngIf="['idle'].includes(status())")
+            i.fa-solid.fa-play
+
+        a.btn.btn-red((click)="stop()", *ngIf="!['idle'].includes(status())")
+            i.fa-solid.fa-stop
+
+        a.btn.btn-blue((click)="stop('Initialize')")
+            i.fa-solid.fa-clock-rotate-left
+        
+        a.btn.btn-blue((click)="reload()")
+            i.fa-solid.fa-rotate-right
+
+        a.btn.btn-blue.if-desktop((click)="update()")
+            i.fa-solid.fa-save
+
+.wiz-modal(*ngIf="drawflow.drive && drawflow.drive.isshow")
+    .modal
+        .modal-dialog.modal-sm(role='document')
+            .modal-content
+                .modal-status.bg-blue
+                .modal-body.p-0
+                    wiz-portal-dizest-we-drive(mode="modal", [binding]="drawflow.drive")
+                .modal-footer.border-top.pt-2.pb-2.d-flex
+                    a.btn((click)="drawflow.drive.hide()") Cancel
+                    .ml-auto
+                    a.btn.btn-blue(*ngIf="drawflow.drive.selected", (click)="drawflow.drive.action()") Select

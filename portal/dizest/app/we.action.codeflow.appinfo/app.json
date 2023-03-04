@@ -1,0 +1,10 @@
+{
+    "mode": "portal",
+    "id": "we.action.codeflow.appinfo",
+    "title": "Action/CodeFlow/AppInfo",
+    "namespace": "we.action.codeflow.appinfo",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "template": "wiz-portal-dizest-we-action-codeflow-appinfo([app]=\"\")"
+}

@@ -1,43 +1,19 @@
-import { OnInit, ChangeDetectorRef } from "@angular/core";
-import { Service } from '@wiz/libs/season/service';
-
-import toastr from 'toastr';
-toastr.options = {
-    "closeButton": false,
-    "debug": false,
-    "newestOnTop": true,
-    "progressBar": false,
-    "positionClass": "toast-bottom-center",
-    "preventDuplicates": true,
-    "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 500,
-    "timeOut": 1500,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
+import { OnInit } from '@angular/core';
+import { Service } from '@wiz/libs/portal/season/service';
 
 export class Component implements OnInit {
-
     public initialized: boolean = false;
     public data: any = { kernel: [], conda: [], script: [] };
     public mode: string = 'kernel';
 
-    constructor(
-        public service: Service,
-        public ref: ChangeDetectorRef
-    ) { }
+    constructor(public service: Service) { }
 
     public async ngOnInit() {
-        await this.service.loading.show();
         await this.service.init();
-        await this.service.auth.allow('admin', '/');
+        await this.service.auth.allow('admin', "/");
         await this.load();
         this.initialized = true;
-        await this.service.loading.hide();
+        await this.service.render();
     }
 
     public async load() {
@@ -71,12 +47,12 @@ export class Component implements OnInit {
             let item = obj.item;
 
             if (!item.name) return;
-            if (item.name.length < 3) return toastr.error("Check name");
-            if (!/^[a-z0-9]+$/.test(item.name)) return toastr.error("Check name");
+            if (item.name.length < 3) return this.service.toast.error("Check name");
+            if (!/^[a-z0-9]+$/.test(item.name)) return this.service.toast.error("Check name");
 
             for (let i = 0; i < this.data.kernel.length; i++) {
                 if (this.data.kernel[i].name == item.name) {
-                    toastr.error("Kernel exists")
+                    this.service.toast.error("Kernel exists")
                     return;
                 }
             }
@@ -105,7 +81,7 @@ export class Component implements OnInit {
         obj.update = async () => {
             let data = JSON.stringify(this.data.kernel);
             await wiz.call("update", { data });
-            toastr.success("Updated");
+            this.service.toast.success("Updated");
         }
 
         return obj;
@@ -133,12 +109,12 @@ export class Component implements OnInit {
             let item = obj.item;
 
             if (!item.name) return;
-            if (item.name.length < 3) return toastr.error("Check name");
-            if (!/^[a-z0-9]+$/.test(item.name)) return toastr.error("Check name");
+            if (item.name.length < 3) return this.service.toast.error("Check name");
+            if (!/^[a-z0-9]+$/.test(item.name)) return this.service.toast.error("Check name");
 
             for (let i = 0; i < this.data.conda.length; i++) {
                 if (this.data.conda[i].name == item.name) {
-                    toastr.error("Env exists");
+                    this.service.toast.error("Env exists");
                     return;
                 }
             }
@@ -173,5 +149,4 @@ export class Component implements OnInit {
 
         return obj;
     })();
-
 }

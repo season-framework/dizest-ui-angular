@@ -1,0 +1,62 @@
+.workspace-tab {
+    height: 100%;
+    width: 50vw;
+    max-width: 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    background: var(--wc-background);
+    border-left: 1px solid var(--wc-border);
+
+    .workspace-tab-header {
+        display: flex;
+        background: var(--wc-blue);
+        padding: 4px 12px;
+        height: 40px;
+        align-items: center;
+
+        .workspace-tab-header-title {
+            color: white;
+            font-family: 'wiz-eb';
+            font-size: 16px;
+        }
+
+        .close-btn {
+            font-size: 16px;
+            cursor: pointer;
+        }
+    }
+
+    .workspace-tab-body-wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        flex: 1;
+    }
+
+    .workspace-tab-body {
+        padding: 16px;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        overflow: auto;
+        padding-bottom: 40vh;
+    }
+}
+
+.featured-image {
+    max-width: 100%;
+    max-height: 280px;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.card-table {
+    border-bottom: none;
+    td, th {
+        padding: 8px 12px;
+    }
+}

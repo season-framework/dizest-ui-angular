@@ -1,20 +1,18 @@
-.workspace-area
-    .workspace-list
-        .workspace-list-header
-            .page-header.d-print-none
-                .row.align-items-center
-                    .col-auto
-                        .text-blue.mr-1(style="font-size: 28px;")
-                            i.fa-solid.fa-cogs
-                    .col
-                        h2.page-title System
-                        .text-muted
-                            ul.list-inline.list-inline-dots.mb-0
-                                li.list-inline-item configure DIZEST system
+.wiz-content-layout
+    .wiz-content-heading
+        .col-auto.pl-3.pr-2
+            .text-blue.mr-1(style="font-size: 28px;")
+                i.fa-solid.fa-cogs
+        .col
+            h2.page-title System
+            .text-muted
+                ul.list-inline.list-inline-dots.mb-0
+                    li.list-inline-item configure DIZEST system
 
-        .workspace-list-item.area-round
-            .container.p-4(style="max-width: 860px;", *ngIf="initialized")
-                .card.mt-4.mb-4
+    .wiz-content-body(*ngIf="data.config")
+        .content-main.area-round
+            .container(style="max-width: 720px;")
+                .card
                     .card-header
                         h4.card-title UI Configuration
 
@@ -25,14 +23,21 @@
                                 input.form-control(type="text", placeholder="Hub Title", [(ngModel)]="data.config.title")
                         
                         .mb-3
+                        
+                        .form-group.row
+                            label.form-label.col-3.col-form-label Conda Path
+                            .col
+                                input.form-control(type="text", placeholder="/opt/anaconda3", [(ngModel)]="data.config.conda")
+                        
+                        .mb-3
 
                         .form-group.row
                             label.form-label.col-3.col-form-label Logo
                             .col.text-left
-                                .bg-blue.text-center(style="padding: 0.75rem 0; max-width: 280px; width: 100%;")
-                                    img([attr.src]="data.config.logo ? data.config.logo : '/assets/images/brand/dizest-hub-white.png'",  style="height: 32px; margin: 5px 0;")
+                                .text-center(style="padding: 0.75rem 0; max-width: 280px; width: 100%;")
+                                    img([attr.src]="data.config.logo ? data.config.logo : '/assets/brand/dizest-hub.png'",  style="height: 32px; margin: 5px 0;")
 
-                            .col-2.if-desktop
+                            .col-2.d-desktop
                                 .btn.btn-outline-blue.btn-block((click)="uploadLogo()") Upload
                                 .btn.btn-outline-danger.btn-block.mt-2(*ngIf="data.config.logo", (click)="data.config.logo = ''; service.render();") Delete
 
@@ -41,72 +46,13 @@
                         .form-group.row
                             label.form-label.col-3.col-form-label Icon
                             .col.text-left
-                                img(*ngIf="data.config.icon", [attr.src]="data.config.icon", style="height: 48px; width: 48px;")
+                                .text-center
+                                    img(*ngIf="data.config.icon", [attr.src]="data.config.icon", style="height: 48px; width: 48px;")
 
-                            .col-2.if-desktop
+                            .col-2.d-desktop
                                 .btn.btn-outline-blue.btn-block((click)="uploadIcon()") Upload
                                 .btn.btn-outline-danger.btn-block.mt-2(*ngIf="data.config.icon", (click)="data.config.icon = ''; service.render();") Delete
-                    
-                        .mb-3
-                        
-                    .card-header.border-top
-                        h4.card-title System Configuration
-
-                    .card-body.p-4
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Conda Path
-                            .col
-                                input.form-control(type="text", placeholder="/opt/anaconda3", [(ngModel)]="data.config.conda")
-
+                
                     .card-footer.d-flex.p-2
                         .ml-auto
                         a.btn.btn-blue((click)="update()") Update
-
-                .card.mb-5
-                    .card-header
-                        h4.card-title System Version
-
-                    .card-body.p-4
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Core Version
-                            .col
-                                span.badge.bg-blue-lt.p-2 {{data.deploy.dizest_version}}
-
-                        .mb-3
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label UI Version
-                            .col
-                                span.badge.bg-blue-lt.p-2.d-inline-block {{data.deploy.dizest_ui_version}}
-                
-                .card.mb-5
-                    .card-header
-                        h4.card-title Server Info
-
-                    .card-body.p-4
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Process ID
-                            .col
-                                span.badge.bg-blue-lt.p-2 {{data.deploy.process_id}}
-
-                        .mb-3
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Child Processes
-                            .col
-                                span.badge.bg-blue-lt.p-2 {{data.deploy.subprocess}}
-
-                        .mb-3
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Working Path
-                            .col
-                                span.badge.bg-blue-lt.p-2 {{data.deploy.cwd}}
-
-                        .mb-3
-
-                        .form-group.row
-                            label.form-label.col-3.col-form-label Restart
-                            .col
-                                .btn.btn-blue((click)="restart()") Restart Server & All Kernel

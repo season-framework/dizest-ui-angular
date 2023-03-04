@@ -2,10 +2,7 @@ import os
 import json
 import season
 
-if wiz.session.get("role") != "admin":
-    wiz.response.abort(401)
-
-fs = wiz.workspace("service").fs("config")
+fs = wiz.workspace("service").fs("config", "dizest")
 
 class Conda:
     def list(self):
@@ -40,6 +37,9 @@ class Conda:
 
     def __call__(self, segment):
         config = fs.read.json("config.json", dict(conda="conda"))
+        if 'conda' not in config:
+            wiz.response.status(404)
+
         self.condapath = config['conda']
         self.condacmd = os.path.join(config['conda'], "condabin", "conda")
 
@@ -67,5 +67,9 @@ def load():
 def update():
     data = wiz.request.query("data", True)
     data = json.loads(data)
+    for i in range(len(data)):
+        if 'conda' in data[i]:
+            condaenv = data[i]['conda']
+            data[i]['executable'] = f"/opt/anaconda3/envs/{condaenv}/bin/python"
     config = fs.write.json("kernel.json", data)
     wiz.response.status(200)

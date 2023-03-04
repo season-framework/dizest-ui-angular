@@ -1,0 +1,10 @@
+{
+    "mode": "portal",
+    "id": "we.action.timer",
+    "title": "Action/Timer",
+    "namespace": "we.action.timer",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "template": "wiz-portal-dizest-we-action-timer()"
+}

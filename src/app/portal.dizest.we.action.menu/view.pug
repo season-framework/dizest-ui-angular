@@ -1,0 +1,32 @@
+.action-menu-container
+    .d-block
+        .btn((click)="toggle('info')", [class.btn-blue]="is('info')")
+            i.fa-solid.fa-book
+            .hover-area
+                span Workflow Info
+                .sidemenu-icon
+                    i.fa-solid.fa-book
+    
+    .d-block
+        .btn((click)="toggle('codeflow')", [class.btn-blue]="is('codeflow')")
+            i.fa-solid.fa-code
+            .hover-area
+                span Codeflow
+                .sidemenu-icon
+                    i.fa-solid.fa-code
+
+    .d-block
+        .btn((click)="toggle('uimode')", [class.btn-blue]="is('uimode')")
+            i.fa-solid.fa-display
+            .hover-area
+                span UI Mode
+                .sidemenu-icon
+                    i.fa-solid.fa-display
+
+    .d-block
+        .btn((click)="toggle('timer')", [class.btn-blue]="is('timer')")
+            i.fa-solid.fa-stopwatch
+            .hover-area
+                span Timer
+                .sidemenu-icon
+                    i.fa-solid.fa-stopwatch

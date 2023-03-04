@@ -2,14 +2,14 @@
     .card.card-info
         .fab((click)="closeInfo()")
             i.fa-solid.fa-xmark
-        .card-body.p-4.text-center(style="background-image: url({{item.featured}});")
+        .card-body.featured.p-4.text-center(style="background-image: url({{item.featured}});")
             .info-box
                 span.avatar.avatar-xl.mb-3.avatar-rounded(style="background-image: url({{item.logo}}); border-radius: 24px;")
                 h3.m-0.mb-1 {{ item.title }}
                 .text-muted {{ item.updated }}
             
         .d-flex(*ngIf="actions")
-            a.card-btn(href="/hub/workflow/item/{{item.id}}")
+            a.card-btn(routerLink="/workflow/{{item.id}}")
                 span Open
                 i.fa-solid.fa-square-arrow-up-right.ml-3
 
@@ -17,7 +17,7 @@
                 span Run
                 i.fa-solid.fa-play.ml-3
             
-            a.card-btn(*ngIf="item.status != 'stop'", (click)="stop()")
+            a.card-btn(*ngIf="item.status == 'running'", (click)="stop()")
                 span Stop
                 i.fa-solid.fa-stop.ml-3
 
@@ -25,7 +25,7 @@
     .description.p-5.text-center(*ngIf="!item.description")
         h2 No description
     
-    .actions.p-3.border-top.area-round.text-center(*ngIf="full || download")
+    .actions.p-3.border-top.area-round.text-center.d-desktop(*ngIf="full || download")
         .btn.btn-outline-blue.mr-3(*ngIf="full", (click)="cloneInfo()")
             span Clone
             i.fa-solid.fa-clone.ml-3

@@ -1,41 +1,21 @@
-import { OnInit, ChangeDetectorRef } from "@angular/core";
-import { Service } from '@wiz/libs/season/service';
+import { OnInit } from '@angular/core';
+import { Service } from '@wiz/libs/portal/season/service';
 
 export class Component implements OnInit {
 
     public list: any = [];
+    public isCreate: boolean = false;
     public selected: any;
-    public status: any = {};
     public session: any = {};
 
-    constructor(
-        public service: Service,
-        public ref: ChangeDetectorRef
-    ) { }
+    constructor(public service: Service) { }
 
     public async ngOnInit() {
-        await this.service.init();
-        await this.service.auth.allow('admin', '/');
         await this.load();
-        this.session = this.service.auth;
-    }
+        this.session = this.service.auth.session;
 
-    public async load() {
-        let { data } = await wiz.call('users');
-        let { users, status } = data;
-        this.list = users;
-        this.status = status;
-        await this.service.render();
-    }
-
-    public async select(item: any) {
-        this.created = null;
-        if (item) {
-            this.selected = JSON.parse(JSON.stringify(item));
-        } else {
-            this.selected = null;
-        }
-        await this.service.render();
+        await this.service.init();
+        await this.service.auth.allow('admin', "/");
     }
 
     public async alert(message: string) {
@@ -45,6 +25,26 @@ export class Component implements OnInit {
             cancel: false,
             action: "Confirm"
         });
+    }
+
+    public async load() {
+        let { data } = await wiz.call("load");
+        let { users } = data;
+        this.list = users;
+        await this.service.render();
+    }
+
+    public async select(item: any, isCreate: boolean = false) {
+        if (isCreate) {
+            this.isCreate = isCreate;
+            this.selected = { role: 'user' };
+        } else if (item) {
+            this.selected = JSON.parse(JSON.stringify(item));
+        } else {
+            this.isCreate = false;
+            this.selected = null;
+        }
+        await this.service.render();
     }
 
     public async update() {
@@ -57,6 +57,7 @@ export class Component implements OnInit {
                 return await this.alert("Check password");
             if (user.password != user.repeat_password)
                 return await this.alert("Check password");
+            user.password = this.service.auth.hash(user.password);
         } else {
             delete user.password;
         }
@@ -70,18 +71,7 @@ export class Component implements OnInit {
     }
 
     public async create() {
-        this.selected = null;
-        this.created = { role: 'user' };
-        await this.service.render();
-    }
-
-    public async close() {
-        this.created = null;
-        await this.service.render();
-    }
-
-    public async send() {
-        let user = JSON.parse(JSON.stringify(this.created));
+        let user = JSON.parse(JSON.stringify(this.selected));
         if (!user.id || user.id.length < 4) return await this.alert('user id must 4 characters or more');
         if (!user.password) return await this.alert('password must 8 characters or more');
         if (user.password.length < 8)
@@ -91,18 +81,18 @@ export class Component implements OnInit {
         if (user.password != user.repeat_password)
             return await this.alert('check password');
 
-        await this.service.loading.show();
+        user.password = this.service.auth.hash(user.password);
+
         let { code, data } = await wiz.call("create", user);
 
         if (code != 200) {
-            await this.service.loading.hide();
             return await this.alert(data);
         }
 
-        this.created = null;
+        this.selected = null;
+        this.isCreate = false;
         await this.load();
         await this.service.render();
-        await this.service.loading.hide();
     }
 
     public async delete() {

@@ -2,10 +2,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxLoadingModule, ngxLoadingAnimationTypes } from "ngx-loading";
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { SortablejsModule } from "@wiz/libs/portal/season/ngx-sortablejs";
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 @NgModule({
     declarations: [
@@ -16,17 +17,17 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
         AppRoutingModule,
         FormsModule,
         NgbModule,
+        SortablejsModule,
+        KeyboardShortcutsModule.forRoot(),
         NuMonacoEditorModule.forRoot({ baseUrl: `lib` }),
-        NgxLoadingModule.forRoot({
-            animationType: ngxLoadingAnimationTypes.cubeGrid,
-            backdropBackgroundColour: "rgba(0,0,0,0.1)",
-            primaryColour: "#3843D0",
-            secondaryColour: "#3843D0",
-            tertiaryColour: "#3843D0",
-        }),
         '@wiz.imports'
     ],
-    providers: [],
+    providers: [
+        {
+            provide: COMPOSITION_BUFFER_MODE,
+            useValue: false
+        }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

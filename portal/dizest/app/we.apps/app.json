@@ -1,0 +1,10 @@
+{
+    "mode": "portal",
+    "id": "we.apps",
+    "title": "Nav/Apps",
+    "namespace": "we.apps",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "template": "wiz-portal-dizest-we-apps()"
+}

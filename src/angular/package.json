@@ -36,6 +36,10 @@
         "toastr": "^2.1.4",
         "tslib": "^2.3.0",
         "urlpattern-polyfill": "^6.0.1",
+        "xterm": "^5.1.0",
+        "xterm-addon-fit": "^0.7.0",
+        "xterm-addon-search": "^0.11.0",
+        "xterm-addon-web-links": "^0.8.0",
         "zone.js": "~0.11.4"
     },
     "devDependencies": {

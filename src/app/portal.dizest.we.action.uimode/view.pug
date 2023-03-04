@@ -1,0 +1,84 @@
+.workspace-tab([class.maximized]="maximized", [class.editmode]="edit")
+    .code-area.area-round(*ngIf="edit")
+        .workspace-tab-header
+            .btn-group
+                .btn([class.btn-blue]="enabled.head", (click)="toggle('head')") head
+                .btn([class.btn-blue]="enabled.body", (click)="toggle('body')") body
+                .btn([class.btn-blue]="enabled.js", (click)="toggle('js')") js
+                .btn([class.btn-blue]="enabled.scss", (click)="toggle('scss')") scss
+                .btn([class.btn-blue]="enabled.api", (click)="toggle('api')") api
+
+            .ml-auto
+            
+            .btn.btn-blue.mr-2((click)="update()")
+                i.fa-solid.fa-save
+
+            .btn.btn-red((click)="code(false)")
+                i.fa-solid.fa-xmark
+        
+        .code-area-body
+            .code-container(*ngIf="enabled.head")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.head", [options]="monacopug", height="100%")
+                .code-label Head (Pug)
+
+            .code-container(*ngIf="enabled.body")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.pug", [options]="monacopug", height="100%")
+                .code-label Body (Pug)
+            
+            .code-container(*ngIf="enabled.js")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.js", [options]="monacojs", height="100%")
+                .code-label Javascript
+
+            .code-container(*ngIf="enabled.scss")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.scss", [options]="monacoscss", height="100%")
+                .code-label SCSS
+            
+            .code-container(*ngIf="enabled.api")
+                .code-wrapper
+                    nu-monaco-editor([(ngModel)]="data.api", [options]="monacopy", height="100%")
+                .code-label API
+
+    .uimode
+        .workspace-tab-header
+            .workspace-tab-header-title
+                i.fa-solid.fa-display.mr-2
+                span UIMode
+            .ml-auto
+
+            .text-white.close-btn.mr-3.if-desktop(*ngIf="!edit && selected", (click)="code(true)")
+                i.fa-solid.fa-code
+
+            .text-white.close-btn.mr-3(*ngIf="!edit && selected", (click)="maximize(!maximized)")
+                i.fa-solid(
+                    [class.fa-up-right-and-down-left-from-center]='!maximized',
+                    [class.fa-down-left-and-up-right-to-center]='maximized')
+
+            .text-white.close-btn.mr-3(*ngIf="selected", (click)="select(selected)")
+                i.fa-solid.fa-refresh
+
+            .text-white.close-btn(*ngIf="!edit", (click)="close()")
+                i.fa-solid.fa-xmark
+
+        .workspace-tab-body-wrapper
+            .workspace-tab-body(*ngIf="selected && url")
+                iframe([src]="url", (load)="onLoad()")
+        
+            ng-container(*ngIf="!selected")
+                .no-item
+                    .upload
+                        .text.text-drop.text-center
+                            span open UIMode from workflow
+                        .shadow
+
+        .block-page(*ngIf="loading")
+            svg(version='1.1', xmlns='http://www.w3.org/2000/svg', xlink='http://www.w3.org/1999/xlink', x='0px', y='0px', width='60px', height='40px', viewBox='0 0 60 40', style='enable-background:new 0 0 50 50;', space='preserve')
+                rect(x='0', y='0', width='8', height='30', fill='#333')
+                    animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0', dur='0.6s', repeatCount='indefinite')
+                rect(x='16', y='0', width='8', height='30', fill='#333')
+                    animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0.2s', dur='0.6s', repeatCount='indefinite')
+                rect(x='32', y='0', width='8', height='30', fill='#333')
+                    animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0.4s', dur='0.6s', repeatCount='indefinite')

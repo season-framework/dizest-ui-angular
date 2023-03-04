@@ -1,0 +1,64 @@
+aside.navbar.navbar-vertical.navbar-expand-lg.navbar-side
+    .navbar-brand-container
+        button.navbar-toggler(type="button", (click)="isMenuCollapsed = !isMenuCollapsed; service.render();")
+            span.navbar-toggler-icon
+
+        a.navbar-brand.p-0.m-0((click)="isMenuCollapsed = !isMenuCollapsed; service.render();")
+            .text-center
+                img.m-0(src='/brand/logo')
+
+    .collapse.navbar-collapse([ngbCollapse]="isMenuCollapsed")
+        .user-profile(*ngIf="service.auth.status")
+            .card
+                .card-body.pr-4.pl-4
+                    .row.align-items-center
+                        .col
+                            .userinfo
+                                .name {{service.auth.session.id}}
+                                .uclass {{service.auth.session.role}}
+                                .mail {{service.auth.session.email}}
+                        
+                        .col-auto
+                            .btn-list.area-round
+                                .btn.btn-red((click)="stop()",
+                                    style="width: 48px; height: 48px; border-radius: 50%; flex-direction: column; line-height: 1; align-items: center; justify-content: center; font-size: 18px;")
+                                    i.fa-solid.fa-power-off
+                .card-footer
+                    .clicks
+                        a.click(routerLink='/mypage', (click)="isMenuCollapsed = !isMenuCollapsed") MYPAGE
+                        a.click(href='/auth/logout') LOGOUT
+
+        ul.navbar-nav
+            li.nav-item(routerLink='/workflow', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                .d-flex
+                    .nav-link
+                        span.nav-link-title Workflow
+            
+            // li.nav-item(routerLink='/drive', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+            //     .d-flex
+            //         .nav-link
+            //             span.nav-link-title Drive
+
+            ng-container(*ngIf="service.auth.show('admin')")
+                li.nav-item(routerLink='/terminal', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                    .d-flex
+                        .nav-link
+                            span.nav-link-title Terminal
+
+                li.nav-item.dropdown([ngClass]="{'active': menuActive('/admin/')}")
+                    .d-flex
+                        a.nav-link(routerLink='/admin/system', (click)="isMenuCollapsed = !isMenuCollapsed")
+                            span.nav-link-title Admin
+                    ul.dropdown-menu
+                        li
+                            a.dropdown-item(routerLink='/admin/system', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                                span System
+                        li
+                            a.dropdown-item(routerLink='/admin/users', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                                span Users
+                        li
+                            a.dropdown-item(routerLink='/admin/packages', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                                span Packages
+                        li
+                            a.dropdown-item(routerLink='/admin/kernel', routerLinkActive="active", (click)="isMenuCollapsed = !isMenuCollapsed")
+                                span Kernel

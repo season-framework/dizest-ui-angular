@@ -1,7 +1,7 @@
 {
     "mode": "layout",
     "id": "layout.aside",
-    "title": "aside",
+    "title": "Aside",
     "namespace": "aside",
     "viewuri": "",
     "category": "theme",

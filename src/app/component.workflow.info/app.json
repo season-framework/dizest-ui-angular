@@ -2,7 +2,7 @@
     "mode": "component",
     "id": "component.workflow.info",
     "title": "Workflow Info",
-    "namespace": "workflow.info",
+    "namespace": "component.workflow.info",
     "viewuri": "",
     "category": "workflow",
     "controller": "user",

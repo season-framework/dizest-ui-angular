@@ -1,12 +1,12 @@
 {
     "mode": "page",
     "id": "page.admin.system",
-    "title": "System",
+    "title": "/admin/system",
     "namespace": "admin.system",
     "viewuri": "/admin/system",
     "category": "admin",
     "preview": "/admin/system",
-    "controller": "user",
+    "controller": "admin",
     "layout": "layout.aside",
     "ng.build": {
         "id": "page.admin.system",

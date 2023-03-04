@@ -1,12 +1,12 @@
 {
     "mode": "page",
     "id": "page.admin.packages",
-    "title": "Packages",
+    "title": "/admin/packages",
     "namespace": "admin.packages",
     "viewuri": "/admin/packages",
     "category": "admin",
     "preview": "/admin/packages",
-    "controller": "user",
+    "controller": "admin",
     "layout": "layout.aside",
     "ng.build": {
         "id": "page.admin.packages",

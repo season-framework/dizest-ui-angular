@@ -1,4 +1,4 @@
-const INDEX_PAGE = "hub/dashboard";
+const INDEX_PAGE = "workflow";
 
 import { URLPattern } from "urlpattern-polyfill";
 import { NgModule } from '@angular/core';

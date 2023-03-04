@@ -1,5 +1,6 @@
-import { OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
-import { Service } from '@wiz/libs/season/service';
+import { OnInit, OnDestroy } from '@angular/core';
+import { Service } from '@wiz/libs/portal/season/service';
+import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 
 import toastr from 'toastr';
 toastr.options = {
@@ -20,11 +21,11 @@ toastr.options = {
     "hideMethod": "fadeOut"
 };
 
-@directives({
-    DropDirective: '@wiz/libs/directives/drop.directive'
-})
 export class Component implements OnInit, OnDestroy {
-    public list: any = [];
+    public loaded: boolean = false;
+    public interval_id: number = 0;
+    public created: any = null;
+    public selected: any = {};
 
     public search: any = {
         page: 1,
@@ -36,34 +37,27 @@ export class Component implements OnInit, OnDestroy {
         start: -1,
     };
 
-    public created: any = null;
-    public selected: any = {};
-    public selectedStyle: any = { opacity: 1 };
-
     constructor(
         public service: Service,
-        public ref: ChangeDetectorRef
+        public dizest: Dizest
     ) { }
-
-    public interval_id: number = 0;
 
     public async ngOnInit() {
         await this.service.init();
-        await this.service.auth.allow(true, '/auth/login');
+        await this.service.auth.allow(true, "/access");
         await this.load();
 
         this.interval_id = setInterval(async () => {
-            let { code, data } = await wiz.call("status", { fids: this.list.map(v => v.id).join(",") });
+            let { code, data } = await wiz.call("status");
             if (code != 200) return;
-
             let changecounter = 0;
             for (let i = 0; i < this.list.length; i++) {
+                this.list[i].status = null;
                 if (data[this.list[i].id]) {
                     this.list[i].status = data[this.list[i].id];
                     changecounter++;
                 }
             }
-
             if (changecounter > 0) await this.service.render();
         }, 1000);
     }
@@ -74,6 +68,8 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async load(page: number = 1) {
+        this.loaded = false;
+        await this.service.render();
         let { code, data } = await wiz.call("list", { page: page, text: this.search.text });
         if (code != 200) return;
         let { rows, lastpage } = data;
@@ -85,6 +81,7 @@ export class Component implements OnInit, OnDestroy {
         this.pagenation.start = startpage;
         this.pagenation.end = lastpage;
 
+        this.loaded = true;
         await this.service.render();
     }
 
@@ -92,60 +89,11 @@ export class Component implements OnInit, OnDestroy {
         await this.load(page);
     }
 
-    public async close() {
-        await this.select();
-    }
-
-    public async select(item: any = {}) {
-        this.selected = item;
-        if (this.selected.id) this.selectedStyle = { opacity: 0.3 };
-        else this.selectedStyle = { opacity: 1 };
-        await this.service.render();
-    }
-
-    public async delete(item) {
-        let res = await this.service.alert.show({ message: "Do you really want to remove workflow? What you've done cannot be undone." });
-        if (!res) return;
-        await this.service.loading.show();
-        try {
-            await wiz.call('delete', { workflow_id: item.id });
-        } catch (e) {
-        }
-        await this.load(this.search.page);
-        await this.select();
-        await this.service.loading.hide();
-    }
-
-    public async clone(wp) {
-        let id = wp.id;
-        let { data } = await wiz.call("get", { id });
-        await this.create(data);
-    }
-
     public async import() {
         let data = await this.service.file.read({ type: 'json', accept: '.dwp' });
         if (!data.flow || !data.apps)
             return toastr.error('Not supported file format');
         await this.create(data);
-    }
-
-    public drop: any = () => {
-        let scope = this;
-        return async (event) => {
-            let reader = new FileReader();
-            reader.onload = async (readerEvent) => {
-                try {
-                    let data = JSON.parse(readerEvent.target.result);
-                    if (!data.flow || !data.apps)
-                        return toastr.error('Not supported file format');
-                    await scope.create(data);
-                } catch (e) {
-                    toastr.error('Not supported file format');
-                }
-            };
-
-            reader.readAsText(event.dataTransfer.files[0]);
-        }
     }
 
     public async create(reference: any = {}) {
@@ -165,6 +113,11 @@ export class Component implements OnInit, OnDestroy {
         await this.service.render();
     }
 
+    public async cancel() {
+        this.created = null;
+        await this.service.render();
+    }
+
     public async requestCreate(created: any) {
         let { code, data } = await wiz.call("create", { data: JSON.stringify(created) });
         if (code != 200)
@@ -172,12 +125,55 @@ export class Component implements OnInit, OnDestroy {
         this.created = null;
         this.search.text = '';
         await this.load(1);
+    }
+
+    public drop() {
+        let scope = this;
+        return async (event: any) => {
+            let reader = new FileReader();
+            reader.onload = async (readerEvent) => {
+                try {
+                    let data = JSON.parse(readerEvent.target.result);
+                    if (!data.flow || !data.apps)
+                        return toastr.error('Not supported file format');
+                    await scope.create(data);
+                } catch (e) {
+                    toastr.error('Not supported file format');
+                }
+            };
+
+            reader.readAsText(event.dataTransfer.files[0]);
+        }
+    }
+
+    public async select(item: any = {}) {
+        this.selected = item;
+        await this.service.render();
+    }
+
+    public async close() {
         await this.select();
     }
 
-    public async cancel() {
-        this.created = null;
-        await this.service.render();
+    public async delete(item) {
+        let res = await this.service.alert.show({ message: "Do you really want to remove workflow? What you've done cannot be undone." });
+        if (!res) return;
+        await this.service.loading.show();
+        try {
+            await wiz.call('delete', { workflow_id: item.id });
+        } catch (e) {
+        }
+        await this.load(this.search.page);
+        await this.select();
+        await this.service.loading.hide();
     }
+
+    public async clone(wp: any) {
+        let id = wp.id;
+        let { data } = await wiz.call("get", { id });
+        await this.create(data);
+    }
+
+
 
 }

@@ -1,0 +1,26 @@
+.workflow-layout
+    .workflow-navigator
+        .navigator-toggle((click)="toggleNavigator()", [ngClass]="toggle.navigator ? 'toggle-show' : 'toggle-hide'")
+            i.fa-solid.fa-caret-left(*ngIf="toggle.navigator")
+            i.fa-solid.fa-caret-right(*ngIf="!toggle.navigator")
+        
+        ng-container(*ngIf="toggle.navigator")
+            wiz-portal-dizest-we-navigator
+    
+    .workflow-drawflow
+        wiz-portal-dizest-we-drawflow
+
+    .workflow-action-content(*ngIf="toggle.action")
+        ng-container(*ngIf="toggle.action == 'info'")
+            wiz-portal-dizest-we-action-info
+        ng-container(*ngIf="toggle.action == 'codeflow'")
+            wiz-portal-dizest-we-action-codeflow
+        ng-container(*ngIf="toggle.action == 'timer'")
+            wiz-portal-dizest-we-action-timer
+        ng-container(*ngIf="toggle.action == 'uimode'")
+            wiz-portal-dizest-we-action-uimode
+
+    .workflow-action-menu
+        wiz-portal-dizest-we-action-menu
+    
+ng-keyboard-shortcuts([shortcuts]="shortcuts")
