@@ -21,6 +21,9 @@ export class Component implements OnInit, OnDestroy {
         await this.service.auth.allow(true, "/access");
         this.loaded = true;
         await this.service.render();
+
+        let title = this.workflow.spec().title;
+        document.title = title;
     }
 
 }

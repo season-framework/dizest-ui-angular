@@ -174,6 +174,4 @@ export class Component implements OnInit, OnDestroy {
         await this.create(data);
     }
 
-
-
 }

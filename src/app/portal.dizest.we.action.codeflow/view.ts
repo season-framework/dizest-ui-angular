@@ -105,6 +105,7 @@ export class Component implements OnInit, OnDestroy {
 
                 let height = ref * LINE_HEIGHT;
                 if (height < 105) height = 105;
+
                 el.style.height = height + 'px';
                 editor.layout();
 
@@ -120,11 +121,12 @@ export class Component implements OnInit, OnDestroy {
 
         flow.monaco_auto_height = monaco_auto_height;
         monaco_auto_height(true)();
-        editor.onDidChangeModelDecorations(monaco_auto_height());
+        editor.getModel().onDidChangeContent(monaco_auto_height());
     }
 
     public async select(flow: any) {
-        if (flow) {
+        if (flow && !this.selected(flow)) {
+            console.log("select");
             await this.workflow.flow.select(flow.id());
             if (flow.monaco_auto_height)
                 flow.monaco_auto_height();

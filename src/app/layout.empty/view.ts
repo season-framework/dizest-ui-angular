@@ -6,5 +6,6 @@ export class Component implements OnInit {
 
     public async ngOnInit() {
         await this.service.init();
+        document.title = "DIZEST";
     }
 }

@@ -18,7 +18,7 @@
             input.form-control(style="width: 240px;", [(ngModel)]="text", (keyup.enter)="install()", placeholder="Package name")
         
         .col-auto.actions.area-round.d-desktop
-            a.btn.btn-blue(ng-click="install()")
+            a.btn.btn-blue((click)="install()")
                 span Install
 
     .wiz-content-body

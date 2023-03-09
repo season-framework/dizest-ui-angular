@@ -29,7 +29,7 @@ class dConfig:
         return f"/home/{user}"
 
     def kernel(self):
-        fs = wiz.workspace().fs("config", "dizest")
+        fs = self.configfs()
         kernel = fs.read.json("kernel.json", [])
         if len(kernel) == 0:
             kernel.append(dict(name="base"))
@@ -37,12 +37,23 @@ class dConfig:
 
     def dsocket(self):
         branch = wiz.branch()
+
         host = urllib.parse.urlparse(wiz.request.request().base_url)
         host = f"{host.scheme}://{host.netloc}"
+
+        fs = self.configfs()
+        config = fs.read.json("config.json", dict())
+        if 'dsocket_host' in config:
+            host = config['dsocket_host']
+
         dsocket_api = f"{host}/wiz/app/{branch}/portal.dizest.workflow.ui"
         return dsocket_api
 
     def cron_host(self):
+        fs = self.configfs()
+        config = fs.read.json("config.json", dict())
+        if 'cron_host' in config:
+            return config['cron_host']
         return "http://127.0.0.1:3000"
 
     def getWorkflowSpec(self, workflow_id, zone=None):
@@ -55,5 +66,15 @@ class dConfig:
         db = wiz.model("portal/season/orm").use("workflow")
         user = self.user()
         db.update(data, id=workflow_id, user_id=user)
-        
+    
+    def configfs(self):
+        return wiz.workspace().fs(wiz.server.path.root, "config", "dizest")
+    
+    def databaseConfig(self):
+        fs = self.configfs()
+        database = fs.read.json("database.json", dict(type="sqlite", path="dizest.db"))
+        if 'port' in database:
+            database['port'] = int(database['port'])
+        return database
+
 Model = dConfig()
