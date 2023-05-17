@@ -27,9 +27,9 @@
             i.fa-solid.fa-code
         .action-btn.d-desktop((click)='uimode()')
             i.fa-solid.fa-display
-        .action-btn.action-btn-play((click)='run()', *ngIf="['idle', 'error'].includes(status())")
+        .action-btn.action-btn-play((click)='run()', *ngIf="['idle', 'error', 'ready'].includes(status())")
             i.fa-solid.fa-play
-        .action-btn.action-btn-stop((click)='stop()', *ngIf="!['idle', 'error'].includes(status())")
+        .action-btn.action-btn-stop((click)='stop()', *ngIf="!['idle', 'error', 'ready'].includes(status())")
             i.fa-solid.fa-stop
     
     .progress.progress-sm(*ngIf="['running'].includes(status())")
