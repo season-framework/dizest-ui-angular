@@ -1,5 +1,5 @@
 {
-    "mode": "component",
+    "mode": "portal",
     "id": "loading.hexa",
     "title": "\ud5e5\uc0ac \ub85c\ub529",
     "namespace": "loading.hexa",
@@ -7,12 +7,12 @@
     "category": "season",
     "controller": "",
     "ng.build": {
-        "id": "component.loading.hexa",
-        "name": "ComponentLoadingHexaComponent",
-        "path": "./component.loading.hexa/component.loading.hexa.component"
+        "id": "portal.season.loading.hexa",
+        "name": "PortalSeasonLoadingHexaComponent",
+        "path": "./portal.season.loading.hexa/portal.season.loading.hexa.component"
     },
     "ng": {
-        "selector": "wiz-component-loading-hexa",
+        "selector": "wiz-portal-season-loading-hexa",
         "inputs": [],
         "outputs": []
     },

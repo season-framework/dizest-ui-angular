@@ -1,5 +1,5 @@
 {
-    "mode": "component",
+    "mode": "portal",
     "id": "we.drawflow",
     "title": "Drawflow",
     "namespace": "we.drawflow",
@@ -7,15 +7,13 @@
     "category": "dizest",
     "controller": "",
     "ng.build": {
-        "id": "component.dizest.drawflow",
-        "name": "ComponentDizestDrawflowComponent",
-        "path": "./component.dizest.drawflow/component.dizest.drawflow.component"
+        "id": "portal.dizest.we.drawflow",
+        "name": "PortalDizestWeDrawflowComponent",
+        "path": "./portal.dizest.we.drawflow/portal.dizest.we.drawflow.component"
     },
     "ng": {
-        "selector": "wiz-component-dizest-drawflow",
-        "inputs": [
-            "workflow"
-        ],
+        "selector": "wiz-portal-dizest-we-drawflow",
+        "inputs": [],
         "outputs": []
     },
     "template": "wiz-portal-dizest-we-drawflow()"

@@ -1,5 +1,5 @@
 {
-    "mode": "component",
+    "mode": "portal",
     "id": "alert",
     "title": "\uc54c\ub9bc \ud31d\uc5c5",
     "namespace": "alert",
@@ -7,12 +7,12 @@
     "category": "season",
     "controller": "",
     "ng.build": {
-        "id": "component.modal.alert",
-        "name": "ComponentModalAlertComponent",
-        "path": "./component.modal.alert/component.modal.alert.component"
+        "id": "portal.season.alert",
+        "name": "PortalSeasonAlertComponent",
+        "path": "./portal.season.alert/portal.season.alert.component"
     },
     "ng": {
-        "selector": "wiz-component-modal-alert",
+        "selector": "wiz-portal-season-alert",
         "inputs": [
             "model"
         ],

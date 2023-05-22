@@ -6,5 +6,15 @@
     "viewuri": "",
     "category": "dizest",
     "controller": "",
-    "template": "wiz-portal-dizest-we-apps()"
+    "template": "wiz-portal-dizest-we-apps()",
+    "ng.build": {
+        "id": "portal.dizest.we.apps",
+        "name": "PortalDizestWeAppsComponent",
+        "path": "./portal.dizest.we.apps/portal.dizest.we.apps.component"
+    },
+    "ng": {
+        "selector": "wiz-portal-dizest-we-apps",
+        "inputs": [],
+        "outputs": []
+    }
 }
