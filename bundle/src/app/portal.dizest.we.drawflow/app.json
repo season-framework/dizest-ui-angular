@@ -17,5 +17,5 @@
         "outputs": []
     },
     "template": "wiz-portal-dizest-we-drawflow()",
-    "path": "portal/dizest/app/we.drawflow/app.json"
+    "path": "portal/dizest/widget/we.drawflow/app.json"
 }

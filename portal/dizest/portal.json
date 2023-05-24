@@ -10,5 +10,6 @@
     "use_model": true,
     "use_controller": true,
     "use_assets": true,
-    "use_styles": true
+    "use_styles": true,
+    "use_widget": true
 }
