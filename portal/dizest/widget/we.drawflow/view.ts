@@ -1,7 +1,7 @@
 import { OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
+import { Kernel } from '@wiz/libs/portal/dizest/kernel';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 import { DrawflowEditor } from '@wiz/libs/portal/dizest/drawflow';
 import DrawflowNodeComponent from '@wiz/app/portal.dizest.we.drawflow.node';
@@ -17,7 +17,7 @@ export class Component implements OnInit, OnDestroy {
     constructor(
         public service: Service,
         public workflow: Workflow,
-        public dizest: Dizest,
+        public kernel: Kernel,
         public drawflow: DrawflowEditor,
         public viewContainerRef: ViewContainerRef
     ) { }
@@ -84,7 +84,7 @@ export class Component implements OnInit, OnDestroy {
     public async server_stop() {
         let res = await this.service.alert.show({ title: 'Stop Server', message: 'If you shut down the server, all workflows will be terminated.', action: 'Shutdown', cancel: 'Cancel' });
         if (!res) return;
-        await this.dizest.server.stop();
+        await this.kernel.server.stop();
     }
 
     public async stop(action: string = 'Stop') {

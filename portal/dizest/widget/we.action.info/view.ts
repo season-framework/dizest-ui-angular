@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 import showdown from 'showdown';
 import $ from 'jquery';
@@ -9,8 +8,7 @@ export class Component implements OnInit, OnDestroy {
 
     constructor(
         public service: Service,
-        public workflow: Workflow,
-        public dizest: Dizest
+        public workflow: Workflow
     ) { }
 
     public async ngOnInit() {

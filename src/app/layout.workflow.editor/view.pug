@@ -1,9 +1,9 @@
-.dizest-workflow-layout(*ngIf="dizest.status != 'stop'")
+.dizest-workflow-layout(*ngIf="kernel.status != 'stop'")
     router-outlet
 
 wiz-portal-season-alert
 
-.block-page(*ngIf="dizest.status == 'stop'")
+.block-page(*ngIf="kernel.status == 'stop'")
     wiz-component-dizest-kernel
 
 .block-page(*ngIf="service.auth.status === null || service.loading.isshow")

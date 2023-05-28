@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 
 export class Component implements OnInit, OnDestroy {
@@ -9,8 +8,7 @@ export class Component implements OnInit, OnDestroy {
 
     constructor(
         public service: Service,
-        public workflow: Workflow,
-        public dizest: Dizest
+        public workflow: Workflow
     ) {
         this.alert = this.service.alert.localize({
             title: "Are you sure?",
@@ -86,8 +84,9 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async import() {
-        let dwa = await this.service.file.read({ type: 'json', accept: '.dwa' });
-        await this.workflow.app.create(dwa);
+        let dwas = await this.service.file.read({ type: 'json', accept: '.dwa', multiple: true });
+        for (let i = 0; i < dwas.length; i++)
+            await this.workflow.app.create(dwas[i]);
         await this.service.render();
     }
 

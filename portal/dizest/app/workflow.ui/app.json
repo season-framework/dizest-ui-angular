@@ -6,7 +6,7 @@
     "viewuri": "",
     "category": "workflow",
     "controller": "",
-    "template": "wiz-portal-dizest-workflow-ui([zone]=\"\", [workflow_id]=\"\")",
+    "template": "wiz-portal-dizest-workflow-ui([kernel_id]=\"\", [namespace]=\"\", [workflow_id]=\"\")",
     "ng.build": {
         "id": "portal.dizest.workflow.ui",
         "name": "PortalDizestWorkflowUiComponent",
@@ -15,9 +15,11 @@
     "ng": {
         "selector": "wiz-portal-dizest-workflow-ui",
         "inputs": [
-            "zone",
+            "kernel_id",
+            "namespace",
             "workflow_id"
         ],
         "outputs": []
-    }
+    },
+    "type": "app"
 }

@@ -1,11 +1,11 @@
 import { OnInit } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
+import { Kernel } from '@wiz/libs/portal/dizest/kernel';
 
 export class Component implements OnInit {
     constructor(
         public service: Service,
-        public dizest: Dizest
+        public kernel: Kernel
     ) { }
 
     public async ngOnInit() {
@@ -21,6 +21,6 @@ export class Component implements OnInit {
     }
 
     public async stop() {
-        await this.dizest.server.stop();
+        await this.kernel.server.stop();
     }
 }

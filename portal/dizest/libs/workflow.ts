@@ -23,7 +23,7 @@ export class Workflow {
 
     constructor() { }
 
-    public async init(service: any, zone: string, workflow_id: string) {
+    public async init(service: any, kernel_id: any, namespace: any, workflow_id: string) {
         this.service = service;
         this.data = null;
         this.registed = {};
@@ -35,8 +35,11 @@ export class Workflow {
 
         await this.service.render();
         await this.service.loading.show();
-        this.zone = zone;
+
+        this.namespace = namespace;
+        this.kernel_id = kernel_id;
         this.workflow_id = workflow_id;
+
         await this.load();
         await this.service.loading.hide();
     }
@@ -44,8 +47,8 @@ export class Workflow {
     public async request(path: string, data: any = {}) {
         let request = new Request();
         let workflow_id = this.workflow_id;
-        let zone = this.zone;
-        data.zone = zone;
+        if (this.kernel_id) data.kernel_id = this.kernel_id;
+        data.namespace = this.namespace;
         data.workflow_id = workflow_id;
         return await request.post(path, data);
     }

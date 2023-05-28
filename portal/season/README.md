@@ -145,7 +145,7 @@ def saml_acs(userinfo):
 # default_logout = "/auth/saml/logout"
 ```
 
-### (optional) config/smtp/<template>.html
+### (optional) config/smtp/`<template>`.html
 
 - SMTP 발송 템플릿 설정
 - config/smtp 폴더를 생성한 후 html 파일 생성 (ex. default.html)

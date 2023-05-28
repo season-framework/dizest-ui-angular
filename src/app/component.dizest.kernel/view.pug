@@ -10,7 +10,7 @@
                     span(style="width: 120px; overflow: hidden;", *ngIf="selected") {{ selected.name }}
                 
                 .dropdown-menu.dropdown-menu-dark([class.show]="isOpen")
-                    .dropdown-item(*ngFor="let spec of dizest.kernels", (click)="select(spec)") {{spec.name}}
+                    .dropdown-item(*ngFor="let spec of kernel.list", (click)="select(spec)") {{spec.name}}
             .mr-2
             a.btn.btn-blue((click)="start()")
                 i.fa-solid.fa-play.mr-2

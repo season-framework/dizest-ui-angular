@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 import $ from 'jquery';
 
@@ -8,8 +7,7 @@ export class Component implements OnInit, OnDestroy {
 
     constructor(
         public service: Service,
-        public workflow: Workflow,
-        public dizest: Dizest
+        public workflow: Workflow
     ) { }
 
     public async ngOnInit() {
@@ -84,7 +82,7 @@ export class Component implements OnInit, OnDestroy {
 
         let activated = false;
 
-        let monaco_auto_height = (forced: boolean = false) => () => {
+        let monaco_auto_height = (forced: boolean = false) => async () => {
             if (activated) return;
             if (!forced)
                 if (flow.ctrl.selected)
@@ -92,30 +90,55 @@ export class Component implements OnInit, OnDestroy {
                         return;
 
             activated = true;
-            const LINE_HEIGHT = 21;
+
             const el = editor.getDomNode();
             if (!el) return;
-            let pre_line = -1;
-            for (let i = 0; i < 100; i++) {
-                let real_line = $(el).find('.view-lines .view-line').length;
-                let ref = real_line + 5;
-                if (real_line == pre_line) {
-                    ref = real_line + 1;
-                }
 
-                let height = ref * LINE_HEIGHT;
-                if (height < 105) height = 105;
-
-                el.style.height = height + 'px';
-                editor.layout();
-
-                if (real_line == pre_line) {
-                    break;
-                }
-
-                pre_line = real_line;
+            let getLines = () => {
+                return $(el).find('.view-lines .view-line');
             }
 
+            let lineUtil = async (margin: number = 0) => {
+                let lines = getLines();
+                if (lines.length == 0) return;
+                let last_line = lines[lines.length - 1];
+                let top = last_line.style.top.replace("px", "") * 1;
+                let height = top + last_line.style.height.replace("px", "") * 1;
+
+                for (let i = 0; i < lines.length; i++) {
+                    let _top = lines[i].style.top.replace("px", "") * 1;
+                    let _height = _top + lines[i].style.height.replace("px", "") * 1;
+                    if (_height > height) height = _height;
+                }
+
+                height = height + margin;
+                if (height < 105) height = 105;
+                el.style.height = height + 'px';
+                editor.layout();
+            }
+
+            let lineEstimate = async () => {
+                let pre_line = -1;
+                for (let i = 0; i < 100; i++) {
+                    await this.service.render();
+                    let real_line = getLines().length;
+                    if (real_line == pre_line) {
+                        await lineUtil();
+                        return;
+                    }
+
+                    await lineUtil(630);
+                    pre_line = real_line;
+                }
+            }
+
+            let lines = getLines();
+            if (lines.length == 0) {
+                el.style.height = '105px';
+                editor.layout();
+            }
+
+            await lineEstimate();
             activated = false;
         }
 
@@ -126,7 +149,6 @@ export class Component implements OnInit, OnDestroy {
 
     public async select(flow: any) {
         if (flow && !this.selected(flow)) {
-            console.log("select");
             await this.workflow.flow.select(flow.id());
             if (flow.monaco_auto_height)
                 flow.monaco_auto_height();

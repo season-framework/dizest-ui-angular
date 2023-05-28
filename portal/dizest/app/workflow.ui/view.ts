@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy, Input } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 
 @dependencies({
@@ -11,9 +10,11 @@ import { Workflow } from '@wiz/libs/portal/dizest/workflow';
     DropDirective: '@wiz/libs/portal/dizest/external/drop.directive'
 })
 export class Component implements OnInit, OnDestroy {
-    @Input() zone: string = 'dizest';
+    @Input() kernel_id: any = null;
+    @Input() namespace: any = null;
     @Input() workflow_id: any;
 
+    public loaded: boolean = false;
     public socket: any;
     public shortcuts: any = [];
 
@@ -24,12 +25,23 @@ export class Component implements OnInit, OnDestroy {
 
     constructor(
         public service: Service,
-        public workflow: Workflow,
-        public dizest: Dizest
+        public workflow: Workflow
     ) { }
 
     public async ngOnInit() {
+        this.loaded = false;
         await this.service.init();
+
+        if (!this.namespace) this.namespace = this.workflow_id;
+        await this.workflow.init(this.service, this.kernel_id, this.namespace, this.workflow_id);
+        try {
+            let title = this.workflow.spec().title;
+            document.title = title;
+        } catch (e) {
+        }
+        this.loaded = true;
+        await this.service.render();
+
         await this.bindSocket();
         await this.bindEvent();
         this.workflow.preventBack();
@@ -119,7 +131,7 @@ export class Component implements OnInit, OnDestroy {
                 location.reload();
                 return;
             }
-            this.socket.emit("join", { zone: this.zone, workflow_id: this.workflow_id });
+            this.socket.emit("join", { kernel_id: this.kernel_id, namespace: this.workflow.namespace, workflow_id: this.workflow_id });
         });
 
         this.socket.on("disconnect", async () => {

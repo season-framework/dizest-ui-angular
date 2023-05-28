@@ -1,4 +1,4 @@
-.workflow-layout
+.workflow-layout(*ngIf="loaded")
     .workflow-navigator
         .navigator-toggle((click)="toggleNavigator()", [ngClass]="toggle.navigator ? 'toggle-show' : 'toggle-hide'")
             i.fa-solid.fa-caret-left(*ngIf="toggle.navigator")
@@ -23,4 +23,4 @@
     .workflow-action-menu
         wiz-portal-dizest-we-action-menu
     
-ng-keyboard-shortcuts([shortcuts]="shortcuts")
+    ng-keyboard-shortcuts([shortcuts]="shortcuts")

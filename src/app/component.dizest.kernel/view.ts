@@ -1,21 +1,21 @@
 import { OnInit } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
+import { Kernel } from '@wiz/libs/portal/dizest/kernel';
 
 export class Component implements OnInit {
     public isOpen: boolean = false;
-    public kernel: string;
+    public spec: string;
     public selected: any = null;
 
     constructor(
         public service: Service,
-        public dizest: Dizest
+        public kernel: Kernel
     ) { }
 
     public async ngOnInit() {
         await this.service.init();
-        if (this.dizest.kernels.length > 0)
-            await this.select(this.dizest.kernels[0]);
+        if (this.kernel.list.length > 0)
+            await this.select(this.kernel.list[0]);
     }
 
     public async toggle(stat: any = null) {
@@ -28,13 +28,13 @@ export class Component implements OnInit {
     }
 
     public async select(spec: any) {
-        this.kernel = spec.name;
+        this.spec = spec.name;
         this.selected = spec;
         await this.toggle(false);
     }
 
     public async start() {
-        await this.dizest.server.start(this.selected);
+        await this.kernel.server.start(this.selected);
     }
 
 }

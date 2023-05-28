@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 
 import toastr from 'toastr';
 toastr.options = {
@@ -26,6 +25,9 @@ export class Component implements OnInit, OnDestroy {
     public interval_id: number = 0;
     public created: any = null;
     public selected: any = {};
+    public status: string = 'entire';
+    public category: string = '';
+    public categories: any = [];
 
     public search: any = {
         page: 1,
@@ -38,8 +40,7 @@ export class Component implements OnInit, OnDestroy {
     };
 
     constructor(
-        public service: Service,
-        public dizest: Dizest
+        public service: Service
     ) { }
 
     public async ngOnInit() {
@@ -67,10 +68,20 @@ export class Component implements OnInit, OnDestroy {
             clearInterval(this.interval_id);
     }
 
-    public async load(page: number = 1) {
+    public async load(page: number = 1, status: any = 'entire') {
+        this.status = status;
         this.loaded = false;
         await this.service.render();
-        let { code, data } = await wiz.call("list", { page: page, text: this.search.text });
+
+        let res = await wiz.call("categories");
+        if (res.code == 200)
+            this.categories = res.data;
+
+        let category = this.category;
+        let pd = { page: page, text: this.search.text, status: status };
+        if (category) pd.category = category;
+
+        let { code, data } = await wiz.call("list", pd);
         if (code != 200) return;
         let { rows, lastpage } = data;
         const startpage = Math.floor((page - 1) / 10) * 10 + 1;
@@ -97,7 +108,7 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async create(reference: any = {}) {
-        let data: any = { apps: {}, description: '', featured: '', flow: {}, logo: '', title: '', version: '', visibility: 'private', extra: {} }
+        let data: any = { apps: {}, description: '', featured: '', flow: {}, logo: '', title: '', version: '', visibility: 'private', extra: {}, favorite: '0', category: '' }
         for (let key in reference)
             data[key] = reference[key];
 
@@ -146,7 +157,15 @@ export class Component implements OnInit, OnDestroy {
         }
     }
 
+    public async favorite(item: any) {
+        item.favorite = item.favorite == '1' ? '0' : '1';
+        const { code } = await wiz.call("favorite", item);
+        await this.service.render();
+    }
+
     public async select(item: any = {}) {
+        this.selected = {};
+        await this.service.render();
         this.selected = item;
         await this.service.render();
     }

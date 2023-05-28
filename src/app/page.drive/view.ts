@@ -1,12 +1,10 @@
 import { OnInit } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 
 export class Component implements OnInit {
 
     constructor(
-        public service: Service,
-        public dizest: Dizest
+        public service: Service
     ) { }
 
     public async ngOnInit() {

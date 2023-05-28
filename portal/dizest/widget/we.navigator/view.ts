@@ -1,13 +1,13 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
+import { Kernel } from '@wiz/libs/portal/dizest/kernel';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 
 export class Component implements OnInit, OnDestroy {
     constructor(
         public service: Service,
         public workflow: Workflow,
-        public dizest: Dizest
+        public kernel: Kernel
     ) { }
 
     public activeTab: string = 'apps';
@@ -37,6 +37,6 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async stop() {
-        await this.dizest.server.stop();
+        await this.kernel.server.stop();
     }
 }

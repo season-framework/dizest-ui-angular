@@ -23,6 +23,23 @@
     .wiz-content-body
         .content-main([class.m-hidden]="selected.id || created")
             .container(style="max-width: 1024px;")
+                .d-flex.mb-4
+                    .d-flex(style="align-items: center;")
+                        h3.m-0.p-0.mr-2 Category:
+                    .d-flex.area-round(style="align-items: center;")
+                        select.form-select([(ngModel)]="category", style="width: 140px;", (change)="load(1)")
+                            option(value='') All
+                            ng-container(*ngFor="let category of categories")
+                                option([value]='category') {{category}}
+                    .ml-auto
+                    .btn-group.area-round
+                        a.btn([ngClass]="{'btn-blue': status == 'entire'}", (click)="load(1, 'entire')")
+                            span Entire
+                        a.btn([ngClass]="{'btn-blue': status == 'active'}", (click)="load(1, 'active')")
+                            span Active
+                        a.btn([ngClass]="{'btn-blue': status == 'favorite'}", (click)="load(1, 'favorite')")
+                            span Favorite
+
                 .card(*ngIf="!loaded")
                     ul.list-group.list-group-flush.placeholder-glow
                         li.list-group-item
@@ -90,9 +107,13 @@
                                             span.ml-2.badge.bg-red(*ngIf="item.status == 'pending'")
                                         td 
                                             div
-                                                span(routerLink="/workflow/{{item.id}}") {{item.title}}
+                                                a.title(routerLink="/workflow/{{item.id}}") {{item.title}}
                                             small.text-muted {{item.id}}
                                         td.w-1.text-muted.d-desktop {{item.updated}}
+                                        td.w-1.text-muted
+                                            span((click)="favorite(item)")
+                                                i.fa-solid.fa-star.text-yellow(*ngIf="item.favorite == '1'")
+                                                i.fa-regular.fa-star(*ngIf="item.favorite != '1'")
 
         .content-info(*ngIf="selected.id && !created")
             wiz-component-workflow-info(

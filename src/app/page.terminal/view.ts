@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { SearchAddon } from 'xterm-addon-search';
@@ -13,8 +12,7 @@ export class Component implements OnInit, OnDestroy {
     public socket: any;
 
     constructor(
-        public service: Service,
-        public dizest: Dizest
+        public service: Service
     ) { }
 
     public async ngOnInit() {

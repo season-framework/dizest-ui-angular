@@ -1,6 +1,6 @@
 import { OnInit, Input } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
+import { Kernel } from '@wiz/libs/portal/dizest/kernel';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 
 import { FlatTreeControl } from '@angular/cdk/tree';
@@ -17,7 +17,7 @@ export class Component implements OnInit {
     constructor(
         public service: Service,
         public workflow: Workflow,
-        public dizest: Dizest
+        public kernel: Kernel
     ) {
         this.alert = this.service.alert.localize({
             title: "Are you sure?",
@@ -117,7 +117,7 @@ export class Component implements OnInit {
     public async delete(node: FileNode) {
         if (node.type != "new.folder" && node.type != "new.file") {
             let res = await this.alert.show({
-                title: "Are you sure?",
+                title: `Delete '${node.name}'?`,
                 message: "Do you really want to remove files? What you've done cannot be undone."
             });
             if (!res) return;

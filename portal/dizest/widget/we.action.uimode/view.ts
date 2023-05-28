@@ -1,6 +1,5 @@
 import { OnInit, OnDestroy } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 import { Workflow } from '@wiz/libs/portal/dizest/workflow';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
@@ -41,7 +40,6 @@ export class Component implements OnInit, OnDestroy {
     constructor(
         public service: Service,
         public workflow: Workflow,
-        public dizest: Dizest,
         public sanitizer: DomSanitizer
     ) { }
 
@@ -66,7 +64,7 @@ export class Component implements OnInit, OnDestroy {
 
         this.selected = flow;
         this.data = flow.app().spec();
-        this.url = this.sanitizer.bypassSecurityTrustResourceUrl(wiz.url(`render/${this.workflow.zone}/${this.workflow.workflow_id}/${this.selected.id()}`));
+        this.url = this.sanitizer.bypassSecurityTrustResourceUrl(wiz.url(`render/${this.workflow.namespace()}/${this.workflow.workflow_id}/${this.selected.id()}`));
         await this.service.render();
     }
 
