@@ -43,7 +43,6 @@ def acl(wiz, zone):
 
 def admin_access(wiz, zone):
     user = user_id(wiz, zone)
-    print(user, zone)
     return user == 'root'
 
 def cron_access(wiz, zone):
