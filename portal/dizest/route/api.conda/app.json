@@ -1,0 +1,8 @@
+{
+    "id": "api.conda",
+    "title": "/api/dizest/conda/<path:path>",
+    "route": "/api/dizest/conda/<path:path>",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "base"
+}

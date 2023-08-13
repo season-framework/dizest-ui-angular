@@ -83,12 +83,6 @@ export class FlowInstance {
             this.ctrl.workflow.service.render();
         }
         let txt = flowdata.log.replace(/\n/gim, '<br>');
-
-        // if (txt.length > 30000) {
-        //     flowdata.log = '<div class="text-red">Output is too long</div>';
-        //     return '<div class="text-red">Output is too long</div>';
-        // }
-
         return txt;
     }
 
@@ -130,11 +124,11 @@ export class FlowInstance {
             await this.ctrl.workflow.service.alert.show({ title: 'Error', message: 'An error occurred while saving', action: 'Close', cancel: null });
             return;
         }
-        await this.ctrl.workflow.request('/dizest/flow/run', { flow_id: this.id() });
+        await this.ctrl.workflow.request('flow/run', { flow_id: this.id() });
     }
 
     public async stop() {
-        await this.ctrl.workflow.request('/dizest/flow/stop', { flow_id: this.id() });
+        await this.ctrl.workflow.request('flow/stop', { flow_id: this.id() });
     }
 
     public async toggle() {

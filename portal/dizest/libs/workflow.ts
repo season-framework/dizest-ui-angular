@@ -1,128 +1,44 @@
-import { Injectable } from '@angular/core';
-import Request from './request';
+import Dizest from './dizest';
 import App from './workflow/app';
 import Flow from './workflow/flow';
 import Codeflow from './workflow/codeflow';
-import Socket from './workflow/socket';
 
-@Injectable({ providedIn: 'root' })
 export class Workflow {
+    constructor(public dizest: Dizest, public id: any) {
+        this.service = dizest.scope.service;
+    }
+
     public service: any;
-    public zone: any;
-    public workflow_id: any;
 
     public app: App;
     public flow: Flow;
     public codeflow: Codeflow;
-    public socket: Socket;
-    public drawflow: any = null;
+    public drawflow: any;
 
-    public data: any = null;
-    public registed: any = {};
-    public status: string = 'idle';
+    public data: any = {};
+    public status: string = 'stop';
 
-    constructor() { }
+    public async init(drawflow: any) {
+        this.status = 'stop';
+        let res = await this.load();
+        if (!res) return false;
 
-    public async init(service: any, kernel_id: any, namespace: any, workflow_id: string) {
-        this.service = service;
-        this.data = null;
-        this.registed = {};
         this.app = new App(this);
         this.flow = new Flow(this);
         this.codeflow = new Codeflow(this);
-        this.socket = new Socket(this);
-        this.status = 'idle';
 
-        await this.service.render();
-        await this.service.loading.show();
+        if (drawflow)
+            await this.initDrawflow(drawflow);
 
-        this.namespace = namespace;
-        this.kernel_id = kernel_id;
-        this.workflow_id = workflow_id;
-
-        await this.load();
-        await this.service.loading.hide();
-    }
-
-    public async request(path: string, data: any = {}) {
-        let request = new Request();
-        let workflow_id = this.workflow_id;
-        if (this.kernel_id) data.kernel_id = this.kernel_id;
-        data.namespace = this.namespace;
-        data.workflow_id = workflow_id;
-        return await request.post(path, data);
-    }
-
-    public async load() {
-        let { code, data } = await this.request('/dizest/workflow/info');
-        if (code == 200) {
-            this.data = data.data;
-            if (!data.status) data.status = 'idle';
-            this.status = data.status;
-            await this.service.render();
-            return;
-        }
-
-        await this.service.href("/");
-    }
-
-    public async update() {
-        let spec = this.spec();
-        let { code } = await this.request('/dizest/workflow/update', { data: JSON.stringify(spec) });
-        if (code != 200) return false;
         return true;
     }
 
-    public regist(namespace: string, component: any) {
-        if (component)
-            this.registed[namespace] = component;
-        return this.registed[namespace];
-    }
+    public drawflowEvents: any = {};
 
-    public unregist(namespace: string) {
-        delete this.registed[namespace];
-    }
-
-    public component(namespace: string) {
-        return this.registed[namespace];
-    }
-
-    public async stop() {
-        let res = await this.request('/dizest/workflow/stop');
-        this.status = 'idle';
-        for (let flow_id of this.flow.list()) {
-            let flow = this.flow.get(flow_id);
-            flow.status('idle');
-            await flow.logclear();
-        }
-        return res;
-    }
-
-    public async run() {
-        let res = await this.update();
-        if (!res) {
-            await this.ctrl.workflow.service.alert.show({ title: 'Error', message: 'An error occurred while saving', action: 'Close', cancel: null });
-            return;
-        }
-        return await this.request('/dizest/workflow/run');
-    }
-
-    public spec() {
-        return this.data;
-    }
-
-    public async unsync() {
-        await this.sync(null);
-    }
-
-    public async sync(drawflow: any = null) {
+    public async initDrawflow(drawflow: any) {
         this.drawflow = drawflow;
 
-        if (!drawflow) {
-            return;
-        }
-
-        let drawflowChanged = async (ids: any = []) => {
+        let changed = async (ids: any = []) => {
             for (let id of ids) {
                 let origin = drawflow.data()[id];
                 let target = this.flow.get(id);
@@ -153,31 +69,115 @@ export class Workflow {
             }
         };
 
-        drawflow.on('node.moved', drawflowChanged);
-        drawflow.on('connection.created', drawflowChanged);
-        drawflow.on('connection.cancel', drawflowChanged);
-        drawflow.on('connection.removed', drawflowChanged);
-
-        drawflow.on('node.selected', async (id: any) => {
+        let selected = async (id: any) => {
             await this.flow.select(id);
-        });
+        }
 
-        drawflow.on('node.unselected', async () => {
+        let unselected = async () => {
             await this.flow.select();
-        });
+        }
+
+        this.drawflowEvents.changed = changed;
+        this.drawflowEvents.selected = selected;
+        this.drawflowEvents.unselected = unselected;
+
+        drawflow.on('node.moved', changed);
+        drawflow.on('connection.created', changed);
+        drawflow.on('connection.cancel', changed);
+        drawflow.on('connection.removed', changed);
+        drawflow.on('node.selected', selected);
+        drawflow.on('node.unselected', unselected);
     }
 
-    private _preventBack(e) {
-        let confirmationMessage = "\o/";
-        e.returnValue = confirmationMessage;
-        return confirmationMessage;
+    public async destroy() {
+        let drawflow = this.drawflow;
+        let changed = this.drawflowEvents.changed;
+        let selected = this.drawflowEvents.selected;
+        let unselected = this.drawflowEvents.unselected;
+
+        drawflow.unbind('node.moved', changed);
+        drawflow.unbind('connection.created', changed);
+        drawflow.unbind('connection.cancel', changed);
+        drawflow.unbind('connection.removed', changed);
+        drawflow.unbind('node.selected', selected);
+        drawflow.unbind('node.unselected', unselected);
     }
 
-    public preventBack() {
-        window.addEventListener("beforeunload", this._preventBack);
+    public async request(action: string, data: any = {}) {
+        data.workflow_id = this.id;
+        return await this.dizest.api.call("workflow", action, data);
     }
 
-    public removePreventBack() {
-        window.removeEventListener("beforeunload", this._preventBack);
+    public async load() {
+        let { code, data } = await this.request("load");
+        if (code != 200) return false;
+        this.data = data.workflow;
+        this.status = data.status;
+        return true;
     }
+
+    public async check() {
+        let { code, data } = await this.request("status");
+        if (code != 200) {
+            this.status = 'stop';
+        } else {
+            this.status = data;
+        }
+        return this.status;
+    }
+
+    public async update() {
+        let data: any = this.data;
+        let { code } = await this.request('update', { data: JSON.stringify(data) });
+        if (code != 200) return false;
+        return true;
+    }
+
+    public async run() {
+        let res = await this.update();
+        if (res)
+            await this.request('run');
+    }
+
+    public async stop() {
+        this.status = 'stop';
+        let res = await this.request('stop');
+        if (res.code == 200) {
+            for (let flow_id of this.flow.list()) {
+                let flow = this.flow.get(flow_id);
+                flow.status('idle');
+                await flow.logclear();
+            }
+            this.status = 'idle';
+        }
+        return res;
+    }
+
+    public async spec() {
+        let { code, data } = await this.request("spec");
+        if (code == 200)
+            return data;
+        return {};
+    }
+
+    public async updateSpec(spec: string) {
+        await this.request("spec/update", { spec: spec });
+    }
+
+    public async start() {
+        await this.request('start');
+        await this.load();
+        await this.dizest.loadActive();
+        return this.status;
+    }
+
+    public async kill() {
+        let { code } = await this.request('kill');
+        await this.load();
+        await this.dizest.loadActive();
+        return code == 200;
+    }
+
 }
+
+export default Workflow;

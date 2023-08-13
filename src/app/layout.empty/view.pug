@@ -1,9 +1,8 @@
-.wiz-page
-    .wiz-content
-        .wiz-view
-            router-outlet
+.wiz-layout-view
+    router-outlet
 
 wiz-portal-season-alert
+
 .block-page(*ngIf="service.auth.status === null || service.loading.isshow")
     svg(version='1.1', xmlns='http://www.w3.org/2000/svg', xlink='http://www.w3.org/1999/xlink', x='0px', y='0px', width='60px', height='40px', viewBox='0 0 60 40', style='enable-background:new 0 0 50 50;', space='preserve')
         rect(x='0', y='0', width='8', height='30', fill='#333')

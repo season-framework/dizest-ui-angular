@@ -1,9 +1,11 @@
-/cache/
-/config/
-/bundle/
-.vscode/
-/test/
 node_modules/
+.vscode/
+/cache/
+/bundle/
+/config/
+/build/
+/test/
+package-lock.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -15,7 +17,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-/build/
 develop-eggs/
 dist/
 downloads/

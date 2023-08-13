@@ -2,6 +2,7 @@
 @import "content/text";
 @import "content/color";
 @import "content/layout";
+@import "content/ckeditor";
 
 @import "layout/margin";
 @import "layout/padding";
@@ -14,10 +15,11 @@
 @import "component/card";
 @import "component/button";
 
+
 html,
 body,
 app-root {
-    font-family: 'spoqa-r';
+    font-family: 'main-r';
     background: var(--wc-background);
     width: 100%;
     height: 100%;
@@ -67,4 +69,8 @@ iframe {
 
 .alert {
     line-height: 1;
+}
+
+.sortable-ghost {
+    background-color: var(--wc-border);
 }

@@ -6,7 +6,6 @@ export default class Codeflow {
     public codes: any = [];
 
     public async open(flow: any) {
-        await this.workflow.component("action.menu").toggle("codeflow", true);
         if (this.codes.includes(flow)) return await flow.select();;
         this.codes.push(flow);
         await this.workflow.service.render();

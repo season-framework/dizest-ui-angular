@@ -1,0 +1,36 @@
+.workspace-tab.cron-view.area-round
+    .workspace-tab-header
+        .workspace-tab-header-title
+            i.fa-brands.fa-python.mr-2
+            span Python Packages
+        .ml-auto
+        .text-white.close-btn((click)="close()")
+            i.fa-solid.fa-xmark
+    
+    .workspace-tab-body-wrapper
+        .workspace-tab-body
+            .card.mb-2
+                .card-header.p-2
+                    input.form-control(placeholder="scikit-learn", [(ngModel)]="query", (keyup.enter)="add()")
+                    .mr-2
+                    button.btn.btn-blue((click)="add()") Install
+
+            .card.pip-list
+                .card-table.table-responsive
+                    table.table.table-hover.table-vcenter.table-bordered.mb-0
+                        ng-container(*ngFor="let item of list")
+                            tr(*ngIf="item.name.toLowerCase().indexOf(query.toLowerCase()) >= 0")
+                                th.w-1.nowrap {{item.name}}
+                                td.text-muted {{item.version}}
+                                td.w-1.nowrap
+                                    button.btn.btn-red.btn-sm((click)="remove(item.comment)")
+                                        i.fa-solid.fa-trash
+
+    .block-page(*ngIf="loading")
+        svg(version='1.1', xmlns='http://www.w3.org/2000/svg', xlink='http://www.w3.org/1999/xlink', x='0px', y='0px', width='60px', height='40px', viewBox='0 0 60 40', style='enable-background:new 0 0 50 50;', space='preserve')
+            rect(x='0', y='0', width='8', height='30', fill='#333')
+                animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0', dur='0.6s', repeatCount='indefinite')
+            rect(x='16', y='0', width='8', height='30', fill='#333')
+                animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0.2s', dur='0.6s', repeatCount='indefinite')
+            rect(x='32', y='0', width='8', height='30', fill='#333')
+                animateTransform(attributeType='xml', attributeName='transform', type='translate', values='0 0; 0 20; 0 0', begin='0.4s', dur='0.6s', repeatCount='indefinite')

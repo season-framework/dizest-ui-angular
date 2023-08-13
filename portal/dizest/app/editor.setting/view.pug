@@ -1,0 +1,91 @@
+.wiz-content-layout
+    .wiz-content-body
+        .content-main.area-round
+            .container.p-4
+                ul.nav.nav-bordered.mb-4
+                    li.nav-item
+                        a.nav-link((click)="switchTab('system')", [class.active]="mode == 'system'") System
+                    li.nav-item
+                        a.nav-link((click)="switchTab('kernel')", [class.active]="mode == 'kernel'") Kernel
+            
+                .container(*ngIf="mode == 'system'", style="max-width: 720px;")
+                    .card
+                        .card-header
+                            h4.card-title UI Configuration
+
+                        .card-body.p-4
+                            .form-group.row
+                                label.form-label.col-3.col-form-label Hub Title
+                                .col
+                                    input.form-control(type="text", placeholder="Hub Title", [(ngModel)]="data.setting.title")
+                            
+                            .mb-3
+
+                            .form-group.row
+                                label.form-label.col-3.col-form-label Logo
+                                .col.text-left
+                                    .text-center.bg-blue(style="padding: 0.75rem 0; max-width: 280px; width: 100%;")
+                                        img([attr.src]="data.setting.logo ? data.setting.logo : '/assets/brand/logo.png'",  style="height: 32px; margin: 5px 0;")
+
+                                .col-2.d-desktop
+                                    .btn.btn-outline-blue.btn-block((click)="uploadLogo()") Upload
+                                    .btn.btn-outline-danger.btn-block.mt-2(*ngIf="data.setting.logo", (click)="data.setting.logo = ''; service.render();") Delete
+
+                            .mb-3
+
+                            .form-group.row
+                                label.form-label.col-3.col-form-label Icon
+                                .col.text-left
+                                    .text-center
+                                        img(*ngIf="data.setting.icon", [attr.src]="data.setting.icon", style="height: 48px; width: 48px;")
+
+                                .col-2.d-desktop
+                                    .btn.btn-outline-blue.btn-block((click)="uploadIcon()") Upload
+                                    .btn.btn-outline-danger.btn-block.mt-2(*ngIf="data.setting.icon", (click)="data.setting.icon = ''; service.render();") Delete
+                    
+                        .card-footer.d-flex.p-2
+                            .ml-auto
+                            a.btn.btn-blue((click)="update()") Update
+
+                .row.row-deck.row-cards(*ngIf="mode == 'kernel'")
+                    .col-md-4(*ngFor="let item of data.conda")
+                        .card.card-sm
+                            .card-body
+                                .row.mb-4
+                                    .col
+                                        h3.card-title.m-0 {{item.name}}
+                                    .col-auto
+                                        a.link-muted((click)='conda.remove(item)')
+                                            i.fa-solid.fa-xmark
+                                
+                                .text-muted.mb-2 {{item.path}}
+                                .text-muted {{item.version}}
+
+                    .col-md-4
+                        .card.card-sm.bg-blue((click)="conda.create()", *ngIf="!conda.iscreate")
+                            .card-stamp.card-stamp-lg
+                                .card-stamp-icon.bg-white.text-blue
+                                    i.fa-solid.fa-circle-plus
+
+                            .card-body.text-white
+                                .row
+                                    .col
+                                        h3.card-title.m-0 Create Env
+
+                        .card.card-sm(*ngIf="conda.iscreate")
+                            .card-body
+                                .form-group.row.mb-2
+                                    label.form-label.col-3.col-form-label Name
+                                    .col
+                                        input.form-control.form-control-sm(type="text", placeholder="base", [(ngModel)]="conda.item.name")
+
+                                .form-group.row.mb-3
+                                    label.form-label.col-3.col-form-label Version
+                                    .col
+                                        input.form-control.form-control-sm(type="text", placeholder="3.10", [(ngModel)]="conda.item.python")
+
+                                .d-flex
+                                    .btn.btn-sm.btn-link((click)="conda.cancel()") Cancel
+                                    .ml-auto
+                                    .btn.btn-sm.btn-blue((click)="conda.create()") Create
+                                    

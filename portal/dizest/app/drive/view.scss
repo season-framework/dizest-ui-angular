@@ -1,0 +1,109 @@
+.drive-tree {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    overflow: hidden;
+}
+
+.drive-menu {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+
+    .menu-item {
+        background: var(--wc-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 32px;
+        flex: 1;
+        color: #fff;
+        cursor: pointer;
+
+        i {
+            width: 14px;
+            height: 14px;
+        }
+
+        &:hover {
+            color: #F8F9FF;
+        }
+    }
+}
+
+.container {
+    height: 100%;
+    flex: 1;
+    overflow: auto;
+}
+
+.tree-node {
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+
+    i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--wc-gray);
+    }
+
+    .tree-node-title {
+        flex: auto;
+        overflow: hidden;
+        white-space: nowrap;
+        width: inherit;
+    }
+
+    .form-control {
+        height: 20px !important;
+        font-size: 12px;
+        border-radius: 4px;
+        text-align: left;
+    }
+
+    i.fa-folder,
+    i.fa-folder-open {
+        color: #A1C9F7;
+    }
+
+    i.icon-action-always {
+        margin-left: 6px;
+        color: var(--wc-blue);
+    }
+
+    i.icon-action {
+        display: none;
+        margin-left: 6px;
+    }
+
+    &.active {
+        color: var(--wc-blue);
+        background: var(--wc-blue-light);
+    }
+
+    &:hover {
+        color: var(--wc-blue);
+        background: var(--wc-blue-light);
+
+        i.icon-action {
+            display: inline-block;
+            color: var(--wc-gray);
+
+            &:hover {
+                color: var(--wc-blue);
+            }
+        }
+    }
+}
+
+.tree-root {
+    padding-left: 16px;
+}
+
+.tree-icon {
+    width: 20px;
+    text-align: center;
+}

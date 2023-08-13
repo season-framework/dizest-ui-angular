@@ -3,7 +3,8 @@
 - python dependencies
 
 ```sh
-pip install peewee pymysql bcrypt
+apt install pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+pip install peewee pymysql bcrypt python3-saml
 ```
 
 - npm dependencies
