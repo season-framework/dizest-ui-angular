@@ -173,11 +173,10 @@ export class Component implements OnInit {
     }
 
     public async selectFile(value: any) {
-        let res = await this.scope.drawflow.drive.request(this.flow.data()[value.name]);
-        if (res) {
-            this.flow.data()[value.name] = res;
-            await this.scope.service.render();
-        }
+        let data = this.flow.data()[value.name]
+        let res = await this.scope.showDrive(value, data);
+        this.flow.data()[value.name] = res;
+        await this.scope.service.render();
     }
 
     public async code() {
@@ -205,4 +204,5 @@ export class Component implements OnInit {
 
         await rootTab.open(tab);
     }
+
 }

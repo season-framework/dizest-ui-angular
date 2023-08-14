@@ -105,6 +105,7 @@ export class Component implements OnInit {
 
     public async update() {
         await wiz.call("update", { data: JSON.stringify(this.data.setting), zone: this.tab.dizest.zone });
+        await this.tab.alert.info(`updated system info`, 2000);
     }
 
     public async uploadLogo() {

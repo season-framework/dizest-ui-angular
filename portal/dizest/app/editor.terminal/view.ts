@@ -56,7 +56,7 @@ export class Component implements OnInit, OnDestroy {
 
         term.open(this.terminal.nativeElement);
         term.writeln("Welcome to dizest terminal!");
-        term.writeln('')
+        term.writeln('');
 
         const socket = wiz.socket();
 

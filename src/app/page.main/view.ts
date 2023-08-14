@@ -30,12 +30,18 @@ export class Component implements OnInit {
 
     public async ngOnInit() {
         await this.service.init();
-        await this.service.auth.allow(true, "/access");
+        await this.service.auth.allow(true, "/authenticate");
 
         let zone = this.service.auth.session.zone;
         this.dizest = new Dizest(this, zone);
         await this.bindShortcuts();
         await this.dizest.loadActive();
+        try {
+            let res = await this.service.request.post("/setting");
+            if (res.data.title)
+                document.title = res.data.title;
+        } catch (e) {
+        }
     }
 
     public workflow_id: any;

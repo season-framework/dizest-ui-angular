@@ -117,6 +117,7 @@ export class Drawflow {
         await this.scope.service.render();
 
         let element = this.scope.element.nativeElement;
+        element.innerHTML = '';
         let position: any = { canvas_x: 0, canvas_y: 0 };
         if (this.lib) {
             position = {

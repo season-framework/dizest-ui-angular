@@ -303,4 +303,82 @@ export class Component implements OnInit, OnDestroy {
         if (!app_id) return;
         await this.workflow.flow.create(app_id, { x: x, y: y, drop: true });
     }
+
+    public isShowDrive: boolean = false;
+    public driveTarget: any = null;
+    public driveCallback: any = null;
+    public driveList: any = [];
+
+    public async driveRequest(fnname: string, query: any = {}) {
+        let dizest = this.tab.dizest;
+        query.workflow_id = this.workflow.id;
+        const { code, data } = await dizest.api.call('workflow', `drive/${fnname}`, query);
+        return { code, data };
+    }
+
+    public async showDrive(value: any, data: any) {
+        this.driveTarget = data;
+        this.isShowDrive = true;
+        let res = await this.driveRequest('list', { path: data ? data : '', scanparent: true });
+        res.data.files.sort((a, b) => {
+            try {
+                if (a.type == b.type)
+                    return a.title.localeCompare(b.title);
+                if (a.type == 'folder') return -1;
+                if (b.type == 'folder') return 1;
+            } catch (e) {
+            }
+        });
+        this.driveList = res.data;
+        await this.service.render();
+        let fn = () => new Promise((resolve) => {
+            this.driveCallback = resolve;
+        });
+        return await fn();
+    }
+
+    public async openDrive(item: any) {
+        if (item.type != 'folder') {
+            this.driveTarget = item.id;
+            await this.service.render();
+            return;
+        }
+        let res = await this.driveRequest('list', { path: item.id ? item.id : '' });
+        res.data.files.sort((a, b) => {
+            try {
+                if (a.type == b.type)
+                    return a.title.localeCompare(b.title);
+                if (a.type == 'folder') return -1;
+                if (b.type == 'folder') return 1;
+            } catch (e) {
+            }
+        });
+        this.driveList = res.data;
+        await this.service.render();
+    }
+
+    public async selectDrive(item: any) {
+        this.driveTarget = item.id;
+        await this.service.render();
+    }
+
+    public async selectedDrive() {
+        if (this.driveCallback) await this.driveCallback(this.driveTarget);
+        this.driveTarget = null;
+        this.isShowDrive = false;
+        await this.service.render();
+    }
+
+    public async hideDrive() {
+        this.driveTarget = null;
+        this.isShowDrive = false;
+        if (this.driveCallback) await this.driveCallback();
+        await this.service.render();
+    }
+
+    public icon(node: any) {
+        if (node.type == 'folder')
+            return 'fa-solid fa-folder';
+        return 'fa-regular fa-file-lines';
+    }
 }

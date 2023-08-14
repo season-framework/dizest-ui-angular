@@ -27,8 +27,7 @@ export class Workflow {
         this.flow = new Flow(this);
         this.codeflow = new Codeflow(this);
 
-        if (drawflow)
-            await this.initDrawflow(drawflow);
+        await this.initDrawflow(drawflow);
 
         return true;
     }
