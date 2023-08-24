@@ -1,10 +1,10 @@
 {
     "package": "dizest",
     "title": "Dizest",
-    "version": "3.4.0",
+    "version": "3.4.3",
     "description": "dizest core",
     "use_app": true,
-    "use_sample": false,
+    "use_sample": true,
     "use_route": true,
     "use_libs": true,
     "use_model": true,

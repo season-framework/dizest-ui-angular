@@ -2,7 +2,6 @@ import { OnInit, Input } from '@angular/core';
 import { ElementRef, ViewChild } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import NotSupported from '@wiz/app/portal.dizest.editor.notsupported';
 
 export class Component implements OnInit {
     @Input() config: any = {};
@@ -46,7 +45,7 @@ export class Component implements OnInit {
 
     public async open(tab: any, reopen: boolean = false) {
         if (!tab.id) return;
-        if (!tab.view) tab.view = NotSupported;
+        if (!tab.view) return;
         if (!tab.title) tab.title = id;
         let self = this;
 
@@ -75,7 +74,7 @@ export class Component implements OnInit {
             }
             await self.service.render();
             if (self.config.on) await self.config.on("close");
-            if (tab.on) await tab.on("close");
+            if (tab.onClose) await tab.onClose("close");
             if (tab.ref) await tab.ref.destroy();
 
             let alivetab: any = this.find(tab.id);
@@ -98,12 +97,14 @@ export class Component implements OnInit {
                 tab.ref = ref;
             }
 
+            if (tab.onCreatedRef) await tab.onCreatedRef(tab.ref);
+
             let editorElement = tab.ref.location.nativeElement;
             self.element.nativeElement.innerHTML = "";
             self.element.nativeElement.append(editorElement);
             if (self.config.on) await self.config.on("open");
             await self.service.render();
-            if (tab.on) await tab.on("open");
+            if (tab.onOpen) await tab.onOpen("open");
 
             if (preselected.ref && preselected.ref.instance.wizOnTabHide) await preselected.ref.instance.wizOnTabHide();
             if (tab.ref.instance.wizOnTabInit) await tab.ref.instance.wizOnTabInit();

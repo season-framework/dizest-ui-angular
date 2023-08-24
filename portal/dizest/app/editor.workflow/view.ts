@@ -8,6 +8,7 @@ import DrawflowNodeComponent from '@wiz/app/portal.dizest.widget.workflow.node';
 
 export class Component implements OnInit, OnDestroy {
     @Input() tab: any = {};
+    @Input() DrawflowNodeComponent: any = DrawflowNodeComponent;
 
     @ViewChild('drawflow')
     public element: ElementRef;
@@ -20,7 +21,6 @@ export class Component implements OnInit, OnDestroy {
 
     public workflow: any;
     public drawflow: Drawflow;
-    public DrawflowNodeComponent: any = DrawflowNodeComponent;
 
     constructor(
         public service: Service,

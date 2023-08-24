@@ -1,65 +1,106 @@
-## Installation
+# Installation
 
-### dconfig.py 설정
+## config/dizest.py 설정
 
 ```python
+import os
+import sys
+import season
 import urllib
-from season.util.std import stdClass
 
-class dConfig:
+def user_id(wiz, zone):
+    return wiz.session.get("id")
 
-    def user(self):
-        session = wiz.model("portal/season/session").use()
-        return session.get("id")
+def login(wiz, user, password):
+    import crypt
+    import getpass
+    import spwd
+    try:
+        enc_pwd = spwd.getspnam(user)[1]
+        if enc_pwd in ["NP", "!", "", None]:
+            return "user '%s' has no password set" % user
+        if enc_pwd in ["LK", "*"]:
+            return "account is locked"
+        if enc_pwd == "!!":
+            return "password has expired"
+        if crypt.crypt(password, enc_pwd) == enc_pwd:
+            return True
+        else:
+            return "incorrect password"
+    except KeyError:
+        return "user '%s' not found" % user
+    return "unknown error"
 
-    def kernel_user(self):
-        session = wiz.model("portal/season/session").use()
-        user = session.get("id")
-        role = session.get("role")
-        if role == 'admin':
-            return 'root'
-        return user
+def authenticate(wiz):
+    wiz.response.redirect("/access")
 
-    def channel(self, zone=None, workflow_id=None, **data):
-        data['zone'] = zone
-        data['workflow_id'] = workflow_id
-        user = self.user()
-        channel = user + "-" + data['zone'] + "-" + data['workflow_id']
-        return channel
+def acl(wiz, zone):
+    uid = user_id(wiz, zone)
+    return uid == zone
 
-    def cwd(self):
-        user = self.user()
-        if user == "root":
-            return "/root"
-        return f"/home/{user}"
+def admin_access(wiz, zone):
+    user = user_id(wiz, zone)
+    return user == 'root'
 
-    def kernel(self):
-        fs = wiz.workspace().fs("config", "dizest")
-        kernel = fs.read.json("kernel.json", [])
-        if len(kernel) == 0:
-            kernel.append(dict(name="base"))
-        return kernel
+def cron_access(wiz, zone):
+    ip = wiz.request.ip()
+    return ip == '127.0.0.1'
 
-    def dsocket(self):
-        branch = wiz.branch()
-        host = urllib.parse.urlparse(wiz.request.request().base_url)
-        host = f"{host.scheme}://{host.netloc}"
-        dsocket_api = f"{host}/wiz/app/{branch}/portal.dizest.workflow.ui"
-        return dsocket_api
+def storage_path(wiz, zone):
+    homepath = os.path.expanduser(f"~{zone}")
+    return homepath
 
-    def cron_host(self):
-        return "http://127.0.0.1:3000"
+def socket_uri(wiz, zone, workflow_id):
+    branch = wiz.branch()
+    host = urllib.parse.urlparse(wiz.request.request().base_url)
+    host = f"{host.scheme}://{host.netloc}"
+    uri = f"{host}/wiz/app/{branch}/page.main"
+    return uri
 
-    def getWorkflowSpec(self, workflow_id, zone=None):
-        user = self.user()
-        db = wiz.model("portal/season/orm").use("workflow")
-        sfspec = db.get(id=workflow_id, user_id=user)
-        return sfspec
+def cwd(wiz, zone, workflow_id):
+    fs = season.util.os.FileSystem(storage_path(wiz, zone))
+    path = fs.abspath(workflow_id)
+    return os.path.dirname(path)
 
-    def updateWorkflowSpec(self, workflow_id, data, zone=None):
-        db = wiz.model("portal/season/orm").use("workflow")
-        user = self.user()
-        db.update(data, id=workflow_id, user_id=user)
-        
-Model = dConfig()
+def cron_uri(wiz, zone, workflow_id):
+    host = urllib.parse.urlparse(wiz.request.request().base_url)
+    port = host.netloc.split(":")[-1]
+    host = f"{host.scheme}://127.0.0.1:{port}"
+    return host
+
+def get_workflow(wiz, zone, workflow_id):
+    fs = season.util.os.FileSystem(storage_path(wiz, zone))
+    if fs.exists(workflow_id) == False:
+        return None
+    data = fs.read.json(workflow_id, None)
+    return data
+
+def update_workflow(wiz, zone, workflow_id, data):
+    fs = season.util.os.FileSystem(storage_path(wiz, zone))
+    fs.write.json(workflow_id, data)
 ```
+
+# Release
+
+### 3.4.3
+
+- support customize Workflow Node
+- `/api/drive` ownership bug fixed
+
+### 3.4.2
+
+- [ui] terminal bug fixed
+- [ui] authenticate api & config
+- [ui] file selector in workflow node bug fixed 
+
+### 3.4.1
+
+- [ui] draw workflow bug fixed
+- [ui] flow stop bug fixed
+
+### 3.4.0
+
+- [ui] UI full changed (Single page hub)
+- [ui] Remove installation page
+- [ui] change user login using linux account
+- [ui] using kernel for each workflow

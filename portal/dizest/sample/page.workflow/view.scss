@@ -1,0 +1,268 @@
+.workflow-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    @media(max-width:768px) {
+        display: block;
+
+        &.tab-selected {
+            .workflow-nav {
+                display: none;
+            }
+
+            .workflow-sidebar-view {
+                display: none;
+            }
+
+            .workflow-content {
+                height: 100%;
+            }
+        }
+
+        .apps-click {
+            display: none !important;
+        }
+    }
+}
+
+.workflow-nav {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+
+    @media(max-width:768px) {
+        width: 100%;
+    }
+
+    .workflow-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 49%;
+        right: 0;
+        width: 16px;
+        height: 64px;
+        background: var(--wc-border);
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 1900;
+
+        &:hover {
+            background: var(--wc-blue);
+            color: #fff;
+        }
+
+        &.toggle-hide {
+            position: fixed;
+            left: 0;
+        }
+    }
+
+    .view-content {
+        width: 320px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+
+        @media(max-width:768px) {
+            width: 100%;
+        }
+
+        .view-header {
+            padding: 0;
+            padding-top: 0;
+            background-color: var(--wc-blue);
+            color: #fff;
+
+            .view-title {
+                display: flex;
+                padding: 8px 16px;
+                justify-content: center;
+
+                img {
+                    height: 38px;
+                    margin: 0 auto;
+                }
+            }
+
+            .clicks {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+
+                a {
+                    display: block;
+                    width: 100%;
+                    color: #63667b;
+                    text-align: center;
+
+                }
+
+                .click {
+                    font-family: 'main-eb';
+                    cursor: pointer;
+                    padding: 8px;
+                    display: inline-block;
+                    flex: 1;
+                    position: relative;
+                    background-color: var(--wc-blue);
+                    color: #fff;
+                    font-size: 20px;
+
+                    .action-btn {
+                        width: 36px;
+                        height: 36px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 50%;
+                        margin: 0 auto;
+                    }
+
+                    &:hover {
+                        background-color: var(--wc-blue-hover);
+                    }
+
+                    &.active {
+                        .action-btn {
+                            background-color: #fff;
+                            color: var(--wc-blue);
+                        }
+
+                        .action-border {
+                            left: -40%;
+                            top: 100%;
+                            width: 180%;
+                            height: 8px;
+                            position: absolute;
+                            background-color: var(--wc-blue);
+                            clip-path: url(#menu);
+                            transform: scale(1, -1);
+                            z-index: 1080;
+                        }
+                    }
+                }
+
+                .line {
+                    margin: .75rem 0;
+                    border-right: 1px solid #63667b;
+                }
+            }
+        }
+
+        .view-body {
+            height: 100%;
+            flex: auto;
+            border-right: 1px solid var(--wc-border);
+            overflow: hidden;
+
+            @media(max-width:768px) {
+                border-right: none;
+            }
+        }
+    }
+
+    @media(max-width:768px) {
+        .workflow-toggle {
+            display: none;
+        }
+    }
+}
+
+.workflow-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+
+    .view-content {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.workflow-plugin-viewer {
+    @media(max-width:768px) {
+        display: none;
+    }
+}
+
+.workflow-sidebar-view {
+    height: 100%;
+
+}
+
+.workflow-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    width: 42px;
+    border-left: 1px solid var(--wc-border);
+    background-color: #fff;
+
+    @media(max-width:768px) {
+        display: none;
+    }
+
+    .btn {
+
+        &,
+        .hover-area {
+            padding: 8px 12px;
+        }
+
+        display: block;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+
+        .hover-area {
+            display: none;
+            height: 36px;
+            right: 0;
+            margin-top: -28px;
+            min-width: 80px;
+            background-color: var(--wc-blue);
+            color: #fff;
+            box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+            padding-right: 0 !important;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+
+            .sidemenu-icon {
+                width: 42px;
+                text-align: center;
+            }
+        }
+
+        &:hover {
+            .hover-area {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                z-index: 1000;
+                right: 0;
+
+                span {
+                    margin-left: auto;
+                    margin-right: 4px;
+                }
+            }
+        }
+    }
+}
+
+.drive-view {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
