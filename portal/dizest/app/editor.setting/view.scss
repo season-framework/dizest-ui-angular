@@ -95,3 +95,14 @@ table {
 .card-sm {
     min-height: 130px;
 }
+
+.kernel-list {
+    .link-muted {
+        i {
+            cursor: pointer;
+            &:hover {
+                color: var(--wc-blue);
+            }
+        }
+    }
+}

@@ -272,6 +272,11 @@ export class Component implements OnInit, OnDestroy {
         await this.service.render();
     }
 
+    public async reload() {
+        await this.wizOnTabHide();
+        await this.wizOnTabInit();
+    }
+
     public async stop() {
         let alert = await this.tab.alert.warning(`stop workflow: ${this.tab.title}`);
         this.alerts.push(alert);

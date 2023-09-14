@@ -4,14 +4,3 @@
     height: 100%;
     overflow: hidden;
 }
-
-.block-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg path,
-    svg rect {
-        fill: #FF6700;
-    }
-}

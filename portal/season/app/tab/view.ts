@@ -21,6 +21,7 @@ export class Component implements OnInit {
         await this.service.render();
         this.config.open = this.open.bind(this);
         this.config.find = this.find.bind(this);
+        this.config.list = this.list.bind(this);
         this.config.findByIndex = this.findByIndex.bind(this);
         this.config.selected = {};
         if (this.config.onLoad) await this.config.onLoad();
@@ -41,6 +42,10 @@ export class Component implements OnInit {
 
     public findByIndex(index: number) {
         return this.tabs[index];
+    }
+
+    public list() {
+        return this.tabs;
     }
 
     public async open(tab: any, reopen: boolean = false) {

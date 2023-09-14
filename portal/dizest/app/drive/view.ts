@@ -36,6 +36,16 @@ export class Component implements OnInit {
         return ext;
     }
 
+    public isWorkflowStoppable(node: any) {
+        let ext = this.extension(node);
+        if (ext == 'dwp') {
+            if (this.dizest.active)
+                if (this.dizest.active[node.id])
+                    return true;
+        }
+        return false;
+    }
+
     public icon(node: any, checkopen: boolean = true) {
         if (node.type == 'folder') {
             if (node.isOpen() && checkopen)
@@ -245,6 +255,11 @@ export class Component implements OnInit {
         await node.flush();
         await this.dizest.api.call(`drive`, `delete`, { id: node.id });
         await node.parent().refresh();
+    }
+
+    public async stopWorkflow(node: any) {
+        let workflow: any = await this.dizest.workflow(node.id);
+        await workflow.kill();
     }
 
     public async rename(node: any) {

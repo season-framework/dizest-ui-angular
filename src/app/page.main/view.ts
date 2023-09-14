@@ -4,8 +4,13 @@ import { ViewContainerRef } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
 import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 
+// Drive Editor
 import WorkflowEditor from '@wiz/app/portal.dizest.editor.workflow';
 import TextEditor from '@wiz/app/portal.dizest.editor.text';
+import ImageEditor from '@wiz/app/portal.dizest.editor.image';
+import VideoEditor from '@wiz/app/portal.dizest.editor.video';
+
+// Setting Editor
 import UIModeEditor from '@wiz/app/portal.dizest.editor.uimode';
 import SettingEditor from '@wiz/app/portal.dizest.editor.setting';
 import TerminalEditor from '@wiz/app/portal.dizest.editor.terminal';
@@ -63,6 +68,229 @@ export class Component implements OnInit {
         this.view.hideNav = !this.view.hideNav;
         await this.service.render();
     }
+
+    // define view for filetype
+    public findExtMapper(extension) {
+        extension = extension.toLowerCase();
+        for (let key in this.extMapper)
+            if (this.extMapper[key].match && this.extMapper[key].match(extension))
+                return this.extMapper[key];
+        return this.extMapper._default;
+    }
+
+    public extMapper: any = {
+        // dizest workflow
+        dwp: {
+            match: (ext: string) => ext == 'dwp',
+            sidebar: [
+                { icon: 'fa-solid fa-book', title: 'Workflow Info', id: 'info', view: WorkflowInfoSidebar },
+                { icon: 'fa-solid fa-code', title: 'Codeflow', id: 'codeflow', view: CodeFlowSidebar },
+                { icon: 'fa-solid fa-stopwatch', title: 'Timer', id: 'timer', view: TimerSidebar },
+                { icon: 'fa-brands fa-python', title: 'Packages', id: 'packages', view: PackagesSidebar },
+            ],
+            editor: async (tab: any) => {
+                tab.rootTab = this.tab;
+                tab.view = WorkflowEditor;
+                tab.alert = this.statusbar.alert;
+                tab.dizest = this.dizest;
+                tab.socket = () => wiz.socket();
+                tab.render = async () => await this.service.render();
+                tab.sidebar = this.sidebar;
+                tab.onCreatedRef = async (ref: any) => {
+                    ref.instance.DrawflowNodeComponent = DrawflowNodeComponent;
+                }
+                let finded: any = this.tab.find(tab.id);
+                tab = await this.tab.open(tab);
+                if (!finded)
+                    await this.switchNav('apps');
+            }
+        },
+        video: {
+            match: (ext: string) => ['mp4'].includes(ext),
+            sidebar: [],
+            editor: async (tab: any) => {
+                tab.view = VideoEditor;
+                tab.alert = this.statusbar.alert;
+                tab.dizest = this.dizest;
+                tab.render = async () => await this.service.render();
+                tab.sidebar = this.sidebar;
+                tab = await this.tab.open(tab);
+            }
+        },
+        // image viewer
+        image: {
+            match: (ext: string) => ['png', 'jpg', 'jpeg', 'gif', 'ico', 'icon'].includes(ext),
+            sidebar: [],
+            editor: async (tab: any) => {
+                tab.view = ImageEditor;
+                tab.alert = this.statusbar.alert;
+                tab.dizest = this.dizest;
+                tab.render = async () => await this.service.render();
+                tab.sidebar = this.sidebar;
+                tab = await this.tab.open(tab);
+            }
+        },
+        // default: text editor
+        _default: {
+            sidebar: [],
+            editor: async (tab: any) => {
+                tab.view = TextEditor;
+                tab.alert = this.statusbar.alert;
+                tab.dizest = this.dizest;
+                tab.render = async () => await this.service.render();
+                tab.sidebar = this.sidebar;
+                tab = await this.tab.open(tab);
+            }
+        }
+    }
+
+    // UI Component Options
+    public sidebar: any = {
+        active: null,
+        ref: null,
+        toggle: async (item_id: string, forced: any = null) => {
+            if (['setting', 'terminal'].includes(item_id)) {
+                let tab = {
+                    id: `.dizest/${item_id}`,
+                    title: item_id,
+                    extension: ''
+                };
+
+                if (item_id == 'setting') tab.view = SettingEditor;
+                else if (item_id == 'terminal') {
+                    tab.view = TerminalEditor;
+                    tab.id = `.dizest/${item_id}/` + new Date().getTime();
+                }
+
+                tab.alert = this.statusbar.alert;
+                tab.dizest = this.dizest;
+                tab.render = async () => await this.service.render();
+                tab.sidebar = this.sidebar;
+                await this.tab.open(tab);
+                await this.sidebar.toggle("codeflow", false);
+                return;
+            }
+
+            let closeSidebar = async () => {
+                this.sidebar.active = null;
+                this.sidebarElement.nativeElement.innerHTML = "";
+                if (this.sidebar.ref) this.sidebar.ref.destroy();
+                await this.service.render();
+            };
+
+            if (forced === false) {
+                await closeSidebar();
+                return;
+            }
+
+            let item: any = null;
+            let ext: string = this.tab.selected.extension;
+            let data: any = this.findExtMapper(ext);
+            for (let i = 0; i < data.sidebar.length; i++)
+                if (data.sidebar[i].id == item_id) {
+                    item = data.sidebar[i];
+                    break;
+                }
+
+            if (!item) return;
+
+            if (this.sidebar.active == item.id) {
+                if (!forced) {
+                    await closeSidebar();
+                    return;
+                }
+            } else {
+                await closeSidebar();
+            }
+
+            const ref = this.viewContainerRef.createComponent<NodeComponent>(item.view);
+
+            let sidebar: any = {};
+            sidebar.close = async () => {
+                await closeSidebar();
+            }
+
+            sidebar.selected = this.tab.selected;
+
+            ref.instance.sidebar = sidebar;
+            let sidebarElement = ref.location.nativeElement;
+            this.sidebarElement.nativeElement.innerHTML = "";
+            this.sidebarElement.nativeElement.append(sidebarElement);
+
+            this.sidebar.active = item.id;
+            this.sidebar.ref = ref;
+            await this.service.render();
+        },
+        render: () => {
+            try {
+                let ext = this.tab.selected.extension;
+                let data = this.findExtMapper(ext);
+                if (data && data.sidebar) return data.sidebar;
+            } catch (e) {
+            }
+            return [];
+        }
+    };
+
+    public tab: any = {
+        onLoad: async () => { },
+        on: async (action: string) => {
+            if (action == 'open') {
+                if (!this.tab.selected.workflow)
+                    await this.switchNav('drive');
+                if (this.tab.selected.id) {
+                    await this.statusbar.setTitle(this.tab.selected.id, "fa-solid fa-hdd");
+                } else {
+                    await this.statusbar.setTitle("/", "fa-solid fa-hdd");
+                    if (this.sidebar.active)
+                        await this.sidebar.toggle(this.sidebar.active, false);
+                }
+            } else if (action == 'close') {
+                let tabs: any = this.tab.list();
+                let exists: boolean = false;
+                for (let i = 0; i < tabs.length; i++) {
+                    if (tabs[i].workflow) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists)
+                    await this.switchNav('drive');
+                await this.statusbar.setTitle("/", "fa-solid fa-hdd");
+                if (this.sidebar.active)
+                    await this.sidebar.toggle(this.sidebar.active, false);
+            }
+
+        }
+    };
+
+    public drive: any = {
+        tab: this.tab,
+        open: async (node: any, extension: string) => {
+            let tab = {
+                id: node.id,
+                title: node.title,
+                extension: extension
+            };
+
+            let extMapper: any = this.findExtMapper(extension);
+            if (extMapper) tab = await extMapper.editor(tab);
+            if (tab) await this.tab.open(tab);
+            return true;
+        }
+    };
+
+    public apps: any = {
+        tab: this.tab
+    };
+
+    public statusbar: any = {
+        onLoad: async () => {
+            await this.statusbar.setTitle("/", "fa-solid fa-hdd");
+            await this.statusbar.alert.info('dizest started', 2000);
+            await this.service.render();
+        }
+    };
 
     public async bindShortcuts() {
         this.shortcuts.push({
@@ -202,179 +430,4 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
-    // component options
-    public extMapper: any = {
-        dwp: {
-            sidebar: [
-                { icon: 'fa-solid fa-book', title: 'Workflow Info', id: 'info', view: WorkflowInfoSidebar },
-                { icon: 'fa-solid fa-code', title: 'Codeflow', id: 'codeflow', view: CodeFlowSidebar },
-                { icon: 'fa-solid fa-stopwatch', title: 'Timer', id: 'timer', view: TimerSidebar },
-                { icon: 'fa-brands fa-python', title: 'Packages', id: 'packages', view: PackagesSidebar },
-            ],
-            editor: async (tab: any) => {
-                tab.rootTab = this.tab;
-                tab.view = WorkflowEditor;
-                tab.alert = this.statusbar.alert;
-                tab.dizest = this.dizest;
-                tab.socket = () => wiz.socket();
-                tab.render = async () => await this.service.render();
-                tab.sidebar = this.sidebar;
-
-                tab.onCreatedRef = async (ref: any) => {
-                    ref.instance.DrawflowNodeComponent = DrawflowNodeComponent;
-                }
-
-                tab = await this.tab.open(tab);
-                await this.switchNav('apps');
-            }
-        },
-        _default: {
-            sidebar: [],
-            editor: async (tab: any) => {
-                tab.view = TextEditor;
-                tab.alert = this.statusbar.alert;
-                tab.dizest = this.dizest;
-                tab.render = async () => await this.service.render();
-                tab.sidebar = this.sidebar;
-                tab = await this.tab.open(tab);
-            }
-        }
-    }
-
-    public findExtMapper(extension) {
-        if (this.extMapper[extension]) {
-            return this.extMapper[extension];
-        }
-        return this.extMapper._default;
-    }
-
-    public sidebar: any = {
-        active: null,
-        ref: null,
-        toggle: async (item_id: string, forced: any = null) => {
-            if (['setting', 'terminal'].includes(item_id)) {
-                let tab = {
-                    id: `.dizest/${item_id}`,
-                    title: item_id,
-                    extension: ''
-                };
-
-                if (item_id == 'setting') tab.view = SettingEditor;
-                else if (item_id == 'terminal') {
-                    tab.view = TerminalEditor;
-                    tab.id = `.dizest/${item_id}/` + new Date().getTime();
-                }
-
-                tab.alert = this.statusbar.alert;
-                tab.dizest = this.dizest;
-                tab.render = async () => await this.service.render();
-                tab.sidebar = this.sidebar;
-                await this.tab.open(tab);
-                await this.sidebar.toggle("codeflow", false);
-                return;
-            }
-
-            let closeSidebar = async () => {
-                this.sidebar.active = null;
-                this.sidebarElement.nativeElement.innerHTML = "";
-                if (this.sidebar.ref) this.sidebar.ref.destroy();
-                await this.service.render();
-            };
-
-            if (forced === false) {
-                await closeSidebar();
-                return;
-            }
-
-            let item: any = null;
-            let ext: string = this.tab.selected.extension;
-            let data: any = this.findExtMapper(ext);
-            for (let i = 0; i < data.sidebar.length; i++)
-                if (data.sidebar[i].id == item_id) {
-                    item = data.sidebar[i];
-                    break;
-                }
-
-            if (!item) return;
-
-            if (this.sidebar.active == item.id) {
-                if (!forced) {
-                    await closeSidebar();
-                    return;
-                }
-            } else {
-                await closeSidebar();
-            }
-
-            const ref = this.viewContainerRef.createComponent<NodeComponent>(item.view);
-
-            let sidebar: any = {};
-            sidebar.close = async () => {
-                await closeSidebar();
-            }
-
-            sidebar.selected = this.tab.selected;
-
-            ref.instance.sidebar = sidebar;
-            let sidebarElement = ref.location.nativeElement;
-            this.sidebarElement.nativeElement.innerHTML = "";
-            this.sidebarElement.nativeElement.append(sidebarElement);
-
-            this.sidebar.active = item.id;
-            this.sidebar.ref = ref;
-            await this.service.render();
-        },
-        render: () => {
-            try {
-                let ext = this.tab.selected.extension;
-                let data = this.findExtMapper(ext);
-                if (data && data.sidebar) return data.sidebar;
-            } catch (e) {
-            }
-            return [];
-        }
-    };
-
-    public tab: any = {
-        onLoad: async () => { },
-        on: async () => {
-            if (this.tab.selected.id) {
-                await this.statusbar.setTitle(this.tab.selected.id, "fa-solid fa-hdd");
-            } else {
-                await this.statusbar.setTitle("/", "fa-solid fa-hdd");
-                if (this.sidebar.active)
-                    await this.sidebar.toggle(this.sidebar.active, false);
-            }
-        }
-    };
-
-    public drive: any = {
-        tab: this.tab,
-        open: async (node: any, extension: string) => {
-            let tab = {
-                id: node.id,
-                title: node.title,
-                extension: extension
-            };
-
-            if (this.findExtMapper(extension)) {
-                tab = await this.findExtMapper(extension).editor(tab);
-            }
-
-            if (tab) await this.tab.open(tab);
-            return true;
-        }
-    };
-
-    public apps: any = {
-        tab: this.tab
-    };
-
-    public statusbar: any = {
-        onLoad: async () => {
-            await this.statusbar.setTitle("/", "fa-solid fa-hdd");
-            await this.statusbar.alert.info('dizest started', 2000);
-            await this.service.render();
-        }
-    };
 }

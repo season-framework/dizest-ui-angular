@@ -46,8 +46,15 @@
                         .card-footer.d-flex.p-2
                             .ml-auto
                             a.btn.btn-blue((click)="update()") Update
+                    
+                    .card.mt-4
+                        .card-header
+                            h4.card-title Restart Server
 
-                .row.row-deck.row-cards(*ngIf="mode == 'kernel'")
+                        .card-body.p-2.text-center
+                            a.btn.btn-red((click)="restart()") Restart Server
+
+                .row.row-deck.row-cards.kernel-list(*ngIf="mode == 'kernel'")
                     .col-md-4(*ngFor="let item of data.conda")
                         .card.card-sm
                             .card-body
@@ -59,7 +66,9 @@
                                             i.fa-solid.fa-xmark
                                 
                                 .text-muted.mb-2 {{item.path}}
-                                .text-muted {{item.version}}
+                                .text-muted {{item.version}} / dizest: {{item.dizest}}
+                                    a.link-muted.ml-1((click)='conda.upgrade(item)')
+                                        i.fa-solid.fa-circle-arrow-up
 
                     .col-md-4
                         .card.card-sm.bg-blue((click)="conda.create()", *ngIf="!conda.iscreate")

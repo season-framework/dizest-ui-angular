@@ -13,11 +13,13 @@ export class Component implements OnInit {
     ) { }
 
     public async ngOnInit() {
+        await this.service.loading.show();
         await this.service.init();
         let { data } = await wiz.call("load", { zone: this.tab.dizest.zone });
         this.data.setting = data;
         this.data.conda = await this.conda.list();
         await this.service.render();
+        await this.service.loading.hide();
     }
 
     public async wizOnTabInit() {
@@ -45,7 +47,7 @@ export class Component implements OnInit {
         obj.iscreate = false;
 
         obj.list = async () => {
-            let { code, data } = await this.request("conda", "list");
+            let { code, data } = await this.request("conda", "list", { dizest: true });
             data = data.sort((a, b) => a.name.localeCompare(b.name));
             if (code == 200) return data;
             return [];
@@ -81,10 +83,18 @@ export class Component implements OnInit {
             await this.service.loading.hide();
         }
 
+        obj.upgrade = async (item: any) => {
+            await this.service.loading.show();
+            await this.request("conda", "upgrade", { name: item.name });
+            this.data.conda = await obj.list();
+            await this.service.render();
+            await this.service.loading.hide();
+        }
+
         obj.remove = async (item: any) => {
             if (!item.name) return;
             if (item.name.length < 3) return;
-            let res = await this.service.alert.show({ message: "Do you really want to remove env? What you've done cannot be undone." });
+            let res = await this.service.alert.show({ message: "Do you really want to remove env? What you've done cannot be undone.", cancel: 'Cancel', action: 'Remove' });
             if (!res) return;
 
             await this.service.loading.show();
@@ -116,6 +126,25 @@ export class Component implements OnInit {
     public async uploadIcon() {
         this.data.setting.icon = await this.service.file.read({ type: 'image', accept: 'image/*', width: 48, quality: 1 });
         await this.service.render();
+    }
+
+    public async restart() {
+        let res = await this.service.alert.show({ message: "Do you really want to restart server? All working workflow is stop after restarting.", cancel: 'Cancel', action: 'Restart' });
+        if (!res) return;
+        await this.service.loading.show();
+        try {
+            await wiz.call("restart", { zone: this.tab.dizest.zone });
+        } catch (e) {
+        }
+        while (true) {
+            try {
+                let { code } = await wiz.call("status", { zone: this.tab.dizest.zone });
+                if (code == 200) break;
+            } catch (e) {
+            }
+            await this.service.render(500);
+        }
+        await this.service.loading.hide();
     }
 
 }

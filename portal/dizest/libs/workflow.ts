@@ -80,12 +80,14 @@ export class Workflow {
         this.drawflowEvents.selected = selected;
         this.drawflowEvents.unselected = unselected;
 
-        drawflow.on('node.moved', changed);
-        drawflow.on('connection.created', changed);
-        drawflow.on('connection.cancel', changed);
-        drawflow.on('connection.removed', changed);
-        drawflow.on('node.selected', selected);
-        drawflow.on('node.unselected', unselected);
+        if (drawflow) {
+            drawflow.on('node.moved', changed);
+            drawflow.on('connection.created', changed);
+            drawflow.on('connection.cancel', changed);
+            drawflow.on('connection.removed', changed);
+            drawflow.on('node.selected', selected);
+            drawflow.on('node.unselected', unselected);
+        }
     }
 
     public async destroy() {
@@ -94,12 +96,14 @@ export class Workflow {
         let selected = this.drawflowEvents.selected;
         let unselected = this.drawflowEvents.unselected;
 
-        drawflow.unbind('node.moved', changed);
-        drawflow.unbind('connection.created', changed);
-        drawflow.unbind('connection.cancel', changed);
-        drawflow.unbind('connection.removed', changed);
-        drawflow.unbind('node.selected', selected);
-        drawflow.unbind('node.unselected', unselected);
+        if (drawflow) {
+            drawflow.unbind('node.moved', changed);
+            drawflow.unbind('connection.created', changed);
+            drawflow.unbind('connection.cancel', changed);
+            drawflow.unbind('connection.removed', changed);
+            drawflow.unbind('node.selected', selected);
+            drawflow.unbind('node.unselected', unselected);
+        }
     }
 
     public async request(action: string, data: any = {}) {
@@ -134,8 +138,9 @@ export class Workflow {
 
     public async run() {
         let res = await this.update();
-        if (res)
+        if (res) {
             await this.request('run');
+        }
     }
 
     public async stop() {

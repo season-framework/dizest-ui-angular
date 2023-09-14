@@ -1,0 +1,6 @@
+.image-container(*ngIf="!loading")
+    img([src]="imageURI()")
+
+.block-page(*ngIf="loading")
+    wiz-component-loading()
+    

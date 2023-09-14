@@ -1,7 +1,7 @@
 {
     "mode": "portal",
     "id": "alert",
-    "title": "Alert Modal",
+    "title": "\ud31d\uc5c5/Alert",
     "namespace": "alert",
     "viewuri": "",
     "category": "season",
@@ -18,5 +18,6 @@
         ],
         "outputs": []
     },
-    "template": "wiz-portal-season-alert([model]=\"\")"
+    "template": "wiz-portal-season-alert([model]=\"\")",
+    "type": "app"
 }
