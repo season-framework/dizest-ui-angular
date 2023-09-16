@@ -50,7 +50,8 @@ export class Component implements OnInit, OnDestroy {
         this.isRendered = false;
         await this.service.render();
 
-        await this.tab.sidebar.toggle("codeflow", false);
+        if (this.tab.sidebar.active)
+            await this.tab.sidebar.toggle(this.tab.sidebar.active, false);
 
         let alert = await this.tab.alert.info(`initialize workflow: ${this.tab.title}`);
         this.alerts.push(alert);

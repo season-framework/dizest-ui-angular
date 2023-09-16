@@ -148,6 +148,12 @@ export class Component implements OnInit {
     public sidebar: any = {
         active: null,
         ref: null,
+        close: async () => {
+            this.sidebar.active = null;
+            this.sidebarElement.nativeElement.innerHTML = "";
+            if (this.sidebar.ref) this.sidebar.ref.destroy();
+            await this.service.render();
+        },
         toggle: async (item_id: string, forced: any = null) => {
             if (['setting', 'terminal'].includes(item_id)) {
                 let tab = {
@@ -242,6 +248,11 @@ export class Component implements OnInit {
                     await this.statusbar.setTitle(this.tab.selected.id, "fa-solid fa-hdd");
                 } else {
                     await this.statusbar.setTitle("/", "fa-solid fa-hdd");
+                    if (this.sidebar.active)
+                        await this.sidebar.toggle(this.sidebar.active, false);
+                }
+
+                if (this.tab.selected.extension != 'dwp') {
                     if (this.sidebar.active)
                         await this.sidebar.toggle(this.sidebar.active, false);
                 }

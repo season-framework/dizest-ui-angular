@@ -203,6 +203,8 @@ export class Component implements OnInit {
         };
 
         await rootTab.open(tab);
+        if (this.scope.tab.sidebar.active)
+            await this.scope.tab.sidebar.toggle(this.scope.tab.sidebar.active, false);
     }
 
 }
