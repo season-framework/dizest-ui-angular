@@ -536,3 +536,18 @@
 .hidden {
     display: none !important;
 }
+
+.form-control.form-control-flush {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+a.dropdown-item {
+    cursor: pointer;
+
+    &:hover {
+        background: var(--wc-light);
+    }
+}

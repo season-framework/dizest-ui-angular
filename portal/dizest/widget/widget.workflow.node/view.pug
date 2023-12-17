@@ -60,13 +60,21 @@
                     
                     .value-data(*ngIf="['file', 'folder'].includes(item.inputtype)", style="display: flex;")
                         input.form-control.form-control-sm.text-left(type='text', [placeholder]='item.description', [(ngModel)]="data()[item.name]")
-                        span.badge.badge-sm.bg-secondary((click)="selectFile(item)", style='display: flex; align-item: center; cursor: pointer;')
-                            i.fa-solid.fa-upload
+                        span.badge.badge-sm.bg-secondary.text-white((click)="selectFile(item)", style='display: flex; align-item: center; cursor: pointer;')
+                            i.fa-solid.fa-arrow-up-from-bracket
 
                     .value-data(*ngIf="['list'].includes(item.inputtype)")
-                        select.form-select.form-select-sm.text-center([(ngModel)]="data()[item.name]")
-                            ng-container(*ngFor="let val of options(item.description);")
-                                option([value]='val.value') {{val.key}}
+                        wiz-portal-season-ui-dropdown([menuStyle]="{top: '28px'}")
+                            ng-template('#button'='')
+                                .form-control.form-control-flush.form-control-sm.dropdown-toggle {{ optionSelectValue(options(item.description), data()[item.name]) }}
+                            
+                            ng-template('#menu'='')
+                                ng-container(*ngFor="let val of options(item.description);")
+                                    a.dropdown-item.text-center((click)="optionSelectEvent(item, val.value)", [class.active]="data()[item.name] == val.value") {{val.key}}
+                        
+                        // select.form-select.form-select-sm.text-center([(ngModel)]="data()[item.name]")
+                        //     ng-container(*ngFor="let val of options(item.description);")
+                        //         option([value]='val.value') {{val.key}}
 
                 .value-configure(*ngIf="item.conf")
                     .row

@@ -74,10 +74,17 @@ export class Component implements OnInit, OnDestroy {
             term.write(data.output);
         });
 
+        let rtab = this.tab;
+
+        socket.on("exit", async function (data) {
+            await rtab.close();
+        });
+
         socket.on("connect", () => {
             fitToscreen();
+            const dims = { cols: term.cols, rows: term.rows };
             socketEmit("join");
-            socketEmit("create");
+            socketEmit("create", dims);
         });
 
         socket.on("disconnect", () => {

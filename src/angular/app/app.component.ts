@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, enableProdMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { Service } from '@wiz/libs/portal/season/service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-root',
@@ -11,7 +12,8 @@ export class AppComponent implements OnInit {
     constructor(
         public service: Service,
         public router: Router,
-        public ref: ChangeDetectorRef
+        public ref: ChangeDetectorRef,
+        public translate: TranslateService
     ) { }
 
     public async ngOnInit() {

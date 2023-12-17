@@ -41,8 +41,8 @@ iframe {
 }
 
 *::-webkit-scrollbar {
-    height: 10px;
-    width: 10px;
+    height: 10px !important;
+    width: 10px !important;
     background-color: var(--wc-scroll-background);
 }
 

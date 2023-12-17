@@ -8,6 +8,16 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { SortablejsModule } from "@wiz/libs/portal/season/ngx-sortablejs";
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
+// translate libs
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+export function createTranslateLoader(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/lang/', '.json');
+}
+
+// initialize ng module
 @NgModule({
     declarations: [
         '@wiz.declarations'
@@ -20,6 +30,15 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
         SortablejsModule,
         KeyboardShortcutsModule.forRoot(),
         NuMonacoEditorModule.forRoot({ baseUrl: `lib` }),
+        HttpClientModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (createTranslateLoader),
+                deps: [HttpClient]
+            },
+            defaultLanguage: 'en'
+        }),
         '@wiz.imports'
     ],
     providers: [

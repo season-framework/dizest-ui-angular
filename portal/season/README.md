@@ -15,6 +15,15 @@ pip install peewee pymysql bcrypt python3-saml
 
 # Release
 
+### 1.2.4
+
+- 언어 패칭 기능 추가 (service.lang)
+- event trigger 기능 추가 (service.trigger)
+
+### 1.2.3
+
+- auth api 업데이트
+
 ### 1.2.2
 
 - pagenation 페이지 크기 설정 기능 추가

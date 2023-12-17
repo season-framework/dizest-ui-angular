@@ -68,6 +68,19 @@ export class Component implements OnInit {
         return res;
     }
 
+    public async optionSelectEvent(item, value) {
+        this.data()[item.name] = value;
+        await this.scope.service.render();
+    }
+
+    public optionSelectValue(opts, value) {
+        let map = {};
+        for (let i = 0; i < opts.length; i++) {
+            map[opts[i].value] = opts[i].key;
+        }
+        return map[value] ? map[value] : 'Undefined';
+    }
+
     public isActive() {
         return !this.flow.inactive();
     }
