@@ -19,7 +19,7 @@ if action == "logo":
         img = img.convert('RGBA')
         wiz.response.PIL(img, type="PNG")
     
-    fs = wiz.workspace("service").fs("src", "assets", "brand")
+    fs = wiz.project.fs("bundle", "src", "assets", "brand")
     wiz.response.download(fs.abspath("logo.png"), as_attachment=False)
 
 if action == "icon":
@@ -32,7 +32,7 @@ if action == "icon":
         img = img.convert('RGBA')
         wiz.response.PIL(img, type="PNG")
     
-    fs = wiz.workspace("service").fs("src", "assets", "brand")
+    fs = wiz.project.fs("bundle", "src", "assets", "brand")
     wiz.response.download(fs.abspath("icon.ico"), as_attachment=False)
 
 wiz.response.abort(404)

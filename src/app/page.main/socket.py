@@ -22,8 +22,8 @@ class Controller:
         io.join(workflow.spawner_id())
     
     def wplog(self, data, io):
-        branch = wiz.branch()
-        socketNamespace = f"/wiz/app/{branch}/page.main"
+        project = wiz.project()
+        socketNamespace = f"/wiz/app/{project}/page.main"
 
         for log in data:
             event = log['event']
@@ -32,7 +32,7 @@ class Controller:
             del log['namespace']
             del log['workflow_id']
             del log['event']
-            io.emit(event, log, to=to, namespace=socketNamespace, broadcast=True)
+            io.emit(event, log, to=to, namespace=socketNamespace)
 
     def disconnect(self, flask, io):
         pass
