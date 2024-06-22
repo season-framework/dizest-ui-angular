@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "Sidebar/Apps",
+    "id": "sidebar.apps",
+    "namespace": "sidebar.apps",
+    "viewuri": "",
+    "category": "dizest",
+    "controller": "",
+    "template": "wiz-portal-dizest-sidebar-apps([sidebar]=\"\")"
+}

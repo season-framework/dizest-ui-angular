@@ -15,11 +15,6 @@
                             i.fa-solid.fa-hdd(style="width: 22px;")
                         .action-border
                     
-                    .click.apps-click((click)="switchNav('apps')", [class.active]="view.nav == 'apps'")
-                        .action-btn
-                            i.fa-solid.fa-cubes(style="width: 22px;")
-                        .action-border
-
                     .click((click)="switchNav('health')", [class.active]="view.nav == 'health'")
                         .action-btn
                             i.fa-solid.fa-heart-pulse(style="width: 20px;")
@@ -28,9 +23,6 @@
             .view-body
                 .drive-view([hidden]="view.nav != 'drive'")
                     wiz-portal-dizest-drive([dizest]="dizest", [config]="drive")
-
-                ng-container(*ngIf="view.nav == 'apps'")
-                    wiz-portal-dizest-apps([dizest]="dizest", [config]="apps")
 
                 ng-container(*ngIf="view.nav == 'health'")
                     wiz-portal-dizest-health([dizest]="dizest")

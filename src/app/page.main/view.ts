@@ -15,6 +15,7 @@ import UIModeEditor from '@wiz/app/portal.dizest.editor.uimode';
 import SettingEditor from '@wiz/app/portal.dizest.editor.setting';
 import TerminalEditor from '@wiz/app/portal.dizest.editor.terminal';
 
+import AppsSidebar from '@wiz/app/portal.dizest.sidebar.apps';
 import CodeFlowSidebar from '@wiz/app/portal.dizest.sidebar.codeflow';
 import WorkflowInfoSidebar from '@wiz/app/portal.dizest.sidebar.workflowinfo';
 import TimerSidebar from '@wiz/app/portal.dizest.sidebar.timer';
@@ -84,6 +85,7 @@ export class Component implements OnInit {
             match: (ext: string) => ext == 'dwp',
             sidebar: [
                 { icon: 'fa-solid fa-book', title: 'Workflow Info', id: 'info', view: WorkflowInfoSidebar },
+                { icon: 'fa-solid fa-cubes', title: 'Apps', id: 'apps', view: AppsSidebar },
                 { icon: 'fa-solid fa-code', title: 'Codeflow', id: 'codeflow', view: CodeFlowSidebar },
                 { icon: 'fa-solid fa-stopwatch', title: 'Timer', id: 'timer', view: TimerSidebar },
                 { icon: 'fa-brands fa-python', title: 'Packages', id: 'packages', view: PackagesSidebar },
@@ -99,10 +101,7 @@ export class Component implements OnInit {
                 tab.onCreatedRef = async (ref: any) => {
                     ref.instance.DrawflowNodeComponent = DrawflowNodeComponent;
                 }
-                let finded: any = this.tab.find(tab.id);
                 tab = await this.tab.open(tab);
-                if (!finded)
-                    await this.switchNav('apps');
             }
         },
         video: {
@@ -291,10 +290,6 @@ export class Component implements OnInit {
         }
     };
 
-    public apps: any = {
-        tab: this.tab
-    };
-
     public statusbar: any = {
         onLoad: async () => {
             await this.statusbar.setTitle("/", "fa-solid fa-hdd");
@@ -380,12 +375,6 @@ export class Component implements OnInit {
             }
         }, {
             key: ["alt + 2"],
-            preventDefault: true,
-            command: async () => {
-                await this.switchNav("apps");
-            }
-        }, {
-            key: ["alt + 3"],
             preventDefault: true,
             command: async () => {
                 await this.switchNav("health");

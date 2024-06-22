@@ -1,10 +1,10 @@
 import { OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Input } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import { SearchAddon } from 'xterm-addon-search';
-import { WebLinksAddon } from 'xterm-addon-web-links';
+import { Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import { SearchAddon } from '@xterm/addon-search';
+import { WebLinksAddon } from '@xterm/addon-web-links';
 
 export class Component implements OnInit, OnDestroy {
     @Input() tab: any = {};
