@@ -1,87 +1,120 @@
-.drive-tree(
-    *ngIf="!isCreateFile",
-    (drop)="treeConfig.rootNode().drop($event)",
-    (dragend)="treeConfig.rootNode().dragend($event)", 
-    (dragover)="treeConfig.rootNode().dragover($event)")
+div(
+    *ngIf="!tree.status.isCreateFile",
+    class="w-full h-full flex flex-col",
+    (drop)="tree.rootNode().drop($event)",
+    (dragend)="tree.rootNode().dragend($event)", 
+    (dragover)="tree.rootNode().dragover($event)")
 
-    .container.p-3
-        ng-container(*ngIf="treeConfig.rootNode && treeConfig.rootNode().newItem")
-            .tree-node
-                i.tree-icon.fa-regular.fa-folder.mr-2
-                .tree-node-title
-                    input.form-control.form-control-sm([(ngModel)]="treeConfig.rootNode().newItem.title", placeholder="폴더명", (keyup.enter)="createFolder(treeConfig.rootNode())")
-                i.icon-action-always.fa-solid.fa-xmark((click)="cancelCreate(treeConfig.rootNode()); $event.stopPropagation();")
-                i.icon-action-always.fa-solid.fa-check((click)="createFolder(treeConfig.rootNode()); $event.stopPropagation();")
+    div(class="w-full flex bg-indigo-50 text-[14px] border-b border-gray-200")
+        a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.event.upload(tree.rootNode());")
+            i(class="fa-solid fa-arrow-up-from-bracket")
+        a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.event.createFile(tree.rootNode())")
+            i(class="fa-solid fa-plus")
+        a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.event.create(tree.rootNode());")
+            i(class="fa-solid fa-folder-plus")
+        a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.rootNode().refresh()")
+            i(class="fa-solid fa-retweet")
+        a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.event.toggleShowHidden()")
+            i(class="fa-solid fa-eye-slash")
+    
+    div(class="overflow-hidden bg-gray-200", *ngIf="tree.status.uploadStatus.uploading")
+        div(class="h-1 bg-indigo-500", style="width: {{tree.status.uploadStatus.percent}}%;")
 
-        wiz-portal-season-viewer-tree([config]="treeConfig")
+    div(class="w-full flex-1 bg-white overflow-auto p-4 text-[15px]")
+        ng-container(*ngIf="tree.rootNode && tree.rootNode().newItem")
+            div(class="flex w-full cursor-pointer text-gray-500 items-center")
+                i(class="fa-regular fa-folder mr-2")
+                div(class="flex-1 overflow-hidden whitespace-nowrap text-ellipsis mr-1")
+                    input(
+                        class="block w-full rounded-md border-0 px-2 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm", 
+                        [(ngModel)]="tree.rootNode().newItem.title", 
+                        placeholder="폴더명", 
+                        (keyup.enter)="tree.event.createFolder(tree.rootNode())")
+                div(class="flex gap-x-1 text-gray-400 text-sm")
+                    i.fa-solid.fa-xmark((click)="tree.event.cancelCreate(tree.rootNode()); $event.stopPropagation();")
+                    i.fa-solid.fa-check((click)="tree.event.createFolder(tree.rootNode()); $event.stopPropagation();")
+
+        wiz-portal-season-tree([config]="tree")
             ng-template('#fileTemplate'='', let-data='')
-                .tree-node-container
-                    .tree-node((click)="data.select(); $event.stopPropagation();", [class.active]="data.isActive()") 
+                div
+                    div(class="group flex w-full cursor-pointer text-gray-500 items-center hover:bg-blue-50", (click)="data.select(); $event.stopPropagation();") 
                         ng-container(*ngIf="data.type == 'file'")
-                            i.tree-icon.mr-1([ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
+                            i(class="w-4 mr-1", [ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
                         ng-container(*ngIf="data.type == 'folder'")
-                            i.tree-icon.mr-1([ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
+                            i(class="w-4 mr-1 text-blue-400", [ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
 
-                        .tree-node-title
+                        div(class="flex-1 overflow-hidden whitespace-nowrap text-ellipsis mr-1")
                             span(*ngIf="!data.editable") {{data.title}}
-                            input.form-control.form-control-sm([(ngModel)]="data.rename", placeholder="폴더명", (keyup.enter)="data.update();", *ngIf="data.editable", (click)="$event.stopPropagation();")
+                            input(
+                                class="block w-full rounded-md border-0 px-2 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm", 
+                                [(ngModel)]="data.rename", 
+                                placeholder="폴더명", 
+                                (keyup.enter)="data.update();", 
+                                *ngIf="data.editable", 
+                                (click)="$event.stopPropagation();")
                         
-                        ng-container(*ngIf="data.type == 'folder'")
-                            i.icon-action.fa-solid.fa-plus((click)="createFile(data); $event.stopPropagation();")
-                            i.icon-action.fa-solid.fa-folder-plus((click)="create(data); $event.stopPropagation();")
-                            i.icon-action.fa-solid.fa-arrow-up-from-bracket((click)="upload(data); $event.stopPropagation();")
-                        
-                        ng-container(*ngIf="isWorkflowStoppable(data) && !data.isActive()")
-                            i.icon-action.fa-solid.fa-circle-stop((click)="stopWorkflow(data); $event.stopPropagation();")
-
-                        i.icon-action.fa-solid.fa-trash-can((click)="delete(data); $event.stopPropagation();")
-                        i.icon-action.fa-solid.fa-download((click)="download(data); $event.stopPropagation();")
+                        div(class="hidden group-hover:flex gap-x-1 text-gray-400 text-sm")
+                            ng-container(*ngIf="data.type == 'folder'")
+                                i(class="fa-solid fa-plus", (click)="tree.event.createFile(data); $event.stopPropagation();")
+                                i(class="fa-solid fa-folder-plus", (click)="tree.event.create(data); $event.stopPropagation();")
+                                i(class="fa-solid fa-arrow-up-from-bracket", (click)="tree.event.upload(data); $event.stopPropagation();")
+                            
+                            i(class="fa-solid fa-trash-can", (click)="tree.event.delete(data); $event.stopPropagation();")
+                            i(class="fa-solid fa-download", (click)="tree.event.download(data); $event.stopPropagation();")
 
                     ng-container(*ngIf="data.newItem")
-                        .tree-root
-                            .tree-node
-                                i.tree-icon.fa-regular.fa-folder.mr-2
-                                .tree-node-title
-                                    input.form-control.form-control-sm([(ngModel)]="data.newItem.title", placeholder="폴더명", (keyup.enter)="createFolder(data)")
-                                i.icon-action-always.fa-solid.fa-xmark((click)="cancelCreate(data); $event.stopPropagation();")
-                                i.icon-action-always.fa-solid.fa-check((click)="createFolder(data); $event.stopPropagation();")
+                        div(class="pl-4")
+                            div(class="flex w-full cursor-pointer text-gray-500 items-center")
+                                i(class="fa-regular fa-folder mr-2")
+                                div(class="flex-1 overflow-hidden whitespace-nowrap text-ellipsis mr-1")
+                                    input(
+                                        class="block w-full rounded-md border-0 px-2 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm", 
+                                        [(ngModel)]="data.newItem.title", 
+                                        placeholder="폴더명", 
+                                        (keyup.enter)="tree.event.createFolder(data)")
+                                div(class="flex gap-x-1 text-gray-400 text-sm")
+                                    i.fa-solid.fa-xmark((click)="tree.event.cancelCreate(data); $event.stopPropagation();")
+                                    i.fa-solid.fa-check((click)="tree.event.createFolder(data); $event.stopPropagation();")
     
-    .progress.progress-sm(*ngIf="uploadStatus.uploading")
-        .progress-bar.bg-red(style="width: {{uploadStatus.percent}}%;")
-    
-    .drive-menu
-        .menu-item((click)="upload(treeConfig.rootNode())")
-            i.fa-solid.fa-arrow-up-from-bracket
-        .menu-item((click)="createFile(treeConfig.rootNode())")
-            i.fa-solid.fa-plus
-        .menu-item((click)="create(treeConfig.rootNode())")
-            i.fa-solid.fa-folder-plus
-        .menu-item((click)="treeConfig.rootNode().refresh()")
-            i.fa-solid.fa-retweet
-        .menu-item((click)="toggleShowHidden()")
-            i.fa-solid.fa-eye(*ngIf="showHidden")
-            i.fa-solid.fa-eye-slash(*ngIf="!showHidden")
 
-.drive-tree.p-3.pt-4.pb-4(*ngIf="isCreateFile")
-    .card
-        .card-body.p-3
-            .form-group.row.mb-3
-                label.form-label.col-3.col-form-label Type
-                .col
-                    .form-selectgroup
-                        label.form-selectgroup-item
-                            input.form-selectgroup-input(type='radio', name='file-type', value='file', [(ngModel)]="createFileData.type")
-                            span.form-selectgroup-label.pt-1.pb-1 File
-                        label.form-selectgroup-item
-                            input.form-selectgroup-input(type='radio', name='file-type', value='workflow', [(ngModel)]="createFileData.type")
-                            span.form-selectgroup-label.pt-1.pb-1 Workflow
+div(*ngIf="tree.status.isCreateFile", class="w-full h-full bg-white")
+    div(class="flex")
+        div(class="w-16 bg-gray-100 border-b p-2 px-4 text-sm font-semibold") Type
+        div(class="flex-1 flex border-b p-2 text-sm font-normal")
+            label(class="form-selectgroup-item")
+                input(type="radio", class="hidden", name="file-type", value="file", [(ngModel)]="tree.status.createFileData.type")
+                span(
+                    class="cursor-pointer items-center justify-center group flex gap-x-3 rounded-full py-2 px-3 text-sm font-semibold",
+                    (click)="tree.status.createFileData.type = 'file'; service.render()", 
+                    [ngClass]="tree.status.createFileData.type == 'file' ? 'bg-indigo-500 text-white hover:bg-indigo-500' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'") 
+                    | File
 
-            .form-group.row
-                label.form-label.col-3.col-form-label Name
-                .col
-                    input.form-control(type="text", [(ngModel)]="createFileData.title", [placeholder]="createFileData.type == 'workflow' ? 'Workflow Name' : 'code.py'")
-            
-        .card-footer.d-flex.p-2
-            button.btn.btn-outline-blue((click)="cancelCreateFile()") Cancel
-            .ml-auto
-            button.btn.btn-blue((click)="createFile()") Create
+            label(class="form-selectgroup-item")
+                input(type="radio", class="hidden", name="file-type", value="workflow", [(ngModel)]="tree.status.createFileData.type")
+                span(
+                    class="cursor-pointer items-center justify-center group flex gap-x-3 rounded-full py-2 px-3 text-sm font-semibold",
+                    (click)="tree.status.createFileData.type = 'workflow'; service.render()", 
+                    [ngClass]="tree.status.createFileData.type == 'workflow' ? 'bg-indigo-500 text-white hover:bg-indigo-500' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'") 
+                    | Workflow
+
+    div(class="flex")
+        div(class="w-16 border-b bg-gray-100 p-2 px-4 text-sm font-semibold") Name
+        div(class="flex-1 border-b p-2 text-sm font-normal col-span-2")
+            input(
+                type="text", 
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", 
+                [placeholder]="tree.status.createFileData.type == 'workflow' ? 'Workflow Name' : 'code.py'", 
+                [(ngModel)]="tree.status.createFileData.title")
+
+    div(class="flex p-4")
+        button(
+            class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto", 
+            (click)="tree.event.cancelCreateFile()")
+            span Cancel
+        
+        div(class="ms-auto")
+
+        button(
+            class="inline-flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:w-auto", 
+            (click)="tree.event.createFile()")
+            span Create

@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "editor.workflow.node",
+    "id": "editor.workflow.node",
+    "namespace": "editor.workflow.node",
+    "viewuri": "",
+    "category": "editor",
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-workflow-node([workflow]=\"\", [flow]=\"\")"
+}

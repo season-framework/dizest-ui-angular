@@ -15,10 +15,6 @@ if wiz.request.match(f"{BASEURI}/logout") is not None:
     if LOGOUT_URI is not None and LOGOUT_URI != f"{BASEURI}/logout":
         wiz.response.redirect(LOGOUT_URI)
 
-    authType = wiz.session.get("authType", "local")
-    if authType == 'saml':
-        wiz.response.redirect(f"{BASEURI}/saml/logout")
-
     wiz.session.clear()
     wiz.response.redirect(returnTo)
 

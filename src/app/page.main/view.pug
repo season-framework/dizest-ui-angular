@@ -1,77 +1,66 @@
-.workflow-layout([class.tab-selected]="tab.selected && tab.selected.id", *ngIf="dizest")
-    .workflow-nav
-        .workflow-toggle((click)="toggleNav()", [class.toggle-hide]="view.hideNav")
-            i.fa-solid.fa-caret-left(*ngIf="!view.hideNav")
-            i.fa-solid.fa-caret-right(*ngIf="view.hideNav")
-        
-        .view-content(*ngIf="!view.hideNav")
-            .view-header
-                .view-title
-                    img(src="/brand/logo")
+div(class="w-screen h-screen bg-gray-100 overflow-hidden flex")
+    div(class="flex flex-col w-full lg:w-[320px]")
+        div(class="w-full bg-indigo-500 text-white p-2 flex justify-center items-center")
+            img(src="/assets/brand/logo.png", class="h-[36px]")
+        div(class="w-full flex-1 overflow-hidden")
+            wiz-portal-dizest-drive([config]="driveConfig", [dizest]="dizest")
 
-                .clicks
-                    .click((click)="switchNav('drive')", [class.active]="view.nav == 'drive'")
-                        .action-btn
-                            i.fa-solid.fa-hdd(style="width: 22px;")
-                        .action-border
-                    
-                    .click((click)="switchNav('health')", [class.active]="view.nav == 'health'")
-                        .action-btn
-                            i.fa-solid.fa-heart-pulse(style="width: 20px;")
-                        .action-border
+    div(class="w-full h-full lg:flex-1 border-x border-gray-200 flex flex-col overflow-hidden")
+        div(*ngIf="workspace", class="w-full flex", [sortablejs]="workspace.editors", [sortablejsOptions]="workspaceSortableOption")
+            ng-container(*ngFor="let editor of workspace.editors")
+                div(class="view-tab w-full max-w-48 flex flex-1 text-sm px-2 py-0.5 bg-gray-200 border-r border-gray-300", [class.bg-white]="editor.path == workspace.current")
+                    div(class="flex-1 overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer", (click)="editor.open()") {{editor.name}}
+                    div(class="cursor-pointer flex justify-center items-center", (click)="editor.close()")
+                        svg(class="animate-spin h-[14px] w-[14px]", viewBox="0 0 24 24", *ngIf="editor.loading")
+                            circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
+                            path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
+                        i.fa-solid.fa-xmark(*ngIf="!editor.loading")
             
-            .view-body
-                .drive-view([hidden]="view.nav != 'drive'")
-                    wiz-portal-dizest-drive([dizest]="dizest", [config]="drive")
+        div(class="w-full flex-1 overflow-hidden", '#editor'='')
 
-                ng-container(*ngIf="view.nav == 'health'")
-                    wiz-portal-dizest-health([dizest]="dizest")
-
-    .workflow-content
-        .view-content
-            wiz-portal-season-tab([config]="tab")
-        wiz-portal-season-statusbar([config]="statusbar")
-
-    .workflow-sidebar-view('#workflowsidebar'='')
-
-    .workflow-sidebar
-        ng-container(*ngFor="let item of sidebar.render()")
-            .btn((click)="sidebar.toggle(item.id)", [class.btn-blue]="sidebar.active == item.id")
-                i([ngClass]="item.icon")
-                .hover-area
-                    span {{item.title}}
-                    .sidemenu-icon
-                        i([ngClass]="item.icon")
+    div(class="w-[42px] bg-white h-full flex flex-col")
+        ng-container(*ngIf="workspace && workspace.selected && workspace.selected.actions")
+            div(
+                *ngFor="let action of workspace.selected.actions", 
+                class="group flex h-[42px] justify-center items-center cursor-pointer", 
+                [class.bg-indigo-500]="action.isActive && action.isActive()",
+                [class.text-white]="action.isActive && action.isActive()",
+                (click)="workspace.selected.onAction(action)")
+                i([ngClass]="action.icon")
+                div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
+                    span(class="ml-4") {{action.name}}
+                    div(class="w-[42px] flex justify-center items-center")
+                        i([ngClass]="action.icon")
+            
+        div(class="flex-1")
         
-        .mt-auto
-
-        .btn((click)="sidebar.toggle('terminal')")
+        div(class="group flex h-[42px] justify-center items-center cursor-pointer")
             i.fa-solid.fa-terminal
-            .hover-area
-                span Terminal
-                .sidemenu-icon
+            div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
+                span(class="ml-4") Terminal
+                div(class="w-[42px] flex justify-center items-center")
                     i.fa-solid.fa-terminal
-
-        .btn((click)="sidebar.toggle('setting')", *ngIf="service.auth.session.admin")
+        
+        div(class="group flex h-[42px] justify-center items-center cursor-pointer")
+            i.fa-solid.fa-heart-pulse
+            div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
+                span(class="ml-4") Health
+                div(class="w-[42px] flex justify-center items-center")
+                    i.fa-solid.fa-heart-pulse
+        
+        div(class="group flex h-[42px] justify-center items-center cursor-pointer")
             i.fa-solid.fa-cog
-            .hover-area
-                span Setting
-                .sidemenu-icon
+            div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
+                span(class="ml-4") Setting
+                div(class="w-[42px] flex justify-center items-center")
                     i.fa-solid.fa-cog
 
-        a.btn(href="/auth/logout")
+        div(class="group flex h-[42px] justify-center items-center cursor-pointer")
             i.fa-solid.fa-power-off
-            .hover-area
-                span Logout
-                .sidemenu-icon
+            div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
+                span(class="ml-4") Logout
+                div(class="w-[42px] flex justify-center items-center")
                     i.fa-solid.fa-power-off
-
-svg(viewBox="0 0 202.9 45.5").
-    <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
-        <path  d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
-            c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
-            c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
-    </clipPath>
 
 ng-container(*ngIf="shortcuts.length > 0")
     ng-keyboard-shortcuts([shortcuts]="shortcuts")

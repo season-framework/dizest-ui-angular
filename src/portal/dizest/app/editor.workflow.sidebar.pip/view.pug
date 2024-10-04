@@ -1,0 +1,10 @@
+div(class="w-[320px] flex flex-col h-full bg-white")
+    div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
+        div(class="flex flex-1 gap-x-2 items-center")
+            i.fa-brands.fa-python
+            span Packages
+        div((click)="sidebar.close()", class="cursor-pointer")
+            i.fa-solid.fa-xmark
+    
+    div(class="flex-1 w-full h-full overflow-hidden")
+        div(class="w-full h-full overflow-y-auto")

@@ -1,53 +1,59 @@
 import { Injectable } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 
-import Crypto from './crypto';
-import Auth from './auth';
-import File from './file';
-import Alert from './alert';
-import Loading from './loading';
-import Request from './request';
-import Toast from './toast';
-import Navbar from './navbar';
-import Lang from './lang';
-import Trigger from './trigger';
+import Auth from './src/auth';
+import Event from './src/event';
+import Lang from './src/lang';
+import Modal from './src/modal';
+import Status from './src/status';
+
+import Crypto from './util/crypto';
+import File from './util/file';
+import Request from './util/request';
 
 @Injectable({ providedIn: 'root' })
 export class Service {
-    public auth: Auth;
-    public file: File;
-    public alert: Alert;
-    public loading: Loading;
-    public request: Request;
-    public toast: Toast;
-    public navbar: Navbar;
-    public lang: Lang;
-    public trigger: Trigger;
     public app: ChangeDetectorRef;
+    public inited: boolean = false;
+
+    public auth: Auth;
+    public modal: Modal;
+    public event: Event;
+    public lang: Lang;
+    public status: Status;
+
+    public crypto: Crypto;
+    public file: File;
+    public request: Request;
 
     constructor() { }
 
     public async init(app: any) {
         if (app) {
             this.app = app;
+
             this.crypto = new Crypto();
-            this.auth = new Auth(this);
-            this.file = new File(this);
-            this.alert = new Alert(this);
-            this.loading = new Loading(this);
-            this.navbar = new Navbar(this);
+            this.file = new File();
             this.request = new Request();
-            this.toast = new Toast();
-            this.trigger = new Trigger();
-            this.lang = new Lang(this);
-            let lang: string = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
-            if (!['ko', 'en'].includes(lang)) lang = 'en';
-            this.lang.set(lang);
-            await this.loading.show();
+
+            this.auth = new Auth(this);
+            this.modal = new Modal(this);
+            this.status = new Status(this);
+            this.event = new Event(this);
+
+            if (this.app.translate) {
+                this.lang = new Lang(this);
+                let lang: string = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
+                if (!['ko', 'en'].includes(lang)) lang = 'en';
+                this.lang.set(lang);
+            }
+
             await this.auth.init();
+            this.inited = true;
+            await this.render();
         }
 
-        await this.auth.check();
+        await this.auth.update();
         return this;
     }
 

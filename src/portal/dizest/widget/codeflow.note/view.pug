@@ -1,7 +1,0 @@
-.container.area-round(*ngIf="initialize && app")
-    .descarea.pb-0.pt-3.pr-3.pl-3(*ngIf="!descriptionEditable && app.spec().description", [innerHtml]="showdown(app.spec().description)")
-    nu-monaco-editor(*ngIf="descriptionEditable", [(ngModel)]="app.spec().description", [options]="monaco", [height]="'auto'", (event)="init($event)")
-    button.btn.btn-blue((click)="toggleEditable()")
-        i.fa-solid.fa-book(*ngIf="descriptionEditable")
-        i.fa-solid.fa-edit(*ngIf="!descriptionEditable")
-    

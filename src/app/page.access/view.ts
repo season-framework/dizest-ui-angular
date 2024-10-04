@@ -1,12 +1,15 @@
 import { OnInit } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
+import { Dizest } from '@wiz/libs/portal/dizest/dizest';
 
 export class Component implements OnInit {
-    constructor(public service: Service) { }
+    constructor(public service: Service) {
+        this.dizest = new Dizest(service);
+    }
 
     public user: any = {
-        id: '',
-        username: '',
+        id: 'root',
+        username: 'root',
         password: ''
     };
 
@@ -16,7 +19,7 @@ export class Component implements OnInit {
     }
 
     public async alert(message: string, status: string = 'error') {
-        return await this.service.alert.show({
+        return await this.service.modal.show({
             title: "",
             message: message,
             cancel: false,
@@ -28,7 +31,7 @@ export class Component implements OnInit {
 
     public async login() {
         let user = JSON.parse(JSON.stringify(this.user));
-        let { code, data } = await wiz.call("login", user);
+        let { code, data } = await this.dizest.api.call("auth", "login", user)
         if (code == 200) {
             location.href = "/";
             return;

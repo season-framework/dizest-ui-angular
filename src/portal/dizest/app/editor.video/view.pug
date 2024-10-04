@@ -1,6 +1,3 @@
-.image-container(*ngIf="!loading")
+div(*ngIf="!loading", class="flex justify-center items-center w-full h-full overflow-auto bg-gray-200")
     video(controls)
         source([src]="imageURI()")
-
-.block-page(*ngIf="loading")
-    wiz-component-loading()

@@ -1,86 +1,54 @@
-.dizest-drawflow((drop)="drop($event)", (dragover)="dragover($event)")
-    .workflow-canvas.noselect
-        .drawflow-container(*ngIf="isRendered")
-            div('#drawflow'='')
-    
-    .workflow-zoom.area-round
-        .workflow-position
-            a.text-muted.btn-link.cursor-pointer((click)="init_pos()")
+div(class="flex h-full w-full bg-white")
+    div(class="relative flex-1 h-full w-full flex justify-center items-center", (drop)="drop($event)", (dragover)="dragover($event)")
+        div('#drawflow'='')
+
+        div(class="absolute bottom-[24px] right-[24px] flex flex-col justify-center items-center", *ngIf="workflow")
+            div(class="flex text-gray-500 font-normal mb-1", (click)="workflow.init_pos()")
                 span (
-                span {{-position().x}}
+                span {{-workflow.position.x}}
                 span.mr-1.ml-1 ,
-                span {{-position().y}}
+                span {{-workflow.position.y}}
                 span )
 
-        .btn-group
-            .btn.btn-blue((click)="zoom_out()")
-                i.fa-solid.fa-magnifying-glass-minus
-            .btn.btn-blue((click)="zoom_reset()")
-                i.fa-solid.fa-magnifying-glass
-            .btn.btn-blue((click)="zoom_in()")
-                i.fa-solid.fa-magnifying-glass-plus
+            span(class="isolate flex rounded-2xl shadow-sm cursor-pointer")
+                div(
+                    class="relative inline-flex items-center rounded-l-2xl bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:z-10", 
+                    (click)="zoom_out()")
+                    i.fa-solid.fa-magnifying-glass-minus
+                .btn.btn-blue(
+                    class="relative -ml-px inline-flex items-center bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:z-10",
+                    (click)="zoom_reset()")
+                    i.fa-solid.fa-magnifying-glass
+                .btn.btn-blue(
+                    class="relative -ml-px inline-flex items-center rounded-r-2xl bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:z-10",
+                    (click)="zoom_in()")
+                    i.fa-solid.fa-magnifying-glass-plus
 
-    .workspace-actions.area-round
-        a.btn.btn-red((click)="kill()")
-            i.fa-solid.fa-power-off
-        
-        wiz-portal-season-ui-dropdown([menuStyle]="{top: '52px'}")
-            ng-template('#button'='')
-                .btn.dropdown-toggle.spec-header {{spec}}
+        div(class="absolute bg-gray-300 bg-opacity-40 top-[24px] p-4 rounded-lg flex gap-x-3")
+            div(class="px-4 py-4 text-md bg-rose-500 text-white cursor-pointer rounded-full hover:bg-rose-600")
+                i.fa-solid.fa-power-off
 
-            ng-template('#menu'='')
-                a.dropdown-item(*ngFor="let item of specs", (click)="changeSpec(item)") {{item.name}}
-        
-        a.btn.btn-blue((click)="run()", *ngIf="['idle'].includes(status())")
-            i.fa-solid.fa-play
+            select(class="w-32 h-[48px] rounded-full text-sm flex items-center justify-center text-center border-indigo-500")
+                option(value="base") base
 
-        a.btn.btn-red((click)="stop()", *ngIf="!['idle'].includes(status())")
-            i.fa-solid.fa-stop
+            div(
+                class="px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
+                (click)="run()")
+                i.fa-solid.fa-play
 
-        a.btn.btn-blue((click)="stop('Initialize')", *ngIf="['idle'].includes(status())")
-            i.fa-solid.fa-stop
+            div(
+                class="px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
+                (click)="stop()")
+                i.fa-solid.fa-stop
 
-        a.btn.btn-blue((click)="reload()")
-            i.fa-solid.fa-refresh
-        
-        a.btn.btn-blue.if-desktop((click)="update()")
-            i.fa-solid.fa-save
+            div(
+                class="px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
+                (click)="workflow.reload()")
+                i.fa-solid.fa-refresh
 
-.block-page(*ngIf="!workflow || workflow.status == 'stop'")
-    wiz-component-loading()
+            div(
+                class="px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
+                (click)="editor.update()")
+                i.fa-solid.fa-save
 
-.wiz-modal(*ngIf="isShowDrive")
-    .modal
-        .modal-dialog.modal-sm(role='document')
-            .modal-content
-                .modal-body.p-0
-                    .table-content
-                        table.table.table-vcenter.table-nowrap.card-table.table-hover
-                            thead.sticky-top
-                                tr
-                                    th 이름
-                                    th.w-1.text-right 크기
-                                    th.w-1.text-right 수정된 날짜
-
-                            tbody
-                                tr((click)="openDrive({type : 'folder', id: driveList.parent}); $event.stopPropagation();", *ngIf="driveList.parent !== null")
-                                    td
-                                        .file-title
-                                            i.mr-2.fa-solid.fa-folder
-                                            span ..
-                                    td.text-muted.text-right
-                                    td.text-muted
-
-                                tr(*ngFor="let file of driveList.files", [class.bg-blue-lt]="file.id == driveTarget", (click)="selectDrive(file); $event.stopPropagation();", (dblclick)="openDrive(file); $event.stopPropagation();")
-                                    td
-                                        .file-title
-                                            i.mr-2([ngClass]="icon(file)")
-                                            span((click)="openDrive(file); $event.stopPropagation();") {{file.title}}
-                                    
-                                    td.text-muted.text-right {{file.size}}
-                                    td.text-muted {{file.modified}}
-
-                .modal-footer.border-top.pt-2.pb-2.d-flex
-                    a.btn((click)="hideDrive()") Cancel
-                    .ml-auto
-                    a.btn.btn-blue(*ngIf="driveTarget", (click)="selectedDrive()") Select
+    div(class="h-full flex justify-center items-center bg-white", '#sidebar'='')

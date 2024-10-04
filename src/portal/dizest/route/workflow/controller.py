@@ -8,139 +8,64 @@ import shutil
 import zipfile
 import tempfile
 
-Kernel = wiz.model("portal/dizest/kernel")
-config = wiz.model("portal/dizest/config")
-segment = wiz.request.match("/api/dizest/workflow/<zone>/<path:path>")
-zone = segment.zone
+segment = wiz.request.match("/api/dizest/workflow/<path:path>")
 action = segment.path
+struct = wiz.model("portal/dizest/struct")
+config = struct.config
 
-if config.acl(wiz, zone) == False:
-    wiz.response.status(401)
+if action == 'load':
+    path = wiz.request.query("path", True)
+    data = config.get_workflow(path)
+    wiz.response.status(200, data)
 
-fs = season.util.fs(config.storage_path(wiz, zone))
-kernel = Kernel(zone)
+if action == 'init':
+    path = wiz.request.query("path", True)
+    data = config.get_workflow(path)
 
-if action == "active":
-    workflows = kernel.workflows()
-    wiz.response.status(200, workflows)
+    kernel_id = None
+    if 'kernel_id' in data:
+        kernel_id = data['kernel_id']
 
-workflow_id = wiz.request.query("workflow_id", True)
-workflow = kernel.workflow(workflow_id)
+    kernel = struct.kernel(kernel_id)
+    kernel.path = path
+    kernel_id = kernel.id
 
-def driveItem(path):
-    def convert_size():
-        size_bytes = os.path.getsize(fs.abspath(path)) 
-        if size_bytes == 0:
-            return "0B"
-        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-        i = int(math.floor(math.log(size_bytes, 1024)))
-        p = math.pow(1024, i)
-        s = round(size_bytes / p, 2)
-        return "%s %s" % (s, size_name[i])
+    data = kernel.update(data)
+    if data is None:
+        wiz.response.status(400, "path not defined")
+    wiz.response.status(200, data)
 
-    item = dict()
-    item['id'] = path
-    item['type'] = 'folder' if fs.isdir(path) else 'file'
-    item['title'] = os.path.basename(path)
-    item['root_id'] = os.path.dirname(path)
-    item['created'] = datetime.datetime.fromtimestamp(os.stat(fs.abspath(path)).st_ctime).strftime('%Y-%m-%d %H:%M:%S')
-    item['modified'] = datetime.datetime.fromtimestamp(os.stat(fs.abspath(path)).st_mtime).strftime('%Y-%m-%d %H:%M:%S')
-    item['size'] = convert_size()
-    item['sizebyte'] = os.path.getsize(fs.abspath(path)) 
-    return item
+kernel_id = wiz.request.query("kernel_id", True)
+kernel = struct.kernel(kernel_id)
 
-if action == "load":
-    data = workflow.data()
-    status = workflow.status()
-    
-    if status != 'stop':
-        flow_status = workflow.flow.status()
-        for key in data['flow']:
-            try:
-                del data['flow'][key]['status']
-                del data['flow'][key]['index']
-                del data['flow'][key]['log']
-            except:
-                pass
-            if key in flow_status:
-                data['flow'][key]['status'] = flow_status[key]['status']
-                data['flow'][key]['index'] = flow_status[key]['index']
-                data['flow'][key]['log'] = "<br>".join(flow_status[key]['log'])
-            else:
-                data['flow'][key]['status'] = 'idle'
-                data['flow'][key]['index'] = -1
-                data['flow'][key]['log'] = ""
-
-    wiz.response.status(200, workflow=data, status=status)
-
-if action == "update":
+if action == 'update':
     data = json.loads(wiz.request.query("data", True))
-    res = workflow.update(data)
-    wiz.response.status(200, res)
+    data = kernel.update(data)
+    if data is None:
+        wiz.response.status(400, "path not defined")    
+    wiz.response.status(200, data)
 
-if action == "status":
-    status = workflow.status()
-    wiz.response.status(200, status)
+if action == 'status':
+    status = kernel.workflow.status()
+    flow_status = kernel.workflow.flow.status()
+    wiz.response.status(200, workflow=status, flow=flow_status)
 
-if action == "start":
-    workflow.start()
+if action == 'run':
+    kernel.workflow.run()
     wiz.response.status(200)
 
-if action == "kill":
-    workflow.kill()
-    wiz.response.status(200)
-
-if action == "restart":
-    workflow.restart()
-    wiz.response.status(200)
-
-if action == "run":
-    workflow.run()
-    wiz.response.status(200)
-
-if action == "stop":
-    workflow.stop()
+if action == 'stop':
+    kernel.workflow.stop()
     wiz.response.status(200)
 
 if action == "flow/run":
     flow_id = wiz.request.query("flow_id")
-    res = workflow.flow.run(flow_id)
-    wiz.response.status(res.code)
+    res = kernel.workflow.flow.run(flow_id)
+    wiz.response.status(res.code, res.data)
 
 if action == "flow/stop":
     flow_id = wiz.request.query("flow_id")
-    res = workflow.flow.stop(flow_id)
+    res = kernel.workflow.flow.stop(flow_id)
     wiz.response.status(res.code)
-
-if action == "spec":
-    wiz.response.status(200, workflow.spec())
-
-if action == "spec/update":
-    spec = wiz.request.query("spec", True)
-    specdata = kernel.spec(spec)
-    if specdata['name'] == spec:
-        workflow.set(spec=spec)
-    wiz.response.status(200)
-
-if action == "drive/list":
-    path = wiz.request.query("path", "")
-    scanparent = wiz.request.query("scanparent", None)
-    if scanparent is not None:
-        path = os.path.dirname(path)
-
-    basedir = os.path.dirname(workflow_id)
-    basedir = os.path.join(basedir, path)
-    files = fs.ls(basedir)
-    res = []
-    for f in files:
-        fi = driveItem(os.path.join(basedir, f))
-        fi['id'] = os.path.join(path, f)
-        res.append(fi)
-
-    parent = None
-    if len(path) > 0:
-        parent = os.path.dirname(path)
-    
-    wiz.response.status(200, parent=parent, files=res)
 
 wiz.response.status(404)

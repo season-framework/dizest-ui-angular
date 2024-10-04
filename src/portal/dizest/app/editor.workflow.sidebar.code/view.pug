@@ -1,0 +1,35 @@
+div(class="w-[720px] flex flex-col h-full bg-white")
+    div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
+        div(class="flex flex-1 gap-x-2 items-center")
+            i.fa-solid.fa-code
+            span Code
+        div((click)="sidebar.close()", class="cursor-pointer")
+            i.fa-solid.fa-xmark
+    
+    div(class="flex-1 w-full h-full overflow-hidden", *ngIf="workflow")
+        div(*ngIf="!sidebar.items || sidebar.items.length == 0", class="w-full p-8")
+            div(class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center")
+                i.fa-solid.fa-square-plus(class="text-xl")
+                span(class="mt-2 block text-sm font-semibold text-gray-900") Open code from workflow
+        
+        div('#scrollelement'='', class="w-full h-full overflow-y-auto", *ngIf="sidebar.items")
+            div(
+                class="w-full border-b border-slate-300",
+                (click)="select(flow_id)",
+                *ngFor="let flow_id of sidebar.items")
+
+                div(class="flex px-3 py-2 bg-slate-200 text-slate-700 gap-x-2 items-center justify-center")
+                    div(*ngIf="workflow.node.selected == flow_id")
+                        i.fa-solid.fa-circle-play
+
+                    div(class="flex-1 overflow-hidden")
+                        input(
+                            class="text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0 placeholder-gray-700 bg-transparent", 
+                            [placeholder]="flow(flow_id).title()",
+                            [(ngModel)]="flow(flow_id).raw().title")
+                    
+                    div
+                        i.fa-solid.fa-xmark((click)="close(flow_id)")
+
+                div(class="code-area w-full")
+                    nu-monaco-editor([(ngModel)]="flow(flow_id).app().raw().code", [options]="monacopy", [height]="'auto'", (event)="init($event)")

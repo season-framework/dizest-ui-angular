@@ -1,8 +1,8 @@
 {
     "id": "drive",
-    "title": "/api/dizest/drive/<zone>/<path:path>",
-    "route": "/api/dizest/drive/<zone>/<path:path>",
+    "title": "/api/dizest/drive/<path:path>",
+    "route": "/api/dizest/drive/<path:path>",
     "viewuri": "",
-    "category": "dizest",
+    "category": "api",
     "controller": "base"
 }

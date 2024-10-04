@@ -1,9 +1,0 @@
-.app.area-round
-    wiz-portal-dizest-statuscard(title="Deployment", [items]="status.deploy")
-    
-    wiz-portal-dizest-statuscard(title="System Usage", [items]="status.system")
-
-    ng-container(*ngIf="status.gpu.length > 0")
-        h2.text-center.mt-4.mb-0 GPU Usage
-        ng-container(*ngFor="let item of status.gpu")
-            wiz-portal-dizest-statuscard([title]="item.title", [items]="item.data")

@@ -1,9 +1,0 @@
-{
-    "mode": "sample",
-    "id": "page.workflow",
-    "title": "/workflow",
-    "namespace": "page.workflow",
-    "viewuri": "/workflow",
-    "category": "general",
-    "preview": "/workflow"
-}

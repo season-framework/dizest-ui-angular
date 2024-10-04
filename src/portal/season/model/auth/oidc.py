@@ -85,16 +85,10 @@ class OIDC:
         client = self.client
         query = wiz.request.query()
         query = urllib.parse.urlencode(query)
-
-        print("Test")
-
         aresp = client.parse_response(AuthorizationResponse, info=query, sformat="urlencoded")        
         args = {"code": aresp["code"]}
         resp = client.do_access_token_request(state=aresp["state"], request_args=args, authn_method="client_secret_basic")
         userinfo = client.do_user_info_request(state=aresp["state"])
-
-        print(userinfo)
-
         wiz.response.status(200, userinfo)
 
 Model = OIDC()

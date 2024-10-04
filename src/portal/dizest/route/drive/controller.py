@@ -8,16 +8,12 @@ import shutil
 import zipfile
 import tempfile
 
-config = wiz.model("portal/dizest/config")
-segment = wiz.request.match("/api/dizest/drive/<zone>/<path:path>")
-zone = segment.zone
+segment = wiz.request.match("/api/dizest/drive/<path:path>")
 action = segment.path
-fs = season.util.fs(config.storage_path(wiz, zone))
 
-if config.acl(wiz, zone) == False:
-    wiz.response.status(401)
-
-user = config.user_id(wiz, zone)
+struct = wiz.model("portal/dizest/struct")
+config = struct.config
+fs = season.util.fs(config.storage_path())
 
 def driveItem(path):
     def convert_size():
@@ -74,14 +70,12 @@ if action.startswith("create"):
         fs.makedirs(path)
     else:
         fs.write(path, data)
-    shutil.chown(fs.abspath(path), user=user, group=user)
     wiz.response.status(200)
 
 if action.startswith("update_file"):
     file_id = wiz.request.query("id", True)
     data = wiz.request.query("data", True)
     fs.write(file_id, data)
-    shutil.chown(fs.abspath(file_id), user=user, group=user)
     wiz.response.status(200)
 
 if action.startswith("update"):
@@ -92,7 +86,6 @@ if action.startswith("update"):
     if fs.exists(path):
         wiz.response.status(401)
     fs.move(file_id, path)
-    shutil.chown(fs.abspath(path), user=user, group=user)
     wiz.response.status(200)
 
 if action == "delete":
@@ -115,7 +108,7 @@ if action.startswith("upload"):
         filepath = json.loads(wiz.request.query("path", ""))
     except:
         pass
-    segment = wiz.request.match("/api/dizest/drive/<zone>/upload/<path:path>")
+    segment = wiz.request.match("/api/dizest/drive/upload/<path:path>")
     path = segment.path
     if path is None: path = ""
     path = fs.abspath(path)
@@ -129,19 +122,11 @@ if action.startswith("upload"):
             name = fpath
         target = os.path.join(path, name)
         fs.write.file(target, f)
-        shutil.chown(fs.abspath(target), user=user, group=user)
-        dirname = os.path.dirname(target)
-        while fs.abspath() in dirname:
-            try:
-                shutil.chown(fs.abspath(dirname), user=user, group=user)
-            except:
-                pass
-            dirname = os.path.dirname(dirname)
 
     wiz.response.status(200)
 
 if action.startswith("download"):
-    segment = wiz.request.match("/api/dizest/drive/<zone>/download/<path:path>")
+    segment = wiz.request.match("/api/dizest/drive/download/<path:path>")
     path = segment.path
     path = fs.abspath(path)
 
@@ -165,7 +150,7 @@ if action.startswith("download"):
     wiz.response.download(path)
 
 if action.startswith("video"):
-    segment = wiz.request.match("/api/dizest/drive/<zone>/video/<path:path>")
+    segment = wiz.request.match("/api/dizest/drive/video/<path:path>")
     rangeHeader = wiz.request.headers('Range', None)
     path = segment.path
     path = fs.abspath(path)

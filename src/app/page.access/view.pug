@@ -1,12 +1,9 @@
 .login-bg
     .login-box
         .text-center
-            img.logo(src='/brand/logo')
+            img(src="/assets/brand/logo.png", class="h-[48px] inline-block")
         
         .form
-            .input-box
-                input(type='text', name, required, [(ngModel)]="user.id")
-                label User ID
             .input-box
                 input(type='password', name, required, [(ngModel)]="user.password", (keyup.enter)="login()")
                 label Password

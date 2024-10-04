@@ -1,0 +1,9 @@
+div(class="flex flex-col h-full w-full items-center justify-center p-6 bg-white", *ngIf="error")
+    h2(class="m-0") Not Supported File
+    .mt-3
+    button(
+        class="inline-flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:w-auto", 
+        (click)="download()") Download
+
+div(class="w-full h-full overflow-hidden bg-white", *ngIf="!error && !loading")
+    nu-monaco-editor([(ngModel)]="editor.data", [options]="monaco", [height]="'100%'", (event)="init($event)")

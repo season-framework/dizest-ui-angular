@@ -1,0 +1,58 @@
+div(*ngIf="workflow", class="w-[320px] flex flex-col h-full bg-white")
+    div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
+        div(class="flex flex-1 gap-x-2 items-center")
+            i.fa-solid.fa-cubes
+            span Apps
+        div((click)="sidebar.close()", class="cursor-pointer")
+            i.fa-solid.fa-xmark
+    
+    div(class="bg-gray-100 flex gap-x-1 px-3 py-2 border-b border-gray-300")
+        input(
+            class="text-center text-sm block w-full rounded-full border-0 px-4 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-indigo-600 ",
+            placeholder="enter for search", [(ngModel)]="keyword", (ngModelChange)="search()")
+        button(
+            class="px-4 py-1 text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+            (click)="import()")
+            i.fa-solid.fa-upload
+        button(
+            class="px-4 py-1 text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+            (click)="create()")
+            i.fa-solid.fa-plus
+
+    div(class="flex-1 w-full h-full overflow-hidden", [ngDrop]="drop()")
+        div(class="w-full h-full overflow-y-auto")
+            div(class="py-12 w-full flex flex-col items-center justify-center gap-y-3", *ngIf="workflow.spec.apps().length == 0")
+                div
+                    i(class="fa-solid fa-cube text-[32px]")
+                div(class="text-[20px]") No Apps
+
+            ng-container(*ngFor="let category of categories()")
+                div(class="bg-slate-200 px-3 py-1 text-sm border-b border-gray-300", *ngIf="categories().length > 1")
+                    span {{category}}
+
+                ul(class="divide-y divide-gray-100")
+                    ng-container(*ngFor="let item of appList(category)")
+                        li(
+                            class="flex items-center justify-between gap-x-3 py-2 px-3 hover:bg-slate-100 cursor-grab",
+                            *ngIf="match(item, keyword)", [attr.data-id]="item.id", draggable="true", (dragstart)="drag($event, item)", (mouseenter)="hoverin(item)", (mouseleave)="hoverout(item)")
+                            
+                            div(class="min-w-0")
+                                div(class="flex items-start gap-x-2")
+                                    input(
+                                        class="text-[14px] font-bold w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0 bg-transparent cursor-auto", 
+                                        (ngModelChange)="editing()",
+                                        [(ngModel)]="item.title")
+                                div(class="flex items-center gap-x-2 text-xs leading-5 text-gray-500")
+                                    p(class="whitespace-nowrap") {{item.version}}
+
+                            div(class="flex flex-none items-center gap-x-2")
+                                a(
+                                    class="px-2 py-1 text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300",
+                                    (click)="delete(item)")
+                                    i.fa-solid.fa-xmark
+                                a(
+                                    class="px-2 py-1 text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+                                    (click)="add(item)")
+                                    i.fa-solid.fa-plus
+
+wiz-portal-season-modal([model]="modal")

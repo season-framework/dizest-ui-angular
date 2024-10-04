@@ -6,20 +6,18 @@ class Controller:
         pass
 
     def join(self, data, io):
-        config = wiz.model("portal/dizest/config")
         wiz.session = wiz.model("portal/season/session")
-        zone = data['zone']
-        workflow_id = data['workflow_id']
+        struct = wiz.model("portal/dizest/struct")
+        config = struct.config
+        # TODO: acl
+        io.join(data)
 
-        if config.acl(wiz, zone) == False:
-            return
-
-        Kernel = wiz.model("portal/dizest/kernel")
-        config = wiz.model("portal/dizest/config")
-        kernel = Kernel(zone)
-        workflow = kernel.workflow(workflow_id)
-        status = workflow.status()
-        io.join(workflow.spawner_id())
+    def leave(self, data, io):
+        wiz.session = wiz.model("portal/season/session")
+        struct = wiz.model("portal/dizest/struct")
+        config = struct.config
+        # TODO: acl
+        io.leave(data)
     
     def wplog(self, data, io):
         project = wiz.project()
@@ -27,11 +25,7 @@ class Controller:
 
         for log in data:
             event = log['event']
-            workflow_id = log['workflow_id']
-            to = log['namespace']
-            del log['namespace']
-            del log['workflow_id']
-            del log['event']
+            to = log['id']
             io.emit(event, log, to=to, namespace=socketNamespace)
 
     def disconnect(self, flask, io):

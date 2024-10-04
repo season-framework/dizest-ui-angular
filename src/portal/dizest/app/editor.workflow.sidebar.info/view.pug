@@ -1,0 +1,90 @@
+div(class="w-[640px] flex flex-col h-full bg-white")
+    div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
+        div(class="flex flex-1 gap-x-2 items-center")
+            i.fa-solid.fa-book
+            span Workflow Info
+        div((click)="sidebar.close()", class="cursor-pointer")
+            i.fa-solid.fa-xmark
+
+    div(class="flex-1 w-full h-full overflow-hidden")
+        div(class="w-full h-full overflow-y-auto px-4 py-5")
+            div(class="space-y-8 pb-12 space-y-0 divide-y divide-gray-900/10", *ngIf="workflow")
+                div(class="grid grid-cols-3 items-start gap-4 py-6")
+                    label(class="block text-sm font-medium leading-6 text-gray-900 pt-1.5") ID
+                    div(class="col-span-2 mt-0")
+                        div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 max-w-md")
+                            input(
+                                type="text", 
+                                [(ngModel)]="workflow.spec.data.id",
+                                disabled="disabled",
+                                class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                
+                div(class="grid grid-cols-3 items-start gap-4 py-6")
+                    label(class="block text-sm font-medium leading-6 text-gray-900 pt-1.5") Title
+                    div(class="col-span-2 mt-0")
+                        div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 max-w-md")
+                            input(
+                                type="text", 
+                                [(ngModel)]="workflow.spec.data.title",
+                                placeholder="My Workflow",
+                                class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                
+                div(class="grid grid-cols-3 items-start gap-4 py-6")
+                    label(class="block text-sm font-medium leading-6 text-gray-900 pt-1.5") Version
+                    div(class="col-span-2 mt-0")
+                        div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 max-w-md")
+                            input(
+                                type="text", 
+                                [(ngModel)]="workflow.spec.data.version",
+                                placeholder="1.0.0",
+                                class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                
+                div(class="grid grid-cols-3 items-start gap-4 py-6")
+                    label(class="block text-sm font-medium leading-6 text-gray-900 pt-1.5") Category
+                    div(class="col-span-2 mt-0")
+                        div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 max-w-md")
+                            input(
+                                type="text", 
+                                [(ngModel)]="workflow.spec.data.category",
+                                placeholder="data analysis",
+                                class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                
+                div(class="grid grid-cols-3 items-start gap-4 py-6")
+                    label(class="block text-sm font-medium leading-6 text-gray-900 pt-1.5") requirements.txt
+                    div(class="col-span-2 mt-0")
+                        textarea(
+                            [(ngModel)]="workflow.spec.data.requirementstxt",
+                            rows="8", 
+                            class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm")
+                
+                div(class="gap-4 py-6")
+
+                    div(class="flex block text-sm font-medium leading-6 text-gray-900 pt-1.5 mb-3")
+                        div README.md
+                        div(class="ml-auto")
+                            button(
+                                class="px-4 py-1 text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full border border-slate-200 hover:bg-slate-300",
+                                (click)="toggleEditable()")
+                                i.fa-solid.fa-book(*ngIf="descriptionEditable")
+                                i.fa-solid.fa-edit(*ngIf="!descriptionEditable")
+                    
+                    div(
+                        class="p-3 markdown-body",
+                        *ngIf="!descriptionEditable && workflow.spec.data.description", 
+                        [innerHtml]="showdown(workflow.spec.data.description)")
+                    
+                    nu-monaco-editor(
+                        *ngIf="descriptionEditable", 
+                        [(ngModel)]="workflow.spec.data.description", 
+                        [options]="monaco", 
+                        [height]="'auto'", 
+                        (event)="init($event)")
+
+                div(class="pt-4 text-right")
+                    button(
+                        class="inline-flex w-[80px] h-[32px] items-center justify-center text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+                        (click)="app.editor.update()")
+                        span(*ngIf="!app.editor.loading") Save
+                        svg(class="animate-spin h-[14px] w-[14px]", viewBox="0 0 24 24", *ngIf="app.editor.loading")
+                            circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
+                            path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")

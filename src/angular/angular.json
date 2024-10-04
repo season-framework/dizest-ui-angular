@@ -60,8 +60,7 @@
                             }
                         ],
                         "styles": [
-                            "node_modules/@tabler/core/dist/css/tabler.min.css",
-                            "node_modules/toastr/build/toastr.min.css",
+                            "tailwind.min.css",
                             "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
                             "node_modules/xterm/css/xterm.css",
                             "src/styles.scss"

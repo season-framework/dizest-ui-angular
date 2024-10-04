@@ -1,0 +1,239 @@
+div(
+    '#rootelement'='',
+    class="shadow-2xl flex flex-col",
+    [class.shadow-red-400]="['error'].includes(status)",
+    [class.opacity-25]="checkOpacity()")
+
+    div(class="node-header w-full")
+        div(
+            class="group drawflow-handler w-full flex p-2 cursor-grab items-center",
+            [class.bg-white]="!flow.active()",
+            [class.bg-indigo-500]="flow.active()",
+            [class.text-white]="flow.active()")
+            
+            div(class="mr-2")
+                input(type="checkbox", class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600", [(ngModel)]="flow.raw().active")
+            div(class="flex-1 mr-1 overflow-hidden text-ellipsis whitespace-nowrap") {{flow.title()}}
+            div(class="px-2 py-1 text-xs bg-white text-indigo-500 cursor-pointer rounded-xl hover:bg-indigo-50 flex border border-gray-200", (click)="delete()")
+                i.fa-solid.fa-xmark
+
+        div(class="flex bg-indigo-50 divide-x divide-gray-300 border-y border-gray-300")
+            ng-container(*ngIf="['pending', 'ready'].includes(status)")
+                div(class="w-[48px] bg-gray-100 flex items-center py-1.5 justify-center text-[12px]")
+                    span(class="relative flex h-2 w-2")
+                        span(class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75")
+                        span(class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500")
+
+            ng-container(*ngIf="['idle'].includes(status)")
+                div(class="w-[48px] bg-teal-50 text-teal-500 flex items-center py-1.5 justify-center text-[12px] font-black", *ngIf="index > 0")
+                    span {{index}}
+            
+            ng-container(*ngIf="['error'].includes(status)")
+                div(class="w-[48px] bg-red-50 text-red-500 flex items-center py-1.5 justify-center text-[12px] font-black")
+                    i.fa-solid.fa-triangle-exclamation
+            
+            ng-container(*ngIf="['idle'].includes(status) && index == -2")
+                div(class="w-[48px] bg-yellow-50 text-yellow-500 flex items-center py-1.5 justify-center text-[12px] font-black")
+                    i.fa-solid.fa-stop
+
+            div(class="flex-1 flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", (click)='code()')
+                i.fa-solid.fa-code
+            div(class="flex-1 flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", (click)='uimode()')
+                i.fa-solid.fa-display
+            div(
+                *ngIf="['idle', 'error', 'ready'].includes(status)"
+                class="flex-1 flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", 
+                (click)='run()')
+                i.fa-solid.fa-play
+            div(
+                *ngIf="!['idle', 'error', 'ready'].includes(status)"
+                class="flex-1 flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", 
+                (click)='stop()')
+                i.fa-solid.fa-stop
+        
+        ng-container(*ngIf="['running'].includes(status)")
+            div(class="h-1 w-full bg-gray-200 overflow-hidden")
+                div(class="progress w-full h-full bg-indigo-500 left-right")
+
+        // variables
+        div(class="flex bg-gray-100 font-extrabold text-xs")
+            div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
+                span Variables
+                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addVariable()")
+                    i.fa-solid.fa-plus
+        
+        div(class="divide-y divide-gray-200", [sortablejs]="flow.app().inputs()", [sortablejsOptions]="{ animation: 150, handle: '.value-title', onUpdate: sorted, scope: scope }")
+            ng-container(*ngFor="let item of flow.app().inputs()")
+                div(class="flex relative bg-white", [class.hidden]="item.type != 'variable'")
+                    div(class="flex group border-r border-gray-200 w-[100px]")
+                        div(class="flex-1 value-title pl-1")
+                            input(
+                                class="text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                [(ngModel)]="item.name")
+
+                        div(
+                            class="text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex",
+                            [class.hidden]="!item.conf",
+                            [class.flex]="item.conf",
+                            (click)="variableConfigure(item)")
+                            i.fa-solid.fa-cog(*ngIf="!item.conf")
+                            i.fa-solid.fa-floppy-disk(*ngIf="item.conf")
+                    
+                    div(class="flex-1 overflow-hidden")
+                        div(*ngIf="!['list', 'textarea', 'file', 'folder'].includes(item.inputtype)")
+                            input(
+                                class="px-1 text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                [type]='item.inputtype', [placeholder]='item.description', [(ngModel)]="flow.data()[item.name]")
+                        
+                        div(*ngIf="['textarea'].includes(item.inputtype)")
+                            textarea(
+                                class="px-1 text-[14px] leading-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                [placeholder]='item.description', rows=5, [(ngModel)]="flow.data()[item.name]")
+                        
+                        div(class="flex", *ngIf="['file', 'folder'].includes(item.inputtype)")
+                            input(
+                                class="px-1 text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                type='text', [placeholder]='item.description', [(ngModel)]="flow.data()[item.name]")
+                            div(
+                                class="text-sm items-center justify-center w-6 bg-gray-600 text-white cursor-pointer hover:bg-gray-700", 
+                                (click)="selectFile(item)", style='display: flex; align-item: center; cursor: pointer;')
+                                i.fa-solid.fa-arrow-up-from-bracket
+                        
+                        div(*ngIf="['list'].includes(item.inputtype)")
+                            wiz-portal-season-form-dropdown([menuStyle]="{top: '12px'}")
+                                ng-template('#button'='')
+                                    div(class="text-[14px] flex w-full justify-center gap-x pl-2 py-[2px] hover:bg-gray-50")
+                                        div {{ optionSelectValue(options(item.description), flow.data()[item.name]) }}
+                                        svg(class="h-5 w-5 text-gray-400", viewBox="0 0 20 20", fill="currentColor", aria-hidden="true")
+                                            path(fill-rule="evenodd", d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z", clip-rule="evenodd")
+
+                                ng-template('#menu'='')
+                                    div(class="text-[14px] py-1", role="none")
+                                        ng-container(*ngFor="let val of options(item.description);")
+                                            a(class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50", (click)="optionSelectEvent(item, val.value)", [class.active]="flow.data()[item.name] == val.value") {{val.key}}
+
+                div(*ngIf="item.conf", class="bg-white flex flex-col divide-y divide-gray-200")
+                    div(class="flex items-center")
+                        div(class="flex items-center justify-center w-[64px] h-[24px] pl-1 text-[14px] bg-indigo-400 text-white") Type
+                        div(class="flex flex-1 h-[24px]")
+                            select(
+                                class="text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                [(ngModel)]="item.inputtype", (change)='variableConfigureChanged(item)')
+                                option(value='text') Text
+                                option(value='textarea') Textarea
+                                option(value='number') Number
+                                option(value='password') Password
+                                option(value='date') Date
+                                option(value='time') Time
+                                option(value='list') List
+                                option(value='file') File
+                        div(
+                            class="h-[24px] text-sm items-center justify-center w-6 bg-red-400 text-white cursor-pointer flex", 
+                            (click)="removeInput(item)")
+                            i.fa-solid.fa-xmark
+
+                    div(class="flex items-center", *ngIf="item.inputtype != 'list'")
+                        div(class="flex items-center justify-center w-[64px] h-[24px] pl-1 text-[14px] bg-indigo-400 text-white") Desc
+                        div(class="flex flex-1 h-[24px]")
+                            input(
+                                class="text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                type='text', [(ngModel)]="item.description")
+
+                    div(class="flex", *ngIf="item.inputtype == 'list'")
+                        div(class="flex items-center justify-center w-[64px] pl-1 text-[14px] bg-indigo-400 text-white") List
+                        div(class="flex flex-1 overflow-hidden")
+                            table(class="w-full border-collapse text-[12px]")
+                                tr(class="text-center")
+                                    th(class="border border-slate-300") Display Text
+                                    th(class="border border-slate-300") Value
+                                    th(class="border border-slate-300")
+                                tr(*ngFor="let val of item.cache")
+                                    td(class="border border-slate-300")
+                                        input(
+                                            class="px-1 text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                            [(ngModel)]="val.key", placeholder="title")
+                                    td(class="border border-slate-300")
+                                        input(
+                                            class="px-1 text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                            [(ngModel)]="val.value", placeholder="value")
+                                    td(class="border border-slate-300")
+                                        div(
+                                            class="h-[24px] text-sm items-center justify-center w-6 bg-red-400 text-white cursor-pointer flex", 
+                                            (click)="item.cache.remove(val); variableConfigureChanged(item)")
+                                            i.fa-solid.fa-xmark
+                                tr
+                                    td(class="border border-slate-300", colspan=3)
+                                        div(
+                                            class="h-[24px] text-sm items-center justify-center bg-gray-400 text-white cursor-pointer flex w-full", 
+                                            (click)="item.cache.push({key: '', value: ''}); variableConfigureChanged(item)")
+                                            i.fa-solid.fa-plus
+
+        // input output          
+        div(class="flex bg-gray-100 font-extrabold text-xs")
+            div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
+                span Input
+                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addInput()")
+                    i.fa-solid.fa-plus
+            
+            div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
+                span Output
+                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addOutput()")
+                    i.fa-solid.fa-plus
+
+        div(class="flex bg-white border-b border-gray-200")
+            div(
+                class="input-container flex-1 overflow-hidden divide-y divide-gray-200 border-r border-gray-200", 
+                style="background: repeating-linear-gradient(-45deg, rgba(116, 108, 112, .1), rgba(116, 108, 112, .1) 2px, #fff 0, #fff 6px);",
+                [sortablejs]="flow.app().inputs()", 
+                [sortablejsOptions]="{ animation: 150, handle: '.value-title', onUpdate: sorted, scope: scope }")
+
+                ng-container(*ngFor="let item of flow.app().inputs()")
+                    div(class="flex relative bg-white", [class.hidden]="item.type != 'output'")
+                        div(class="flex items-center")
+                            div(
+                                class="input w-[16px] h-[16px] border bg-white hover:bg-indigo-200 cursor-pointer", 
+                                [ngClass]="'input-' + item.name")
+
+                        div(class="flex group")
+                            div(class="flex-1 value-title pl-1")
+                                input(
+                                    class="input text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                    [(ngModel)]="item.name",
+                                    [ngClass]="'input-' + item.name")
+
+                            div(
+                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex", 
+                                (click)="removeInput(item)")
+                                i.fa-solid.fa-xmark
+
+            div(
+                class="input-container flex-1 overflow-hidden divide-y divide-gray-200", 
+                style="background: repeating-linear-gradient(-45deg, rgba(116, 108, 112, .1), rgba(116, 108, 112, .1) 2px, #fff 0, #fff 6px);",
+                [sortablejs]="flow.app().outputs()", 
+                [sortablejsOptions]="{ animation: 150, handle: '.value-title', onUpdate: sorted, scope: scope }")
+                
+                ng-container(*ngFor="let item of flow.app().outputs()")
+                    div(class="flex relative bg-white")
+                        div(class="flex flex-1 group")
+                            div(class="flex-1 value-title pl-1")
+                                input(
+                                    class="text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
+                                    [(ngModel)]="item.name")
+
+                            div(
+                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex", 
+                                (click)="removeOutput(item)")
+                                i.fa-solid.fa-xmark
+
+                        div(class="flex items-center ml-1")
+                            div(
+                                class="output w-[16px] h-[16px] border bg-white hover:bg-indigo-200 cursor-pointer", 
+                                [ngClass]="'output-' + item.name")
+        
+    div(
+        class="w-full flex-1 overflow-auto text-[14px] leading-[14px] p-1 bg-white cursor-auto font-light debug-message")
+        div(class="debug-inner w-full")
+            ng-container(*ngFor="let msg of log")
+                div([innerHtml]="msg")
+
+    div(class="resize-handle", (mousedown)="resize($event)")

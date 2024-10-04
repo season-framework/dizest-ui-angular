@@ -23,9 +23,10 @@ class Model:
 
     @staticmethod
     def cls(tablename=None, module=None):
+        orm = None
         try:
             orm = wiz.model(os.path.join(ORM_BASE, tablename))
-        except:
+        except Exception as e:
             pass
         if module is not None:
             orm = wiz.model(os.path.join("portal", module, "db", tablename))
@@ -33,7 +34,7 @@ class Model:
     
     @staticmethod
     def random(length=16, number=False):
-        string_pool = _string.ascii_letters + _string.digits
+        string_pool = _string.ascii_letters
         if number:
             string_pool = _string.digits
         result = ""
@@ -67,10 +68,72 @@ class Model:
         kwargs['dump'] = 1
         data = self.rows(**kwargs)
         if len(data) > 0:
-            return season.util.stdClass(data[0])
+            return data[0]
         return None
 
-    def count(self, query=None, groupby=None, like=None, **where):
+    def _build(self, query, like=None, between=None, _or=None, **where):
+        db = self.orm
+        skip = []
+
+        for key in where:
+            notequal = False
+            tkey = key
+            if key[0] == "_":
+                tkey = key[1:]
+                notequal = True
+            
+            if tkey in skip:
+                continue
+
+            try:
+                field = getattr(db, tkey)
+                values = [where[key]]
+                if type(where[key]) == list:
+                    values = where[key]
+
+                qo = None
+                if between is not None and tkey in between:
+                    qo = (values[0] <= field) & (field <= values[1])
+                    values = dict()
+
+                if _or is not None and tkey in _or:
+                    for k in _or:
+                        fld = getattr(db, k)
+                        v = where[k]
+                        if qo is None:
+                            if like is not None and k in like:
+                                qo = fld.contains(v)
+                            else:
+                                if notequal: qo = field!=v
+                                else: qo = field==v
+                        else:
+                            if like is not None and k in like:
+                                qo = (qo) | fld.contains(v)
+                            else:
+                                if notequal: qo = (qo) | field!=v
+                                else: qo = (qo) | field==v
+                        skip.append(k)
+
+                for v in values:
+                    if hasattr(v, '__call__'):
+                        _qo = v(field)
+                    else:
+                        if notequal: _qo = field!=v
+                        else: _qo = field==v
+                        if like is not None and tkey in like:
+                            _qo = field.contains(v)
+                    
+                    if qo is None:
+                        qo = _qo
+                    else:
+                        qo = (qo) | (_qo)
+
+                query = query.where(qo)
+            except Exception as e:
+                pass
+        return query
+            
+    def count(self, query=None, groupby=None, like=None, between=None, _or=None, **where):
         db = self.orm
         try:
             queryfn = query
@@ -80,31 +143,9 @@ class Model:
             
             if like is not None:
                 like = like.split(",")
-            
-            for key in where:
-                try:
-                    field = getattr(db, key)
-                    values = [where[key]]
-                    if type(where[key]) == list:
-                        values = where[key]
 
-                    qo = None
-                    for v in values:
-                        if hasattr(v, '__call__'):
-                            _qo = v(field)
-                        else:
-                            _qo = field==v
-                            if like is not None and key in like:
-                                _qo = field.contains(v)
-                        if qo is None:
-                            qo = _qo
-                        else:
-                            qo = (qo) | (_qo)
+            query = self._build(query, like=like, between=between, _or=_or, **where)
 
-                    query = query.where(qo)
-                except Exception as e:
-                    pass
-            
             if groupby is not None:
                 groupby = groupby.split(",")
                 for i in range(len(groupby)):
@@ -123,39 +164,33 @@ class Model:
             pass
         return None
 
-    def rows(self, query=None, groupby=None, order='ASC', orderby=None, page=None, dump=10, fields=None, like=None, **where):
+    def rows(self, query=None, groupby=None, order='ASC', orderby=None, page=None, dump=10, fields=None, like=None, between=None, _or=None, **where):
         db = self.orm
         queryfn = query
         query = db.select()
+        
+        if fields is not None:
+            fields = fields.split(",")
+            sfields = []
+            
+            for key in fields:
+                try:
+                    field = getattr(db, key)
+                    sfields.append(field)
+                except:
+                    pass
+            query = db.select(*sfields)
+
         if queryfn is not None:
             query = queryfn(db, query)
 
         if like is not None:
             like = like.split(",")
+        
+        if _or is not None:
+            _or = _or.split(",")
 
-        for key in where:
-            try:
-                field = getattr(db, key)
-                values = [where[key]]
-                if type(where[key]) == list:
-                    values = where[key]
-
-                qo = None
-                for v in values:
-                    if hasattr(v, '__call__'):
-                        _qo = v(field)
-                    else:
-                        _qo = field==v
-                        if like is not None and key in like:
-                            _qo = field.contains(v)
-                    if qo is None:
-                        qo = _qo
-                    else:
-                        qo = (qo) | (_qo)
-                        
-                query = query.where(qo)
-            except Exception as e:
-                pass
+        query = self._build(query, like=like, between=between, _or=_or, **where)
 
         if groupby is not None:
             groupby = groupby.split(",")
@@ -184,36 +219,31 @@ class Model:
 
         if page is not None:
             query = query.paginate(page, dump)
+
         rows = []
 
-        if fields is not None:
-            fields = fields.split(",")
-
         for row in query.dicts():
-            if fields is not None:
-                obj = dict()
-                for field in fields:
-                    if field in row:
-                        obj[field] = row[field]
-                rows.append(obj)
-            else:
-                rows.append(row)
+            rows.append(row)
 
         return rows
         
     def insert(self, *args, **data):
+        def genId(max_length):
+            if max_length == 32:
+                return str(int(time.time()*1000000)) + self.random(16)
+            return self.random(max_length)
+
         if len(args) > 0: data = args[0]
+        if len(args) > 1: genId = args[1]
+
         db = self.orm
         if 'id' not in data and hasattr(db, "id"):
-            cls = type(getattr(db, "id"))
-            if cls is not pw.IntegerField and cls is not pw.BigIntegerField:
-                obj_id = self.random(self.id_size)
-                if self.id_size == 32:
-                    obj_id = str(int(time.time()*1000000)) + self.random(16)
+            fld_id = getattr(db, "id")
+            cls = type(fld_id)
+            if cls is not pw.IntegerField and cls is not pw.BigIntegerField and cls is not pw.AutoField:
+                obj_id = genId(fld_id.max_length)
                 while self.get(id=obj_id) is not None:
-                    obj_id = self.random(self.id_size)
-                    if self.id_size == 32:
-                        obj_id = str(int(time.time()*1000000)) + self.random(16)
+                    obj_id = genId(fld_id.max_length)
                 data['id'] = obj_id
             else:
                 obj_id = None

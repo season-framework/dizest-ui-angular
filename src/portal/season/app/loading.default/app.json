@@ -1,21 +1,11 @@
 {
+    "type": "app",
     "mode": "portal",
+    "title": "loading.default",
     "id": "loading.default",
-    "title": "\ub85c\ub529/\uae30\ubcf8",
     "namespace": "loading.default",
     "viewuri": "",
-    "category": "loading",
+    "category": "",
     "controller": "",
-    "type": "app",
-    "template": "wiz-portal-season-loading-default()",
-    "ng.build": {
-        "id": "portal.season.loading.default",
-        "name": "PortalSeasonLoadingDefaultComponent",
-        "path": "./portal.season.loading.default/portal.season.loading.default.component"
-    },
-    "ng": {
-        "selector": "wiz-portal-season-loading-default",
-        "inputs": [],
-        "outputs": []
-    }
+    "template": "wiz-portal-season-loading-default([title]=\"\")"
 }

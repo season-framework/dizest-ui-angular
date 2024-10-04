@@ -8,7 +8,11 @@ pip install peewee pymysql bcrypt python3-saml
 ```
 
 - npm dependencies
-    - `@fortawesome/fontawesome-free`
+    - `tailwindcss`
+    - `@tailwindcss/aspect-ratio`
+    - `@tailwindcss/container-queries`
+    - `@tailwindcss/forms`
+    - `@tailwindcss/typography`
     - `urlpattern-polyfill`
     - `moment`
     - `sortablejs`
@@ -59,9 +63,7 @@ pip install peewee pymysql bcrypt python3-saml
 {
     "assets": [],
     "styles": [
-        "node_modules/@tabler/core/dist/css/tabler.min.css",
-        "node_modules/toastr/build/toastr.min.css",
-        "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+        "tailwind.min.css",
         "src/styles.scss"
     ],
     "scripts": [
@@ -114,14 +116,6 @@ export class AppComponent implements OnInit {
         await this.service.init(this);
     }
 }
-```
-
-### styles/styles.scss
-
-- CSS 적용
-
-```scss
-@import "portal/season/core"
 ```
 
 ## Config 지정

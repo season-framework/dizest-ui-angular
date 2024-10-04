@@ -1,23 +1,11 @@
 {
-    "mode": "portal",
     "type": "app",
+    "mode": "portal",
+    "title": "editor.image",
     "id": "editor.image",
-    "title": "Editor/Drive/Image",
     "namespace": "editor.image",
     "viewuri": "",
     "category": "editor",
-    "controller": "",
-    "template": "wiz-portal-dizest-editor-image([tab]=\"\")",
-    "ng.build": {
-        "id": "portal.dizest.editor.image",
-        "name": "PortalDizestEditorImageComponent",
-        "path": "./portal.dizest.editor.image/portal.dizest.editor.image.component"
-    },
-    "ng": {
-        "selector": "wiz-portal-dizest-editor-image",
-        "inputs": [
-            "tab"
-        ],
-        "outputs": []
-    }
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-image([dizest]=\"\", [editor]=\"\")"
 }

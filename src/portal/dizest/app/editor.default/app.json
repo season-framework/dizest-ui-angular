@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "editor.default",
+    "id": "editor.default",
+    "namespace": "editor.default",
+    "viewuri": "",
+    "category": "editor",
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-default([dizest]=\"\", [editor]=\"\")"
+}
