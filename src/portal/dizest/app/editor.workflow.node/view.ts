@@ -2,9 +2,10 @@ import { OnInit, Input } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
 import { ElementRef, ViewChild } from '@angular/core';
 import { HostListener } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export class Component implements OnInit {
-    constructor(public service: Service) { }
+    constructor(public service: Service, public sanitizer: DomSanitizer) { }
 
     @ViewChild('rootelement')
     public rootElement: ElementRef;
@@ -15,6 +16,8 @@ export class Component implements OnInit {
     public log: any = [];
     public status: any = 'idle';
     public index: any = -1;
+    public isUIMode: boolean = false;
+    public uiModeSrc: any;
 
     public async ngOnInit() {
         await this.service.init();
@@ -31,6 +34,9 @@ export class Component implements OnInit {
             data = data.replace('text-red', 'text-red-500');
             this.log.push(data);
             this.log = this.log.splice(this.log.length - 51 > 0 ? this.log.length - 51 : 0);
+            await this.service.render();
+            let debug = this.rootElement.nativeElement.querySelector('.debug-message');
+            debug.scrollTop = debug.scrollHeight;
         } else if (eventname == 'flow.status') {
             this.status = data;
         } else if (eventname == 'flow.index') {
@@ -114,6 +120,41 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
+    // ui mode codes
+    public async uimode() {
+        if (this.isUIMode) {
+            this.isUIMode = false;
+            await this.service.render();
+            return;
+        }
+
+        let flow_id = this.flow.id();
+        let kernel_id = this.workflow.data().kernel_id;
+        let url = `/ui/${kernel_id}/${flow_id}/render`;
+        this.uiModeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        this.isUIMode = true;
+        await this.service.render();
+    }
+
+    public async uimodeReload() {
+        let flow_id = this.flow.id();
+        let kernel_id = this.workflow.data().kernel_id;
+        let url = `/ui/${kernel_id}/${flow_id}/render`;
+        this.uiModeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        this.isUIMode = true;
+        await this.service.render();
+    }
+
+    public async uimodeOpen() {
+        let flow_id = this.flow.id();
+        let kernel_id = this.workflow.data().kernel_id;
+        let url = `/ui/${kernel_id}/${flow_id}/render`;
+        window.open(url, '_blank');
+        this.isUIMode = false;
+        await this.service.render();
+    }
+
+    // variables & inputs & outputs
     public async addVariable() {
         let app = this.flow.app();
         app.inputs().push({ type: 'variable', name: 'undefined', inputtype: 'text', description: '' });

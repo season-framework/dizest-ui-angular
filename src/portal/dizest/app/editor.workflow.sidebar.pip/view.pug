@@ -1,4 +1,4 @@
-div(class="w-[320px] flex flex-col h-full bg-white")
+div(class="w-[320px] flex flex-col h-full bg-white relative")
     div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
         div(class="flex flex-1 gap-x-2 items-center")
             i.fa-brands.fa-python
@@ -6,5 +6,36 @@ div(class="w-[320px] flex flex-col h-full bg-white")
         div((click)="sidebar.close()", class="cursor-pointer")
             i.fa-solid.fa-xmark
     
+    div(class="bg-gray-100 flex gap-x-1 px-3 py-2 border-b border-gray-300")
+        input(
+            class="text-center text-sm block w-full rounded-full border-0 px-4 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-indigo-600 ",
+            placeholder="scikit-learn", [(ngModel)]="query", (keyup.enter)="add()")
+        button(
+            class="px-4 py-1 text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+            (click)="add()")
+            span Install
+
     div(class="flex-1 w-full h-full overflow-hidden")
         div(class="w-full h-full overflow-y-auto")
+            ul(class="divide-y divide-gray-100")
+                ng-container(*ngFor="let item of list")
+                    li(
+                        class="flex items-center justify-between gap-x-3 py-2 px-3 hover:bg-slate-100 cursor-grab",
+                        *ngIf="item.name.toLowerCase().indexOf(query.toLowerCase()) >= 0")
+                        
+                        div(class="min-w-0")
+                            div(class="flex items-start gap-x-2")
+                                p(class="whitespace-nowrap") {{item.name}}
+                            div(class="flex items-center gap-x-2 text-xs leading-5 text-gray-500")
+                                p(class="whitespace-nowrap") {{item.version}}
+
+                        div(class="flex flex-none items-center gap-x-2")
+                            a(
+                                class="px-2 py-1 text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300",
+                                (click)="remove(item)")
+                                i.fa-solid.fa-xmark
+
+    div(
+        *ngIf="loading",
+        class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center")
+        wiz-portal-season-loading-season(className="w-[48px] h-[48px] text-orange-500 animate-spin duration-700")

@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "editor.health",
+    "id": "editor.health",
+    "namespace": "editor.health",
+    "viewuri": "",
+    "category": "",
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-health([dizest]=\"\", [editor]=\"\")"
+}

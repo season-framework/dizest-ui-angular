@@ -15,7 +15,8 @@ div(
         a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.rootNode().refresh()")
             i(class="fa-solid fa-retweet")
         a(class="flex justify-center items-center flex-1 p-2 hover:bg-indigo-200", (click)="tree.event.toggleShowHidden()")
-            i(class="fa-solid fa-eye-slash")
+            i(class="fa-solid fa-eye-slash", *ngIf="!tree.status.showHidden")
+            i(class="fa-solid fa-eye", *ngIf="tree.status.showHidden")
     
     div(class="overflow-hidden bg-gray-200", *ngIf="tree.status.uploadStatus.uploading")
         div(class="h-1 bg-indigo-500", style="width: {{tree.status.uploadStatus.percent}}%;")
@@ -39,7 +40,10 @@ div(
                 div
                     div(class="group flex w-full cursor-pointer text-gray-500 items-center hover:bg-blue-50", (click)="data.select(); $event.stopPropagation();") 
                         ng-container(*ngIf="data.type == 'file'")
-                            i(class="w-4 mr-1", [ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
+                            i(
+                                class="w-4 mr-1", [ngClass]="icon(data)", 
+                                [class.text-indigo-500]="dizest.activeKernels[data.id]",
+                                (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
                         ng-container(*ngIf="data.type == 'folder'")
                             i(class="w-4 mr-1 text-blue-400", [ngClass]="icon(data)", (click)="data.editable = !data.editable; $event.stopPropagation(); service.render()")
 

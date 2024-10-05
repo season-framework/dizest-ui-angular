@@ -12,8 +12,9 @@ export class Component implements OnInit {
     @Input() app: any;
     @Input() sidebar: any;
 
-    public onEditorScroll: boolean = false;
+    public codeflow: any = {};
 
+    public onEditorScroll: boolean = false;
     public monaco_auto_height_objs: any = [];
 
     public async monaco_auto_height() {
@@ -33,26 +34,36 @@ export class Component implements OnInit {
     }
 
     public flow(flow_id) {
-        return this.workflow.spec.flow(flow_id);
+        if (this.codeflow[flow_id]) return this.codeflow[flow_id].flow;
+        this.codeflow[flow_id] = {};
+        let flow = this.workflow.spec.flow(flow_id);
+        this.codeflow[flow_id].flow = flow;
+        this.codeflow[flow_id].target = 'code';
+        this.codeflow[flow_id].monaco = this.monacoopt('python');
+        this.codeflow[flow_id].show = true;
+        return flow;
     }
 
-    public monacopy: any = {
-        value: '',
-        language: 'python',
-        theme: "vs",
-        fontSize: 14,
-        automaticLayout: true,
-        scrollBeyondLastLine: false,
-        wordWrap: true,
-        roundedSelection: false,
-        glyphMargin: false,
-        scrollbar: {
-            vertical: "hidden",
-            handleMouseWheel: false,
-        },
-        minimap: {
-            enabled: false
+    public monacoopt(language: string = 'python') {
+        let opt = {
+            value: '',
+            language: language,
+            theme: "vs",
+            fontSize: 14,
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            wordWrap: true,
+            roundedSelection: false,
+            glyphMargin: false,
+            scrollbar: {
+                vertical: "hidden",
+                handleMouseWheel: false,
+            },
+            minimap: {
+                enabled: false
+            }
         }
+        return opt;
     }
 
     public async select(flow_id) {
@@ -65,6 +76,20 @@ export class Component implements OnInit {
         this.sidebar.items.remove(flow_id);
         this.workflow.node.selected = null;
         await this.app.service.render();
+    }
+
+    public async changeTargetCode(flow_id, target) {
+        this.codeflow[flow_id].show = false;
+        await this.service.render();
+
+        let languageMap: any = { code: 'python', html: 'html', js: 'javascript', css: 'scss', api: 'python' };
+        let language = languageMap[target];
+
+        this.codeflow[flow_id].target = target;
+        this.codeflow[flow_id].monaco.language = language;
+        this.codeflow[flow_id].show = true;
+
+        await this.service.render();
     }
 
     public async init(event: any) {

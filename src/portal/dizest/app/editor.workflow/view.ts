@@ -57,7 +57,7 @@ export class Component implements OnInit {
             { id: 'apps', icon: 'fa-solid fa-cubes', name: 'Apps' },
             { id: 'code', icon: 'fa-solid fa-code', name: 'Code' },
             { id: 'pip', icon: 'fa-brands fa-python', name: 'Packages' },
-            { id: 'api', icon: 'fa-solid fa-link', name: 'API' },
+            // { id: 'api', icon: 'fa-solid fa-link', name: 'API' },
             { id: 'save', icon: 'fa-solid fa-floppy-disk', name: 'Save' },
             { id: 'download', icon: 'fa-solid fa-circle-down', name: 'Download' }
         ];
@@ -111,6 +111,30 @@ export class Component implements OnInit {
                 const { value } = data;
                 this.workflow.status = value;
                 await this.service.render();
+            } else if (eventname == 'flow.api') {
+                const { value } = data;
+                let Style = {
+                    base: [
+                        "color: #fff",
+                        "background-color: #444",
+                        "padding: 2px 4px",
+                        "border-radius: 2px"
+                    ],
+                    warning: [
+                        "color: #eee",
+                        "background-color: red"
+                    ],
+                    success: [
+                        "background-color: green"
+                    ]
+                }
+
+                let logdisplay = function () {
+                    let style = Style.base.join(';') + ';';
+                    style += Style.base.join(';');
+                    console.log(`%cdizest.api`, style, ...arguments);
+                }
+                logdisplay(value);
             } else if (data.flow_id) {
                 let node: any = this.workflow.node.get(data.flow_id);
                 if (node && node.eventHandler)
@@ -139,6 +163,9 @@ export class Component implements OnInit {
     }
 
     public async onEditorHide() {
+        let socket: any = this.editor.workspace.socket;
+        let data = this.workflow.data();
+        socket.emit("leave", data.kernel_id);
         this.workspace.unbind("*", this.eventHandler);
     }
 
@@ -151,6 +178,12 @@ export class Component implements OnInit {
         this.interrupt = true;
         await this.workflow.api('stop');
         await this.workflow.reload();
+    }
+
+    public async exit() {
+        await this.workflow.api(`kernel/stop`);
+        await this.dizest.kernels();
+        await this.editor.close();
     }
 
     public async zoom_out() {
@@ -245,5 +278,24 @@ export class Component implements OnInit {
         let flow = await this.workflow.spec.createFlow(app_id, { x: x, y: y });
         await this.workflow.node.create(flow.id(), true);
         await this.service.render();
+    }
+
+    public async changeExecutable(executable_path) {
+        this.service.render(this.workspace.app.editorLoading = true);
+
+        let socket: any = this.editor.workspace.socket;
+        socket.emit("leave", this.workflow.data().kernel_id);
+
+        await this.workflow.api(`kernel/stop`);
+        await this.dizest.kernels();
+        let path = this.editor.path;
+        let { code, data } = await this.dizest.api.call(`workflow`, `init`, { path: path, executable_path: executable_path });
+        if (code == 200) {
+            this.workflow.config.data.kernel_id = data.kernel_id;
+            this.workflow.config.data.executable = data.executable;
+            await this.workflow.reload();
+            socket.emit("join", this.workflow.data().kernel_id);
+        }
+        this.service.render(this.workspace.app.editorLoading = false);
     }
 }

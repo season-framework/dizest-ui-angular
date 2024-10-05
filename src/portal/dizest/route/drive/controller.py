@@ -15,6 +15,8 @@ struct = wiz.model("portal/dizest/struct")
 config = struct.config
 fs = season.util.fs(config.storage_path())
 
+config.acl()
+
 def driveItem(path):
     def convert_size():
         size_bytes = os.path.getsize(fs.abspath(path)) 

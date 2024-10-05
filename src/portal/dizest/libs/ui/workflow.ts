@@ -40,6 +40,19 @@ export class Workflow {
     }
 
     public async reload() {
+        this.data().executable_name = 'base';
+        try {
+            if (this.app.dizest.config.executables && this.data().executable) {
+                for (let i = 0; i < this.app.dizest.config.executables.length; i++) {
+                    if (this.app.dizest.config.executables[i].executable_path == this.data().executable) {
+                        this.data().executable_name = this.app.dizest.config.executables[i].name;
+                        break;
+                    }
+                }
+            }
+        } catch (e) {
+        }
+
         let { code, data } = await this.api("status");
         this.status = data.workflow;
 

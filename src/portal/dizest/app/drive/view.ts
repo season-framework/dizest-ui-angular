@@ -189,7 +189,7 @@ export class Component implements OnInit {
             }
         },
         isShow: (node: any) => {
-            if (this.showHidden)
+            if (this.tree.status.showHidden)
                 return true;
             if (node.title[0] == ".") return false;
             return true;

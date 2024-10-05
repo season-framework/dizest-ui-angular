@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "editor.terminal",
+    "id": "editor.terminal",
+    "namespace": "editor.terminal",
+    "viewuri": "",
+    "category": "",
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-terminal([dizest]=\"\", [editor]=\"\")"
+}

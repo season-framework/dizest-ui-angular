@@ -75,13 +75,9 @@ def authenticate(path):
 
     wiz.response.redirect("/access")
 
-def acl_workflow():
+def acl():
     if wiz.session.user_id() is None:
         wiz.response.status(401)
-
-def acl_cron():
-    ip = wiz.request.ip()
-    return ip == '127.0.0.1'
 
 class Config(BaseConfig):
     DEFAULT_VALUES = {
@@ -93,7 +89,7 @@ class Config(BaseConfig):
         'get_workflow': (None, get_workflow),
         'update_workflow': (None, update_workflow),
         'authenticate': (None, authenticate),
-        'acl_cron': (None, acl_cron),
+        'acl': (None, acl),
     }
 
 fs = season.util.fs(os.getcwd())

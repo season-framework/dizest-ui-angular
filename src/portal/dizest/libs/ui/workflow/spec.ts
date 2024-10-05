@@ -1,5 +1,6 @@
 export class Flow {
     public _data: any = {};
+    public meta: any = {};
 
     constructor(private spec: any, flow_id: any) {
         if (!spec.data.flow[flow_id]) return;
@@ -128,7 +129,7 @@ export class Spec {
             outputs: [],
             code: '',
             api: '',
-            pug: '',
+            html: '',
             js: '',
             css: ''
         };

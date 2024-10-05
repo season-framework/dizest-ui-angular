@@ -18,7 +18,7 @@ div(class="w-[720px] flex flex-col h-full bg-white")
                 (click)="select(flow_id)",
                 *ngFor="let flow_id of sidebar.items")
 
-                div(class="flex px-3 py-2 bg-slate-200 text-slate-700 gap-x-2 items-center justify-center")
+                div(class="flex h-[40px] px-3 pr-0 bg-slate-200 text-slate-700 gap-x-2 items-center justify-center")
                     div(*ngIf="workflow.node.selected == flow_id")
                         i.fa-solid.fa-circle-play
 
@@ -27,9 +27,46 @@ div(class="w-[720px] flex flex-col h-full bg-white")
                             class="text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0 placeholder-gray-700 bg-transparent", 
                             [placeholder]="flow(flow_id).title()",
                             [(ngModel)]="flow(flow_id).raw().title")
-                    
-                    div
-                        i.fa-solid.fa-xmark((click)="close(flow_id)")
 
-                div(class="code-area w-full")
-                    nu-monaco-editor([(ngModel)]="flow(flow_id).app().raw().code", [options]="monacopy", [height]="'auto'", (event)="init($event)")
+                    div(class="flex h-[40px]", *ngIf="codeflow[flow_id]")
+                        div(
+                            class="flex items-center justify-center h-full px-2 text-[14px] cursor-pointer text-slate-700 hover:bg-slate-400",
+                            (click)="changeTargetCode(flow_id, 'code')",
+                            [class.text-white]="codeflow[flow_id].target == 'code'",
+                            [class.bg-slate-500]="codeflow[flow_id].target == 'code'")
+                            span Code
+                        div(
+                            class="flex items-center justify-center h-full px-2 text-[14px] cursor-pointer text-slate-700 hover:bg-slate-400",
+                            (click)="changeTargetCode(flow_id, 'html')",
+                            [class.text-white]="codeflow[flow_id].target == 'html'",
+                            [class.bg-slate-500]="codeflow[flow_id].target == 'html'")
+                            span HTML
+                        div(
+                            class="flex items-center justify-center h-full px-2 text-[14px] cursor-pointer text-slate-700 hover:bg-slate-400",
+                            (click)="changeTargetCode(flow_id, 'js')",
+                            [class.text-white]="codeflow[flow_id].target == 'js'",
+                            [class.bg-slate-500]="codeflow[flow_id].target == 'js'")
+                            span JS
+                        div(
+                            class="flex items-center justify-center h-full px-2 text-[14px] cursor-pointer text-slate-700 hover:bg-slate-400",
+                            (click)="changeTargetCode(flow_id, 'css')",
+                            [class.text-white]="codeflow[flow_id].target == 'css'",
+                            [class.bg-slate-500]="codeflow[flow_id].target == 'css'")
+                            span CSS
+                        div(
+                            class="flex items-center justify-center h-full px-2 text-[14px] cursor-pointer text-slate-700 hover:bg-slate-400",
+                            (click)="changeTargetCode(flow_id, 'api')",
+                            [class.text-white]="codeflow[flow_id].target == 'api'",
+                            [class.bg-slate-500]="codeflow[flow_id].target == 'api'")
+                            span API
+                        div(
+                            (click)="close(flow_id)",
+                            class="flex items-center justify-center h-full w-[32px] cursor-pointer text-slate-700 hover:bg-slate-400")
+                            i.fa-solid.fa-xmark
+
+                div(class="code-area w-full", *ngIf="codeflow[flow_id] && codeflow[flow_id].show")
+                    nu-monaco-editor(
+                        [(ngModel)]="flow(flow_id).app().raw()[codeflow[flow_id].target]", 
+                        [options]="codeflow[flow_id].monaco", 
+                        [height]="'auto'", 
+                        (event)="init($event)")

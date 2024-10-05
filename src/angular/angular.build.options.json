@@ -14,7 +14,7 @@
     "styles": [
         "tailwind.min.css",
         "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-        "node_modules/xterm/css/xterm.css",
+        "node_modules/@xterm/xterm/css/xterm.css",
         "src/styles.scss"
     ],
     "scripts": [

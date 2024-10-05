@@ -1,0 +1,8 @@
+{
+    "id": "api.config",
+    "title": "/api/dizest/config/<path:path>",
+    "route": "/api/dizest/config/<path:path>",
+    "viewuri": "",
+    "category": "",
+    "controller": "base"
+}

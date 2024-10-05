@@ -9,15 +9,22 @@ import uuid
 Workflow = wiz.model("portal/dizest/struct/workflow")
 
 class Model:
-    def __init__(self, core, id=None):
+    def __init__(self, core, id=None, cwd=None, executable=None):
         self.core = core
         self.id = id
         if id is None:
             return
         
         self.path = None
+        self.executable = None
         opts = core.config.spawner_option()
         opts['id'] = self.id
+        if executable is not None:
+            opts['executable'] = executable
+            self.executable = executable
+
+        if cwd is not None:
+            opts['cwd'] = os.path.join(opts['cwd'], cwd)
         self.spawner = core.config.spawner_class(**opts)
         self.spawner.start()
         self.workflow = Workflow(self)
@@ -25,16 +32,22 @@ class Model:
     """
     static functions
     """
-    def __call__(self, id):
+    def __call__(self, id, cwd=None, executable=None):
         cache = self.cache()
         if id is None:
             id = str(uuid.uuid1())
 
         if id not in cache:
             id = str(uuid.uuid1())
-            cache[id] = Model(self.core, id)
+            cache[id] = Model(self.core, id, cwd, executable)
         return cache[id]
     
+    def get(self, id):
+        cache = self.cache()
+        if id not in cache:
+            return None
+        return cache[id]
+
     def cache(self):
         cache = self.core.cache()
         if 'kernel' not in cache:
@@ -44,14 +57,22 @@ class Model:
     def list(self):
         cache = self.core.cache().kernel
         res = []
-        for kernel_id in cache:
-            kernel = cache[kernel_id]
-            res.append(kernel)
+        if cache is not None:
+            for kernel_id in cache:
+                kernel = cache[kernel_id]
+                res.append(kernel)
         return res
         
     """
     instance functions
     """
+    def stop(self):
+        if self.id is None: return
+        self.spawner.stop()
+        cache = self.cache()
+        if self.id in cache:
+            del cache[self.id]
+
     def uri(self):
         if self.id is None: return
         return self.spawner.uri()

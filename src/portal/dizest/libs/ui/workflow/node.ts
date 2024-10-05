@@ -92,15 +92,6 @@ export class Node {
         }
         return null;
     }
-
-    public async scroll(flow_id: string) {
-        if (!this.refs[flow_id]) return;
-        let element = this.refs[flow_id].instance.debugElement;
-        if (!element) return;
-        await this.drawflow.this.workflow.app.service.render(500);
-        element = element.nativeElement;
-        element.scrollTop = element.scrollHeight - element.clientHeight;
-    }
 }
 
 export default Node;

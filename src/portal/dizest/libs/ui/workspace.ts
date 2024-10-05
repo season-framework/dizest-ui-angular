@@ -78,6 +78,8 @@ export class Workspace {
     public async open(path: string, opts: any = {}) {
         if (this.current == path) return;
 
+        this.editorElement.nativeElement.innerHTML = "";
+        
         let editor: any = this.find(path);
         if (!editor) {
             editor = {};
@@ -132,7 +134,6 @@ export class Workspace {
         this.selected = editor;
 
         let editorElement = editor.ref.location.nativeElement;
-        this.editorElement.nativeElement.innerHTML = "";
         this.editorElement.nativeElement.append(editorElement);
         await this.app.service.render();
 
