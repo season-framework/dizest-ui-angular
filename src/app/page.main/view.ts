@@ -72,8 +72,11 @@ export class Component implements OnInit {
             key: ["alt + w"],
             preventDefault: true,
             command: async () => {
-                // if (!this.workspace.selected) return;
-                // await this.workspace.selected.close();
+                if (!this.workspace.selected) return;
+                if (this.workspace.selected.closeWindow)
+                    await this.workspace.selected.closeWindow();
+                else
+                    await this.workspace.selected.close();
             }
         }, {
             key: ["shift + enter"],
@@ -92,6 +95,49 @@ export class Component implements OnInit {
                     await this.workspace.selected.run();
             }
         }, {
+            key: ["alt + a"],
+            preventDefault: true,
+            command: async () => {
+                if (!this.workspace.selected) return;
+                if (this.workspace.selected.alta)
+                    await this.workspace.selected.alta();
+            }
+        }, {
+            key: ["cmd + 1", "ctrl + 1"],
+            preventDefault: true,
+            command: async () => {
+                let editor = this.workspace.editors[0];
+                if (editor) await editor.open();
+            }
+        }, {
+            key: ["cmd + 2", "ctrl + 2"],
+            preventDefault: true,
+            command: async () => {
+                let editor = this.workspace.editors[1];
+                if (editor) await editor.open();
+            }
+        }, {
+            key: ["cmd + 3", "ctrl + 3"],
+            preventDefault: true,
+            command: async () => {
+                let editor = this.workspace.editors[2];
+                if (editor) await editor.open();
+            }
+        }, {
+            key: ["cmd + 4", "ctrl + 4"],
+            preventDefault: true,
+            command: async () => {
+                let editor = this.workspace.editors[3];
+                if (editor) await editor.open();
+            }
+        }, {
+            key: ["cmd + 5", "ctrl + 5"],
+            preventDefault: true,
+            command: async () => {
+                let editor = this.workspace.editors[4];
+                if (editor) await editor.open();
+            }
+        }, {
             key: ["esc"],
             preventDefault: true,
             command: async () => {
@@ -107,13 +153,22 @@ export class Component implements OnInit {
 
     public async ngOnInit() {
         await this.service.init();
-        await this.service.auth.allow("/api/dizest/auth");
+        if (WizRoute.segment[0])
+            await this.service.auth.allow("/api/dizest/auth?redirect=/workflow/" + WizRoute.segment[0]);
+        else
+            await this.service.auth.allow("/api/dizest/auth");
         await this.dizest.kernels();
         await this.dizest.loadConfig();
         await this.service.render();
-
         let socket: any = wiz.socket();
         this.workspace = new Workspace(this, this.editorElement, socket);
+
+        if (WizRoute.segment[0] && WizRoute.segment[0][0] != '#') {
+            let ext = WizRoute.segment[0].split(".")[WizRoute.segment[0].split(".").length - 1];
+            await this.driveConfig.open({ id: decodeURIComponent(WizRoute.segment[0]) }, ext);
+        } else {
+            await this.service.href("/workflow");
+        }
     }
 
     public workspaceSortableOption: any = {
@@ -144,8 +199,20 @@ export class Component implements OnInit {
             terminal: { cls: TerminalEditor },
         };
         if (!mapper[menu_id]) return;
-        await this.workspace.open("#" + menu_id, mapper[menu_id]);
+
+        let target = menu_id;
+        if (menu_id == 'terminal') {
+            target = 'term-' + this.service.random(6);
+        }
+
+        await this.workspace.open("#" + target, mapper[menu_id]);
         await this.service.render();
     }
 
+    public isHideDrive: boolean = false;
+
+    public async toggleDrive() {
+        this.isHideDrive = !this.isHideDrive;
+        await await this.service.render();
+    }
 }

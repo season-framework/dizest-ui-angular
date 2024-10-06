@@ -62,6 +62,7 @@ export class Workspace {
             } else {
                 this.current = null;
                 this.selected = null;
+                await this.app.service.href("/workflow");
                 this.editorElement.nativeElement.innerHTML = "";
             }
         }
@@ -79,7 +80,7 @@ export class Workspace {
         if (this.current == path) return;
 
         this.editorElement.nativeElement.innerHTML = "";
-        
+
         let editor: any = this.find(path);
         if (!editor) {
             editor = {};
@@ -135,6 +136,8 @@ export class Workspace {
 
         let editorElement = editor.ref.location.nativeElement;
         this.editorElement.nativeElement.append(editorElement);
+
+        await this.app.service.href("/workflow/" + path);
         await this.app.service.render();
 
         return editor;

@@ -7,178 +7,81 @@ div(class="w-full h-full overflow-auto bg-gray-100 px-6 py-5")
                     nav(class="-mb-px flex space-x-8")
                         a(
                             class="whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium",
-                            [ngClass]="currentTab == 'system' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'",
-                            (click)="changeTab('system')") System
+                            [ngClass]="currentTab == 'status' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'",
+                            (click)="changeTab('status')") Status
                         a(
                             class="whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium",
-                            [ngClass]="currentTab == 'executables' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'",
-                            (click)="changeTab('executables')") Executables
-                        a(
-                            class="whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium",
-                            [ngClass]="currentTab == 'aiintegration' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'",
-                            (click)="changeTab('aiintegration')") AI Integration
+                            [ngClass]="currentTab == 'workflow' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'",
+                            (click)="changeTab('workflow')") Workflow
 
-        ng-container(*ngIf="currentTab == 'system'")
+        ng-container(*ngIf="currentTab == 'status'")
+            div(class="w-full px-8 py-4 mt-5")
+                div(class="grid grid-cols-2 gap-4")
+                    div(
+                        *ngIf="status.deploy.length > 0",
+                        class="bg-white p-6 rounded-lg shadow-md max-w-xs mx-auto w-full")
+                        h2(class="text-lg font-semibold text-center mb-4") Deployment
+                        div(class="space-y-2")
+                            div(class="flex items-center text-sm", *ngFor="let item of status.deploy")
+                                span(class="font-medium") {{item.key}}
+                                span(class="flex-grow border-b border-dotted mx-2")
+                                span(*ngIf="!item.format") {{item.value}}
+                                span(*ngIf="item.format") {{item.value | number: item.format}}
+                                span(*ngIf="item.unit", class="ml-1") {{item.unit}}
+                            
+                    div(
+                        *ngIf="status.system.length > 0",
+                        class="bg-white p-6 rounded-lg shadow-md max-w-xs mx-auto w-full")
+                        h2(class="text-lg font-semibold text-center mb-4") System Usage
+                        div(class="space-y-2")
+                            div(class="flex items-center text-sm", *ngFor="let item of status.system")
+                                span(class="font-medium") {{item.key}}
+                                span(class="flex-grow border-b border-dotted mx-2")
+                                span(*ngIf="!item.format") {{item.value}}
+                                span(*ngIf="item.format") {{item.value | number: item.format}}
+                                span(*ngIf="item.unit", class="ml-1") {{item.unit}}
+                
+                    ng-container(*ngIf="status.gpu.length > 0")
+                        ng-container(*ngFor="let gpu of status.gpu")
+                            div(
+                                *ngIf="gpu.data.length > 0",
+                                class="bg-white p-6 rounded-lg shadow-md max-w-xs mx-auto w-full")
+                                h2(class="text-lg font-semibold text-center mb-4") {{gpu.title}}
+                                div(class="space-y-2")
+                                    div(class="flex items-center text-sm", *ngFor="let item of gpu.data")
+                                        span(class="font-medium") {{item.key}}
+                                        span(class="flex-grow border-b border-dotted mx-2")
+                                        span(*ngIf="!item.format") {{item.value}}
+                                        span(*ngIf="item.format") {{item.value | number: item.format}}
+                                        span(*ngIf="item.unit", class="ml-1") {{item.unit}}
+
+        ng-container(*ngIf="currentTab == 'workflow'")
             div(class="w-full bg-white px-8 py-4 rounded-2xl mt-5")
-                div(class="space-y-0 divide-y divide-gray-900/10")
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Title
-                        div(class="w-full flex-1")
-                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
-                                input(
-                                    type="text", 
-                                    [(ngModel)]="data.title",
-                                    placeholder="DIZEST",
-                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
-                    
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Logo
-                        div(class="w-full flex-1 bg-indigo-500 px-8 py-4 rounded-xl flex items-center justify-center")
-                            img([attr.src]="data.logo ? data.logo : '/assets/brand/logo.png'", class="h-[32px]")
-                        div(class="flex flex-col gap-y-2")
-                            button(
-                                class="px-4 py-1.5 bg-slate-200 text-slate-700 cursor-pointer rounded-full hover:bg-slate-400",
-                                (click)="uploadLogo()")
-                                span Upload
-                            button(
-                                *ngIf="data.logo",
-                                class="px-4 py-1.5 bg-slate-200 text-slate-700 cursor-pointer rounded-full hover:bg-slate-400",
-                                (click)="data.logo = ''; service.render();")
-                                span Delete
-                    
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Icon
-                        div(class="w-full flex-1")
-                            img(*ngIf="data.icon", [attr.src]="data.icon", class="h-[48px] w-[48px]")
-                        div(class="flex flex-col gap-y-2")
-                            button(
-                                class="px-4 py-1.5 bg-slate-200 text-slate-700 cursor-pointer rounded-full hover:bg-slate-400",
-                                (click)="uploadIcon()")
-                                span Upload
-                            button(
-                                *ngIf="data.icon",
-                                class="px-4 py-1.5 bg-slate-200 text-slate-700 cursor-pointer rounded-full hover:bg-slate-400",
-                                (click)="data.icon = ''; service.render();")
-                                span Delete
-
-                    div(class="flex gap-4 py-6 justify-end")
-                        button(
-                            class="w-[120px] flex justify-center items-center py-1.5 bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
-                            (click)="update()")
-                            span(*ngIf="!isUpdate") Update
-                            svg(class="animate-spin h-[20px] w-[20px]", viewBox="0 0 24 24", *ngIf="isUpdate")
-                                circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
-                                path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
-                        
-            div(class="w-full bg-white px-8 py-4 rounded-2xl mt-8")
-                div(class="space-y-0 divide-y divide-gray-900/10")
-                    div(class="flex gap-4 py-6 justify-end")
-                        div(class="flex-1 text-sm font-medium leading-6 text-gray-900 pt-1.5") Restart Server
-                        div(class="flex flex-col gap-y-2")
-                            button(
-                                class="px-4 py-1.5 bg-red-500 text-white cursor-pointer rounded-full hover:bg-red-700",
-                                (click)="restart()")
-                                span Restart Server
-
-        ng-container(*ngIf="currentTab == 'executables'")
-            div(class="w-full bg-white px-8 py-4 rounded-2xl mt-5")
-                div(class="space-y-0 divide-y divide-gray-900/10")
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[160px]")
-                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
-                                input(
-                                    type="text", 
-                                    [(ngModel)]="newExecObj.name",
-                                    placeholder="base",
-                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
-                        div(class="w-full flex-1")
-                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
-                                input(
-                                    type="text", 
-                                    [(ngModel)]="newExecObj.executable_path",
-                                    placeholder="/opt/anaconda3/bin/python",
-                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
-                        div(class="flex gap-x-2")
-                            button(
-                                *ngIf="newExecObj.isVerified",
-                                class="px-4 py-1.5 cursor-pointer rounded-full bg-slate-200 text-slate-700 hover:bg-slate-400",
-                                (click)="cancelAddExecutable()")
-                                span Cancel
-
-                            button(
-                                class="px-4 py-1.5 cursor-pointer rounded-full",
-                                [ngClass]="!newExecObj.isVerified ? 'bg-slate-200 text-slate-700 hover:bg-slate-400' : 'bg-indigo-500 text-white hover:bg-indigo-700'",
-                                (click)="addNewExecutable()")
-                                ng-container(*ngIf="!newExecObj.isBlocked")
-                                    span(*ngIf="!newExecObj.isVerified") Verify
-                                    span(*ngIf="newExecObj.isVerified") Add
-                                svg(class="animate-spin h-[20px] w-[20px]", viewBox="0 0 24 24", *ngIf="newExecObj.isBlocked")
-                                    circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
-                                    path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
-            
-            div(class="w-full bg-white px-8 py-4 rounded-2xl mt-8")
                 ul(class="divide-y divide-gray-100")
-                    li(class="flex items-center justify-between gap-x-3 py-2 px-3")    
+                    li(class="flex items-center justify-between gap-x-3 py-2 px-3", *ngIf="workflows.length == 0")
                         div(class="min-w-0")
                             div(class="flex items-start gap-x-2")
-                                p(class="whitespace-nowrap") base
+                                p(class="whitespace-nowrap") Nothing
                             div(class="flex items-center gap-x-2 text-xs leading-5 text-gray-500")
-                                p(class="whitespace-nowrap") Python environment that executed dizest.
+                                p(class="whitespace-nowrap") There are no workflows currently running.
                         
-                    ng-container(*ngIf="data.executables")
-                        ng-container(*ngFor="let item of data.executables")
+                    ng-container(*ngIf="workflows.length > 0")
+                        ng-container(*ngFor="let item of workflows")
                             li(class="flex items-center justify-between gap-x-3 py-2 px-3")    
                                 div(class="min-w-0")
                                     div(class="flex items-start gap-x-2")
-                                        p(class="whitespace-nowrap") {{item.name}}
-                                    div(class="flex items-center gap-x-2 text-xs leading-5 text-gray-500")
-                                        p(class="whitespace-nowrap") {{item.executable_path}}
+                                        p(class="whitespace-nowrap") {{item.path}}
+                                    div(class="flex items-center gap-x-2 text-sm leading-5 text-gray-500")
+                                        p(class="whitespace-nowrap") {{item.timestamp}}
+                                        p(class="whitespace-nowrap text-xs") /
+                                        p(class="whitespace-nowrap") {{item.kernel_id}}
                                 div(class="flex flex-none items-center gap-x-2")
                                     a(
-                                        class="px-2 py-1 text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300",
-                                        (click)="removeExecutable(item)")
-                                        i.fa-solid.fa-xmark
-                                    
-        ng-container(*ngIf="currentTab == 'aiintegration'")
-            div(class="w-full bg-white px-8 py-4 rounded-2xl mt-5")
-                div(class="space-y-0 divide-y divide-gray-900/10")
-                    
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Use AI
-                        div(class="w-full flex-1")
-                            div(class="space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0")
-                                div(class="flex items-center")
-                                    input([(ngModel)]="data.use_ai", value="use", name="aiuseoption", type="radio", class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600")
-                                    label(class="ml-3 block text-sm font-medium leading-6 text-gray-900") Use
-                                div(class="flex items-center")
-                                    input([(ngModel)]="data.use_ai", value="", name="aiuseoption", type="radio", class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600")
-                                    label(class="ml-3 block text-sm font-medium leading-6 text-gray-900") Not Use
-
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") API Base
-                        div(class="w-full flex-1")
-                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
-                                input(
-                                    type="text", 
-                                    [(ngModel)]="data.llm_gateway",
-                                    placeholder="https://api.openai.com/v1",
-                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
-                    
-                    div(class="flex gap-4 py-6")
-                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") API Key
-                        div(class="w-full flex-1")
-                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
-                                input(
-                                    type="password", 
-                                    [(ngModel)]="data.llm_api_key",
-                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
-                    
-                    div(class="flex gap-4 py-6 justify-end")
-                        button(
-                            class="w-[120px] flex justify-center items-center py-1.5 bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
-                            (click)="update()")
-                            span(*ngIf="!isUpdate") Update
-                            svg(class="animate-spin h-[20px] w-[20px]", viewBox="0 0 24 24", *ngIf="isUpdate")
-                                circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
-                                path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
-                    
+                                        class="relative px-2 py-1 text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300",
+                                        [class.text-red-500]="item.proceed",
+                                        (click)="stopWorkflow(item)")
+                                        span(
+                                            *ngIf="item.proceed", 
+                                            class="absolute inset-0 border-3 border-transparent border-t-red-500 rounded-full animate-spin")
+                                        i.fa-solid.fa-stop
+                            

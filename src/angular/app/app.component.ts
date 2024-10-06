@@ -14,7 +14,13 @@ export class AppComponent implements OnInit {
         public router: Router,
         public ref: ChangeDetectorRef,
         public translate: TranslateService
-    ) { }
+    ) {
+        window['MonacoEnvironment'] = {
+            getWorkerUrl: function (moduleId: string, label: string) {
+                return `/lib/vs/base/worker/workerMain.js`;
+            }
+        };
+    }
 
     public async ngOnInit() {
         enableProdMode();

@@ -169,6 +169,16 @@ export class Component implements OnInit {
             await this.service.file.upload(url, fd, this.tree.event.uploadProgress.bind(this));
         },
         select: async (node: any) => {
+            if (this.config.selected) {
+                let ext = node.title.split('.');
+                try {
+                    ext = ext[ext.length - 1].toLowerCase();
+                } catch (e) {
+                    ext = '';
+                }
+                await this.config.selected(node, ext);
+            }
+
             if (node.type == 'folder') {
                 if (node.id != this.current.id)
                     await node.toggle();
@@ -198,6 +208,13 @@ export class Component implements OnInit {
             if (!this.current) return false;
             return node.id === this.current.id;
         }
+    }
+
+    public isFocused(item) {
+        if (this.config.focused) {
+            return this.config.focused(item);
+        }
+        return '';
     }
 
     public icon(node: any, checkopen: boolean = true) {

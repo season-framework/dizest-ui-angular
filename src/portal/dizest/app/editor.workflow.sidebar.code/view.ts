@@ -27,6 +27,12 @@ export class Component implements OnInit {
         await this.service.init();
         this.workflow = this.app.workflow;
         await this.service.render();
+
+        this.sidebar.getFlow = async () => {
+            if (!this.workflow.node.selected) return;
+            let flow = this.flow(this.workflow.node.selected);
+            return flow;
+        }
     }
 
     public async onSidebarShow() {
@@ -92,8 +98,11 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
-    public async init(event: any) {
+    public async init(event: any, flow_id: string) {
         let { editor } = event;
+
+        let flow = this.flow(flow_id);
+        flow.editor = editor;
 
         let activated = false;
 

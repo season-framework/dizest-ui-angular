@@ -14,7 +14,7 @@ div(
             div(class="mr-2")
                 input(type="checkbox", class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600", [(ngModel)]="flow.raw().active")
             div(class="flex-1 mr-1 overflow-hidden text-ellipsis whitespace-nowrap") {{flow.title()}}
-            div(class="px-2 py-1 text-xs bg-white text-indigo-500 cursor-pointer rounded-xl hover:bg-indigo-50 flex border border-gray-200", (click)="delete()")
+            div(class="hidden lg:flex px-2 py-1 text-xs bg-white text-indigo-500 cursor-pointer rounded-xl hover:bg-indigo-50 border border-gray-200", (click)="delete()")
                 i.fa-solid.fa-xmark
 
         div(class="flex bg-indigo-50 divide-x divide-gray-300 border-y border-gray-300")
@@ -36,7 +36,7 @@ div(
                 div(class="w-[48px] bg-yellow-50 text-yellow-500 flex items-center py-1.5 justify-center text-[12px] font-black")
                     i.fa-solid.fa-stop
 
-            div(class="flex-1 flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", (click)='code()')
+            div(class="hidden flex-1 lg:flex items-center text-indigo-500 py-1.5 justify-center cursor-pointer hover:bg-indigo-500 hover:text-white", (click)='code()')
                 i.fa-solid.fa-code
 
             div(
@@ -66,7 +66,7 @@ div(
         div(class="flex bg-gray-100 font-extrabold text-xs")
             div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
                 span Variables
-                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addVariable()")
+                div(class="hidden lg:block ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addVariable()")
                     i.fa-solid.fa-plus
         
         div(class="divide-y divide-gray-200", [sortablejs]="flow.app().inputs()", [sortablejsOptions]="{ animation: 150, handle: '.value-title', onUpdate: sorted, scope: scope }")
@@ -79,7 +79,7 @@ div(
                                 [(ngModel)]="item.name")
 
                         div(
-                            class="text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex",
+                            class="text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer lg:group-hover:flex",
                             [class.hidden]="!item.conf",
                             [class.flex]="item.conf",
                             (click)="variableConfigure(item)")
@@ -179,12 +179,12 @@ div(
         div(class="flex bg-gray-100 font-extrabold text-xs")
             div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
                 span Input
-                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addInput()")
+                div(class="hidden lg:block ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addInput()")
                     i.fa-solid.fa-plus
             
             div(class="flex-1 flex overflow-hidden items-center px-1.5 py-1")
                 span Output
-                div(class="ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addOutput()")
+                div(class="hidden lg:block ms-auto px-1.5 text-xs bg-gray-400 text-white cursor-pointer", (click)="addOutput()")
                     i.fa-solid.fa-plus
 
         div(class="flex bg-white border-b border-gray-200")
@@ -209,7 +209,7 @@ div(
                                     [ngClass]="'input-' + item.name")
 
                             div(
-                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex", 
+                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer lg:group-hover:flex", 
                                 (click)="removeInput(item)")
                                 i.fa-solid.fa-xmark
 
@@ -228,7 +228,7 @@ div(
                                     [(ngModel)]="item.name")
 
                             div(
-                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer group-hover:flex", 
+                                class="hidden text-sm items-center justify-center w-6 bg-gray-400 text-white cursor-pointer lg:group-hover:flex", 
                                 (click)="removeOutput(item)")
                                 i.fa-solid.fa-xmark
 
@@ -255,4 +255,4 @@ div(
             ng-container(*ngFor="let msg of log")
                 div([innerHtml]="msg")
 
-    div(class="resize-handle", (mousedown)="resize($event)")
+    div(class="resize-handle hidden lg:block", (mousedown)="resize($event)")

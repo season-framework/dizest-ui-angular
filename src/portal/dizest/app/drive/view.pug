@@ -38,7 +38,10 @@ div(
         wiz-portal-season-tree([config]="tree")
             ng-template('#fileTemplate'='', let-data='')
                 div
-                    div(class="group flex w-full cursor-pointer text-gray-500 items-center hover:bg-blue-50", (click)="data.select(); $event.stopPropagation();") 
+                    div(
+                        class="group flex w-full cursor-pointer text-gray-500 items-center hover:bg-blue-50", 
+                        [class]="isFocused(data)",
+                        (click)="data.select(); $event.stopPropagation();") 
                         ng-container(*ngIf="data.type == 'file'")
                             i(
                                 class="w-4 mr-1", [ngClass]="icon(data)", 

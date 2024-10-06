@@ -28,6 +28,7 @@ class Model:
         self.spawner = core.config.spawner_class(**opts)
         self.spawner.start()
         self.workflow = Workflow(self)
+        self.timestamp = datetime.datetime.now()
 
     """
     static functions

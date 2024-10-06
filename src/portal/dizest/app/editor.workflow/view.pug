@@ -24,7 +24,7 @@ div(class="flex h-full w-full bg-white")
                     (click)="zoom_in()")
                     i.fa-solid.fa-magnifying-glass-plus
 
-        div(class="absolute bg-gray-300 bg-opacity-40 top-[24px] p-4 rounded-lg flex gap-x-3", *ngIf="workflow")
+        div(class="absolute bg-gray-300 bg-opacity-40 top-[12px] lg:top-[24px] p-4 rounded-lg flex gap-x-3", *ngIf="workflow")
             div(
                 (click)="exit()",
                 class="px-4 py-4 text-md bg-rose-500 text-white cursor-pointer rounded-full hover:bg-rose-600")
@@ -55,7 +55,7 @@ div(class="flex h-full w-full bg-white")
                 i.fa-solid.fa-stop
 
             div(
-                class="px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
+                class="hidden lg:block px-4 py-4 text-md bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-600",
                 (click)="workflow.reload()")
                 i.fa-solid.fa-refresh
 
@@ -65,3 +65,21 @@ div(class="flex h-full w-full bg-white")
                 i.fa-solid.fa-save
 
     div(class="h-full flex justify-center items-center bg-white", '#sidebar'='')
+
+div(class="relative z-50", *ngIf="drive.isShow")
+    div(class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity")
+    div(class="fixed inset-0 z-50 w-screen overflow-y-auto")
+        div(class="flex min-h-full items-end justify-center text-center items-center p-0")
+            div(class="relative transform overflow-hidden rounded-lg bg-white px-0 pb-5 text-left shadow-xl transition-all my-8 w-full max-w-lg")
+                div(class="w-full max-h-[calc(100vh-140px)] overflow-auto min-h-[240px]")
+                    wiz-portal-dizest-drive([dizest]="dizest", [config]="drive")
+                    
+                div(class="mt-4 flex px-4")
+                    button(
+                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto", 
+                        (click)="drive.close()") Cancel
+                    div(class="flex-1")
+                    button(
+                        *ngIf="drive.target",
+                        class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto", 
+                        (click)="drive.select()") Select

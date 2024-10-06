@@ -63,7 +63,7 @@ export class Component implements OnInit {
                 if (code == 200) break;
             } catch (e) {
             }
-            await this.service.render(500);
+            await this.service.render(1000);
         }
         await this.service.status.hide('loading');
     }

@@ -220,6 +220,13 @@ export class Component implements OnInit {
         await this.service.render();
     }
 
+    public async selectFile(value) {
+        let prevalue = this.flow.data()[value.name];
+        let path = await this.workflow.app.drive.show(prevalue);
+        this.flow.data()[value.name] = path;
+        await this.service.render();
+    }
+
     // resize node
     public resizing: boolean = false;
 

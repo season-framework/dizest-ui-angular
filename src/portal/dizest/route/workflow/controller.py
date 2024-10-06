@@ -36,6 +36,9 @@ if action == 'init':
     kernel_id = None
     if 'kernel_id' in data:
         kernel_id = data['kernel_id']
+    prek = struct.kernel.get(kernel_id)
+    if prek and prek.path != path:
+        kernel_id = None
 
     opts = dict(cwd=basecwd)
     if executable_path is not None:

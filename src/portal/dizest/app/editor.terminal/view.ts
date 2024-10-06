@@ -20,6 +20,11 @@ export class Component implements OnInit, OnDestroy {
     public fit: any;
     public namespace: any;
 
+    public async socketEmit(channel: string, data: any = {}) {
+        data.namespace = this.namespace;
+        this.socket.emit(channel, data);
+    }
+
     public async ngOnInit() {
         await this.service.init();
         await this.service.render();
@@ -59,39 +64,32 @@ export class Component implements OnInit, OnDestroy {
 
         const socket = wiz.socket();
 
-        let socketEmit = (channel: string, data: any = {}) => {
-            data.namespace = this.namespace;
-            this.socket.emit(channel, data);
-        }
-
         term.onData((data) => {
-            socketEmit("ptyinput", { input: data })
+            this.socketEmit("ptyinput", { input: data })
         });
 
-        socket.on("ptyoutput", function (data) {
+        socket.on("ptyoutput", async (data) => {
             term.write(data.output);
         });
 
-        let rtab = this.tab;
-
-        socket.on("exit", async function (data) {
-            await rtab.close();
+        socket.on("exit", async (data) => {
+            await this.editor.close();
         });
 
         socket.on("connect", () => {
             fitToscreen();
             const dims = { cols: term.cols, rows: term.rows };
-            socketEmit("join");
-            socketEmit("create", dims);
+            this.socketEmit("join");
+            this.socketEmit("create", dims);
         });
 
         socket.on("disconnect", () => {
         });
 
-        function fitToscreen() {
+        let fitToscreen = () => {
             fit.fit();
             const dims = { cols: term.cols, rows: term.rows };
-            socketEmit("resize", dims);
+            this.socketEmit("resize", dims);
         }
 
         this.socket = socket;
@@ -106,12 +104,7 @@ export class Component implements OnInit, OnDestroy {
     }
 
     public async ngOnDestroy() {
-        let socketEmit = (channel: string, data: any = {}) => {
-            data.namespace = this.namespace;
-            this.socket.emit(channel, data);
-        }
-
-        socketEmit('close');
+        this.socketEmit('close');
         this.socket.close();
     }
 }

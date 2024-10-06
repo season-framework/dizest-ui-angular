@@ -9,7 +9,7 @@
         "name": "PageMainComponent",
         "path": "./page.main/page.main.component"
     },
-    "viewuri": "/workflow",
+    "viewuri": "/workflow/**",
     "layout": "layout.empty",
     "preview": "/workflow",
     "ng": {

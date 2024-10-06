@@ -12,6 +12,7 @@ import SidebarInfoClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.inf
 import SidebarAppsClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.apps';
 import SidebarCodeClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.code';
 import SidebarPipClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.pip';
+import SidebarAIClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.ai';
 
 export class Component implements OnInit {
     constructor(public service: Service, public ref: ViewContainerRef) { }
@@ -56,11 +57,12 @@ export class Component implements OnInit {
             { id: 'info', icon: 'fa-solid fa-book', name: 'Workflow Info' },
             { id: 'apps', icon: 'fa-solid fa-cubes', name: 'Apps' },
             { id: 'code', icon: 'fa-solid fa-code', name: 'Code' },
-            { id: 'pip', icon: 'fa-brands fa-python', name: 'Packages' },
-            // { id: 'api', icon: 'fa-solid fa-link', name: 'API' },
-            { id: 'save', icon: 'fa-solid fa-floppy-disk', name: 'Save' },
-            { id: 'download', icon: 'fa-solid fa-circle-down', name: 'Download' }
         ];
+        if (this.dizest.config.use_ai == 'use')
+            this.editor.actions.push({ id: 'ai', icon: 'fa-solid fa-wand-magic-sparkles', name: 'AI Assistant' });
+        this.editor.actions.push({ id: 'pip', icon: 'fa-brands fa-python', name: 'Packages' });
+        this.editor.actions.push({ id: 'save', icon: 'fa-solid fa-floppy-disk', name: 'Save' });
+        this.editor.actions.push({ id: 'download', icon: 'fa-solid fa-circle-down', name: 'Download' });
 
         this.editor.onAction = async (action: any) => {
             if (action.id == 'save') {
@@ -77,6 +79,12 @@ export class Component implements OnInit {
                 await this.service.render();
             }
         }
+
+        this.editor.alta = async () => {
+            if (this.dizest.config.use_ai != 'use') return;
+            if (this.sidebar.get('ai').isOpen) return;
+            this.sidebar.open('ai');
+        };
 
         this.editor.download = async () => {
             let url = this.dizest.api.url('drive', 'download/' + this.editor.path);
@@ -102,6 +110,44 @@ export class Component implements OnInit {
         this.editor.esc = async () => {
             this.workflow.node.selected = null;
             await this.service.render();
+        }
+
+        this.editor.closeWindow = async () => {
+            if (this.workflow.node.selected) {
+                let node_selected_id = this.workflow.node.selected;
+                if (this.sidebar.get('code').isOpen) {
+                    let location = this.sidebar.get('code').items.indexOf(node_selected_id);
+                    this.sidebar.get('code').items.remove(node_selected_id);
+
+                    if (this.sidebar.get('code').items[location])
+                        this.workflow.node.selected = this.sidebar.get('code').items[location]
+                    else if (this.sidebar.get('code').items[location - 1])
+                        this.workflow.node.selected = this.sidebar.get('code').items[location - 1]
+                    else
+                        this.workflow.node.selected = null;
+                }
+
+                await this.service.render();
+                return;
+            }
+
+            let opened = [];
+            for (let key in this.sidebar.items) {
+                if (this.sidebar.items[key].isOpen) {
+                    opened.push(this.sidebar.items[key].id);
+                }
+            }
+
+            if (opened.length > 0) {
+                if (opened[0] == 'apps') {
+                    this.workflow.selectedApp = null;
+                    await this.service.render();
+                }
+                await this.sidebar.items[opened[0]].close();
+                return;
+            }
+
+            await this.editor.close();
         }
 
         // workflow changed event handler
@@ -209,6 +255,7 @@ export class Component implements OnInit {
             info: { id: 'info', cls: SidebarInfoClass },
             code: { id: 'code', cls: SidebarCodeClass },
             pip: { id: 'pip', cls: SidebarPipClass },
+            ai: { id: 'ai', cls: SidebarAIClass },
         };
 
         obj.get = (name: string) => {
@@ -298,4 +345,57 @@ export class Component implements OnInit {
         }
         this.service.render(this.workspace.app.editorLoading = false);
     }
+
+    public drive: any = (() => {
+        let obj = {};
+
+        obj.isShow = false;
+        obj.target = null;
+        obj.callback = null;
+
+        obj.open = async () => {
+            return true;
+        }
+
+        obj.show = async (prevalue) => {
+            obj.isShow = true;
+            obj.target = null;
+            if (prevalue)
+                obj.target = { id: prevalue };
+
+            await this.service.render();
+
+            let fn = () => new Promise((resolve) => {
+                obj.callback = resolve;
+            });
+            return await fn();
+        }
+
+        obj.selected = async (node, ext) => {
+            obj.target = node;
+            await this.service.render();
+        }
+
+        obj.focused = (node) => {
+            if (obj.target)
+                if (node.id == obj.target.id)
+                    return 'bg-indigo-100 text-indigo-500';
+            return '';
+        }
+
+        obj.close = async () => {
+            obj.isShow = false;
+            obj.target = null;
+            await this.service.render();
+        }
+
+        obj.select = async () => {
+            let path = obj.target.id;
+            if (obj.callback)
+                await obj.callback(path);
+            await obj.close();
+        }
+
+        return obj;
+    })();
 }

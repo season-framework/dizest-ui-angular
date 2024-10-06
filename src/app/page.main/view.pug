@@ -1,11 +1,22 @@
 div(class="w-screen h-screen bg-gray-100 overflow-hidden flex")
-    div(class="flex flex-col w-full lg:w-[320px]")
-        div(class="w-full bg-indigo-500 text-white p-2 flex justify-center items-center")
+    div(
+        [ngClass]="isHideDrive ? 'hidden' : (workspace && workspace.selected ? 'hidden lg:flex lg:flex-col' : 'flex flex-col')",
+        class="w-full lg:w-[320px]")
+        div(class="w-full bg-indigo-500 text-white p-2 py-3 flex justify-center items-center")
             img(src="/brand/logo", class="h-[36px]")
         div(class="w-full flex-1 overflow-hidden")
             wiz-portal-dizest-drive([config]="driveConfig", [dizest]="dizest")
+        
+    div(
+        class="hidden lg:flex fixed w-[16px] h-[64px] bg-slate-200 text-slate-700 top-[calc(50vh-32px)] z-50 items-center justify-center hover:bg-slate-300 cursor-pointer",
+        [ngClass]="isHideDrive ? 'left-0' : 'left-[320px]'",
+        (click)="toggleDrive()")
+        i.fa-solid.fa-caret-left(*ngIf="!isHideDrive")
+        i.fa-solid.fa-caret-right(*ngIf="isHideDrive")
 
-    div(class="relative w-full h-full lg:flex-1 border-x border-gray-200 flex flex-col overflow-hidden")
+    div(
+        [ngClass]="workspace && workspace.selected ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'",
+        class="relative w-full h-full flex-1 border-x border-gray-200 overflow-hidden")
         div(*ngIf="workspace", class="w-full flex", [sortablejs]="workspace.editors", [sortablejsOptions]="workspaceSortableOption")
             ng-container(*ngFor="let editor of workspace.editors")
                 div(class="view-tab w-full max-w-48 flex flex-1 text-sm px-2 py-0.5 bg-gray-200 border-r border-gray-300", [class.bg-white]="editor.path == workspace.current")
@@ -22,7 +33,7 @@ div(class="w-screen h-screen bg-gray-100 overflow-hidden flex")
             class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center")
             wiz-portal-season-loading-season(className="w-[48px] h-[48px] text-orange-500 animate-spin duration-700")
 
-    div(class="w-[42px] bg-white h-full flex flex-col")
+    div(class="w-[42px] bg-white h-full hidden lg:flex lg:flex-col")
         ng-container(*ngIf="workspace && workspace.selected && workspace.selected.actions")
             div(
                 *ngFor="let action of workspace.selected.actions", 
@@ -59,7 +70,7 @@ div(class="w-screen h-screen bg-gray-100 overflow-hidden flex")
                 div(class="w-[42px] flex justify-center items-center")
                     i.fa-solid.fa-cog
 
-        a(class="group flex h-[42px] justify-center items-center cursor-pointer", href="/auth/logout")
+        a(class="group flex h-[42px] justify-center items-center cursor-pointer", href="/api/dizest/auth/logout")
             i.fa-solid.fa-power-off
             div(class="hidden h-[42px] absolute items-center right-0 bg-indigo-500 text-white min-w-[80px] group-hover:flex")
                 span(class="ml-4") Logout

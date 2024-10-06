@@ -110,6 +110,7 @@ class Controller:
         (child_pid, fd) = pty.fork()
 
         if child_pid == 0:
+            os.environ['TERM'] = 'xterm-256color'
             subprocess.run(cache["cmd"])
         else:
             cache["fd"] = fd

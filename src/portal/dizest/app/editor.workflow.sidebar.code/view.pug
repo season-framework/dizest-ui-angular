@@ -1,4 +1,4 @@
-div(class="w-[720px] flex flex-col h-full bg-white")
+div(class="w-[720px] flex flex-col h-full bg-slate-50")
     div(class="flex w-full items-center bg-indigo-500 text-white px-3 py-2 draggable-handle")
         div(class="flex flex-1 gap-x-2 items-center")
             i.fa-solid.fa-code
@@ -12,7 +12,7 @@ div(class="w-[720px] flex flex-col h-full bg-white")
                 i.fa-solid.fa-square-plus(class="text-xl")
                 span(class="mt-2 block text-sm font-semibold text-gray-900") Open code from workflow
         
-        div('#scrollelement'='', class="w-full h-full overflow-y-auto", *ngIf="sidebar.items")
+        div('#scrollelement'='', class="w-full h-full overflow-y-auto pb-[30vh]", *ngIf="sidebar.items")
             div(
                 class="w-full border-b border-slate-300",
                 (click)="select(flow_id)",
@@ -21,6 +21,14 @@ div(class="w-[720px] flex flex-col h-full bg-white")
                 div(class="flex h-[40px] px-3 pr-0 bg-slate-200 text-slate-700 gap-x-2 items-center justify-center")
                     div(*ngIf="workflow.node.selected == flow_id")
                         i.fa-solid.fa-circle-play
+
+                    div(class="w-[80px] overflow-hidden")
+                        input(
+                            class="text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0 placeholder-gray-400 bg-transparent", 
+                            placeholder="Category",
+                            [(ngModel)]="flow(flow_id).app().raw().category")
+                    
+                    div(class="px-2 text-sm text-slate-500 flex h-[24px] items-end") /
 
                     div(class="flex-1 overflow-hidden")
                         input(
@@ -69,4 +77,4 @@ div(class="w-[720px] flex flex-col h-full bg-white")
                         [(ngModel)]="flow(flow_id).app().raw()[codeflow[flow_id].target]", 
                         [options]="codeflow[flow_id].monaco", 
                         [height]="'auto'", 
-                        (event)="init($event)")
+                        (event)="init($event, flow_id)")

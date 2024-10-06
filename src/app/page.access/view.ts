@@ -15,7 +15,11 @@ export class Component implements OnInit {
 
     public async ngOnInit() {
         await this.service.init();
-        await this.service.auth.allow(false, "/");
+        const urlParams = new URLSearchParams(window.location.search);
+        let redirectParam = urlParams.get('redirect');
+        if (!redirectParam) redirectParam = "/";
+        this.redirectParam = redirectParam;
+        await this.service.auth.allow(false, this.redirectParam);
     }
 
     public async alert(message: string, status: string = 'error') {
@@ -33,7 +37,7 @@ export class Component implements OnInit {
         let user = JSON.parse(JSON.stringify(this.user));
         let { code, data } = await this.dizest.api.call("auth", "login", user)
         if (code == 200) {
-            location.href = "/";
+            location.href = this.redirectParam;
             return;
         }
         await this.alert(data);

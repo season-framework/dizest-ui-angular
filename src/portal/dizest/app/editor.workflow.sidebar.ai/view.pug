@@ -1,0 +1,69 @@
+div(class="w-[480px] flex flex-col h-full bg-white relative")
+    div(class="flex w-full items-center bg-slate-500 text-white px-3 py-2 draggable-handle")
+        div(class="flex flex-1 gap-x-2 items-center")
+            i.fa-solid.fa-wand-magic-sparkles
+            span AI Assistant
+        
+        div((click)="download()", class="cursor-pointer hover:text-slate-100")
+            i.fa-solid.fa-download
+        
+        div((click)="clear()", class="cursor-pointer ml-3 hover:text-slate-100")
+            i.fa-solid.fa-eraser
+        
+        div((click)="sidebar.close()", class="cursor-pointer ml-3 hover:text-slate-100")
+            i.fa-solid.fa-xmark
+
+    div(class="bg-gray-100 flex gap-x-1 px-3 py-2 border-b border-gray-300")
+        textarea(
+            rows=3,
+            class="text-sm block w-full rounded-lg border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-slate-600 ",
+            [(ngModel)]="query", (keyup.enter)="request()", [disabled]="running")
+        
+        div(
+            class="w-[76px] flex justify-center items-center text-sm bg-slate-500 text-white cursor-pointer rounded-lg hover:bg-slate-700",
+            (click)="request()")
+            span(*ngIf="!running") Send
+            div(*ngIf="running", class="inline-block relative w-[32px] h-[32px] text-sm text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-slate-500")
+                span(class="absolute inset-0 border-2 border-transparent border-t-white rounded-full animate-spin")
+
+
+    div(class="flex-1 w-full h-full overflow-hidden")
+        div(class="w-full h-full overflow-y-auto pb-[30vh]")
+            ul(class="divide-y divide-gray-100")
+                ng-container(*ngFor="let item of messages")
+                    ng-container(*ngIf="item.mode == 'user'")
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5") 
+                            div(class="min-w-0")
+                                div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
+                                    p(class="whitespace-nowrap") Question
+                                div(class="flex items-center gap-x-2")
+                                    div(class="w-full markdown-body bg-transparent", [innerHtml]="showdown(item.data)")
+                        
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5", *ngIf="item.context") 
+                            div(class="min-w-0")
+                                div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
+                                    p(class="whitespace-nowrap") Context
+                                div(class="flex items-center gap-x-2")
+                                    div(class="w-full markdown-body max-h-[240px] overflow-auto", [innerHtml]="showdown(item.context)")
+                        
+                    ng-container(*ngIf="item.mode != 'user'")
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5") 
+                            div(class="min-w-0")
+                                div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
+                                    p(class="whitespace-nowrap") Answer
+                                div(class="flex items-center gap-x-2")
+                                    div(class="w-full markdown-body", [innerHtml]="showdown(item.data)")
+                
+                li(class="flex items-center justify-between gap-x-3 py-4 px-5 w-full", *ngIf="running") 
+                    div(class="min-w-0 w-full")
+                        div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
+                            p(class="whitespace-nowrap") Answer
+                        div(class="flex items-center justify-center gap-x-2")
+                            a(class="relative w-[32px] h-[32px] text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-slate-500")
+                                span(class="absolute inset-0 border-4 border-transparent border-t-slate-500 rounded-full animate-spin")
+
+
+    div(
+        *ngIf="loading",
+        class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center")
+        wiz-portal-season-loading-season(className="w-[48px] h-[48px] text-orange-500 animate-spin duration-700")

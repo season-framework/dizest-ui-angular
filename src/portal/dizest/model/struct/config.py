@@ -9,13 +9,6 @@ from dizest.base.config import BaseConfig
 
 project = wiz.project()
 
-condapath = str(sys.executable)
-condapath = os.path.dirname(condapath)
-condapath = os.path.dirname(condapath)
-if condapath.split("/")[-2] == "envs":
-    condapath = os.path.dirname(condapath)
-    condapath = os.path.dirname(condapath)
-
 def storage_path():
     return os.path.join(os.getcwd(), "data")
 
@@ -30,6 +23,7 @@ def get_workflow(path):
     if fs.exists(path) == False:
         return None
     data = fs.read.json(path, None)
+    data['id'] = path
 
     if 'flow' in data:
         for flow_id in data['flow']:
@@ -73,7 +67,14 @@ def authenticate(path):
         
         wiz.response.status(401, chk)
 
+    redirect = wiz.request.query("redirect", None)
+    if redirect:
+        wiz.response.redirect("/access?redirect=" + redirect)
     wiz.response.redirect("/access")
+
+def logout(path):
+    wiz.session.clear()
+    wiz.response.redirect("/")
 
 def acl():
     if wiz.session.user_id() is None:
@@ -82,13 +83,18 @@ def acl():
 class Config(BaseConfig):
     DEFAULT_VALUES = {
         'fs': (None, season.util.fs(storage_path())), 
-        'condapath': (str, condapath),
+        'disk': (str, "/"), 
+        'use_ai': (str, "notuse"), 
+        'llm_gateway': (str, "https://api.openai.com/v1"), 
+        'llm_api_key': (str, ""), 
+        'llm_model': (str, "gpt-4o"), 
         'spawner_class': (None, SimpleSpawner),
         'spawner_option': (None, spawner_option),
         'storage_path': (None, storage_path),
         'get_workflow': (None, get_workflow),
         'update_workflow': (None, update_workflow),
         'authenticate': (None, authenticate),
+        'logout': (None, logout),
         'acl': (None, acl),
     }
 

@@ -151,7 +151,7 @@ div(class="w-full h-full overflow-auto bg-gray-100 px-6 py-5")
                                     input([(ngModel)]="data.use_ai", value="use", name="aiuseoption", type="radio", class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600")
                                     label(class="ml-3 block text-sm font-medium leading-6 text-gray-900") Use
                                 div(class="flex items-center")
-                                    input([(ngModel)]="data.use_ai", value="", name="aiuseoption", type="radio", class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600")
+                                    input([(ngModel)]="data.use_ai", value="notuse", name="aiuseoption", type="radio", class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600")
                                     label(class="ml-3 block text-sm font-medium leading-6 text-gray-900") Not Use
 
                     div(class="flex gap-4 py-6")
@@ -171,6 +171,26 @@ div(class="w-full h-full overflow-auto bg-gray-100 px-6 py-5")
                                 input(
                                     type="password", 
                                     [(ngModel)]="data.llm_api_key",
+                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                    
+                    div(class="flex gap-4 py-6")
+                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") LLM Model
+                        div(class="w-full flex-1")
+                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
+                                input(
+                                    type="text", 
+                                    [(ngModel)]="data.llm_model",
+                                    placeholder="gpt-4o",
+                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                    
+                    div(class="flex gap-4 py-6")
+                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Help Text
+                        div(class="w-full flex-1")
+                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
+                                textarea(
+                                    rows=3,
+                                    type="text", 
+                                    [(ngModel)]="data.llm_help_text",
                                     class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
                     
                     div(class="flex gap-4 py-6 justify-end")
