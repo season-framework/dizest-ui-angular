@@ -188,7 +188,28 @@ export class Component implements OnInit {
             }
         }
 
-        this.workflow = new Workflow(this, { data: data, nodeComponentClass: NodeComponentClass });
+        this.workflow = new Workflow(this, {
+            data: data,
+            nodeComponentClass: NodeComponentClass,
+            onError: async () => {
+                let socket: any = this.editor.workspace.socket;
+                let path = this.editor.path;
+                await this.service.render(this.workspace.app.editorLoading = true);
+                let { code, data } = await this.dizest.api.call(`workflow`, `init`, { path: path });
+                if (code != 200) {
+                    this.error = true;
+                    await this.service.render();
+                    return;
+                }
+
+                socket.emit("leave", this.workflow.config.data.kernel_id);
+                this.workflow.config.data.kernel_id = data.kernel_id
+                socket.emit("join", this.workflow.config.data.kernel_id);
+                await this.workflow.reload();
+                await this.service.render(this.workspace.app.editorLoading = false);
+            }
+        });
+
         await this.workflow.render();
         await this.workflow.reload();
     }
@@ -204,6 +225,7 @@ export class Component implements OnInit {
                 }
             }
         }
+
         socket.emit("join", data.kernel_id);
         this.workspace.bind("*", this.eventHandler);
     }

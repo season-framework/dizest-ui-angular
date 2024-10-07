@@ -32,7 +32,11 @@ export class Workflow {
 
     public async api(uri: string, params: any = {}) {
         params.kernel_id = this.data().kernel_id;
-        return await this.app.dizest.api.call('workflow', uri, params);
+        let res = await this.app.dizest.api.call('workflow', uri, params);
+        if (res.code != 200)
+            if (this.config.onError)
+                await this.config.onError();
+        return res;
     }
 
     public async update() {

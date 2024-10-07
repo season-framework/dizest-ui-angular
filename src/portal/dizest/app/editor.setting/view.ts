@@ -76,6 +76,8 @@ export class Component implements OnInit {
         isVerified: false
     };
 
+    public execStatus: any = {};
+
     public async cancelAddExecutable() {
         this.newExecObj.name = '';
         this.newExecObj.executable_path = '';
@@ -132,4 +134,36 @@ export class Component implements OnInit {
         await this.update();
     }
 
+    public getExecutableStatus(item) {
+        if (!this.execStatus[item.executable_path]) return {};
+        return this.execStatus[item.executable_path];
+    }
+
+    public async checkExecutable(item) {
+        this.execStatus[item.executable_path] = {};
+        await this.service.render(this.execStatus[item.executable_path].running = true);
+        let { code, data } = await wiz.call("check", item);
+        if (code == 200) {
+            this.execStatus[item.executable_path].status = true;
+        } else {
+            this.execStatus[item.executable_path].status = false;
+        }
+        this.execStatus[item.executable_path].version = data;
+
+        await this.service.render(this.execStatus[item.executable_path].running = false);
+    }
+
+    public async upgradeExecutable(item) {
+        if (this.execStatus[item.executable_path].upgrade) return;
+        await this.service.render(this.execStatus[item.executable_path].upgrade = true);
+        let { code, data } = await wiz.call("upgrade", item);
+        if (code == 200) {
+            this.execStatus[item.executable_path].status = true;
+        } else {
+            this.execStatus[item.executable_path].status = false;
+        }
+        this.execStatus[item.executable_path].version = data;
+
+        await this.service.render(this.execStatus[item.executable_path].upgrade = false);
+    }
 }

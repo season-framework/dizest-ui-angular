@@ -19,10 +19,21 @@ export class Component implements OnInit {
     public async ngOnInit() {
         await this.service.init();
         await this.service.render();
+    }
+
+    public async onEditorShow() {
         await this.health();
         this.interval_id = setInterval(async () => {
             await this.health();
         }, 1000);
+    }
+
+    public async onEditorHide() {
+        clearInterval(this.interval_id);
+    }
+
+    public async ngOnDestroy() {
+        clearInterval(this.interval_id);
     }
 
     public currentTab: string = 'status';
