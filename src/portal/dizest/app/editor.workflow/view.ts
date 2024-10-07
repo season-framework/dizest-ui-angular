@@ -188,6 +188,11 @@ export class Component implements OnInit {
             }
         }
 
+        let base: any = this.editor.path.split("/");
+        base.pop();
+        base = base.join("/");
+        this.drive.base = base;
+
         this.workflow = new Workflow(this, {
             data: data,
             nodeComponentClass: NodeComponentClass,

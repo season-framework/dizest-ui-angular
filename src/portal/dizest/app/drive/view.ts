@@ -142,7 +142,7 @@ export class Component implements OnInit {
     public tree: any = {
         status: { uploadStatus: {} },
         load: async (path: any) => {
-            let res = await this.dizest.api.call(`drive`, `tree`, { path: path });
+            let res = await this.dizest.api.call(`drive`, `tree`, { path: path, base: this.config.base });
             return res;
         },
         update: async (node: any) => {
