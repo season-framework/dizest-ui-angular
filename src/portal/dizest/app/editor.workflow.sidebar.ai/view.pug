@@ -1,4 +1,4 @@
-div(class="w-[480px] flex flex-col h-full bg-white relative")
+div(class="w-[640px] max-w-[40vw] flex flex-col h-full bg-white relative")
     div(class="flex w-full items-center bg-slate-500 text-white px-3 py-2 draggable-handle")
         div(class="flex flex-1 gap-x-2 items-center")
             i.fa-solid.fa-wand-magic-sparkles
@@ -23,45 +23,45 @@ div(class="w-[480px] flex flex-col h-full bg-white relative")
             class="w-[76px] flex justify-center items-center text-sm bg-slate-500 text-white cursor-pointer rounded-lg hover:bg-slate-700",
             (click)="request()")
             span(*ngIf="!running") Send
-            div(*ngIf="running", class="inline-block relative w-[32px] h-[32px] text-sm text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-slate-500")
+            div(*ngIf="running", class="inline-flex justify-center items-center relative w-[32px] h-[32px] text-sm text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-white")
+                i.fa-solid.fa-stop
                 span(class="absolute inset-0 border-2 border-transparent border-t-white rounded-full animate-spin")
 
 
     div(class="flex-1 w-full h-full overflow-hidden")
-        div(class="w-full h-full overflow-y-auto pb-[30vh]")
+        div(class="w-full h-full overflow-y-auto pb-[30vh]", '#scroll'='')
             ul(class="divide-y divide-gray-100")
                 ng-container(*ngFor="let item of messages")
                     ng-container(*ngIf="item.mode == 'user'")
-                        li(class="flex items-center justify-between gap-x-3 py-4 px-5") 
-                            div(class="min-w-0")
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5 bg-gray-100") 
+                            div(class="w-full")
                                 div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
                                     p(class="whitespace-nowrap") Question
                                 div(class="flex items-center gap-x-2")
-                                    div(class="w-full markdown-body bg-transparent", [innerHtml]="showdown(item.data)")
+                                    div(class="w-full markdown-body bg-transparent", [innerHtml]="item.data")
                         
-                        li(class="flex items-center justify-between gap-x-3 py-4 px-5", *ngIf="item.context") 
-                            div(class="min-w-0")
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5 bg-gray-100", *ngIf="item.context") 
+                            div(class="w-full")
                                 div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
                                     p(class="whitespace-nowrap") Context
                                 div(class="flex items-center gap-x-2")
-                                    div(class="w-full markdown-body max-h-[240px] overflow-auto", [innerHtml]="showdown(item.context)")
+                                    div(class="w-full markdown-body max-h-[240px] overflow-auto", [innerHtml]="item.context")
                         
                     ng-container(*ngIf="item.mode != 'user'")
-                        li(class="flex items-center justify-between gap-x-3 py-4 px-5") 
-                            div(class="min-w-0")
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5", *ngIf="item.data") 
+                            div(class="w-full")
                                 div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
                                     p(class="whitespace-nowrap") Answer
                                 div(class="flex items-center gap-x-2")
-                                    div(class="w-full markdown-body", [innerHtml]="showdown(item.data)")
+                                    div(class="w-full markdown-body", [innerHtml]="item.data")
                 
-                li(class="flex items-center justify-between gap-x-3 py-4 px-5 w-full", *ngIf="running") 
-                    div(class="min-w-0 w-full")
-                        div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
-                            p(class="whitespace-nowrap") Answer
-                        div(class="flex items-center justify-center gap-x-2")
-                            a(class="relative w-[32px] h-[32px] text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-slate-500")
-                                span(class="absolute inset-0 border-4 border-transparent border-t-slate-500 rounded-full animate-spin")
-
+                        li(class="flex items-center justify-between gap-x-3 py-4 px-5 w-full", *ngIf="!item.data") 
+                            div(class="w-full")
+                                div(class="flex items-start gap-x-2 text-sm leading-5 text-gray-500")
+                                    p(class="whitespace-nowrap") Answer
+                                div(class="flex items-center justify-center gap-x-2")
+                                    a(class="relative w-[32px] h-[32px] text-sm bg-slate-100 text-slate-700 cursor-pointer rounded-full hover:bg-slate-300 text-slate-500")
+                                        span(class="absolute inset-0 border-4 border-transparent border-t-slate-500 rounded-full animate-spin")
 
     div(
         *ngIf="loading",

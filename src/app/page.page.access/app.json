@@ -1,9 +1,9 @@
 {
     "mode": "page",
-    "id": "page.access",
-    "title": "/access",
+    "id": "page.page.access",
+    "title": "/access/:mode?",
     "namespace": "page.access",
-    "viewuri": "/access",
+    "viewuri": "/access/:mode?",
     "category": "auth",
     "preview": "/access",
     "controller": "base",
@@ -18,5 +18,5 @@
         "inputs": [],
         "outputs": []
     },
-    "template": "wiz-page-access()"
+    "template": "wiz-page-page-access()"
 }

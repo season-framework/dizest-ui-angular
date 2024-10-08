@@ -31,7 +31,7 @@ export class Component implements OnInit {
         this.sidebar.getFlow = async () => {
             if (!this.workflow.node.selected) return;
             let flow = this.flow(this.workflow.node.selected);
-            return flow;
+            return { flow: flow, codeflow: this.codeflow[this.workflow.node.selected] };
         }
     }
 

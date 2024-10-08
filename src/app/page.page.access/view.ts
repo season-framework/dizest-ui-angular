@@ -7,14 +7,17 @@ export class Component implements OnInit {
         this.dizest = new Dizest(service);
     }
 
+    public mode: string = 'password';
+
     public user: any = {
-        id: 'root',
-        username: 'root',
+        id: '',
         password: ''
     };
 
     public async ngOnInit() {
         await this.service.init();
+        this.mode = WizRoute.segment.mode ? WizRoute.segment.mode : 'password';
+
         const urlParams = new URLSearchParams(window.location.search);
         let redirectParam = urlParams.get('redirect');
         if (!redirectParam) redirectParam = "/";

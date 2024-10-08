@@ -1,10 +1,15 @@
 import { OnInit, Input } from '@angular/core';
+import { ElementRef, ViewChild } from '@angular/core';
 import { Service } from '@wiz/libs/portal/season/service';
 import { Markdown } from '@wiz/libs/portal/dizest/ui/md';
 import showdown from 'showdown';
 
 export class Component implements OnInit {
     constructor(public service: Service) { }
+
+    @ViewChild('scroll')
+    public scrollElement: ElementRef;
+
 
     @Input() app: any;
     @Input() sidebar: any;
@@ -24,10 +29,10 @@ export class Component implements OnInit {
         return converter.makeHtml(text);
     }
 
-    public async createLLMData(flow) {
+    public async createLLMData(flow, target) {
         let res = {};
         res.flow_id = flow.id();
-        res.code = flow.app().raw().code;
+        res.code = flow.app().raw()[target];
         res.selection = '';
         let editor = flow.editor;
         if (!editor) return res;
@@ -38,14 +43,19 @@ export class Component implements OnInit {
 
     public async request() {
         if (!this.query) return;
-        if (this.running) return;
-
+        if (this.running) {
+            this.running = false;
+            await this.service.render();
+            return;
+        }
 
         let text = this.query + '';
         let context = null;
         try {
-            let flow = await this.app.sidebar.get('code').getFlow();
-            let ref = await this.createLLMData(flow);
+            let { flow, codeflow } = await this.app.sidebar.get('code').getFlow();
+            let target: any = 'code';
+            if (codeflow && codeflow.target) target = codeflow.target;
+            let ref = await this.createLLMData(flow, target);
             context = this.app.dizest.config.llm_help_text;
             if (!context) context = "Please refer to the code currently under development below when answering the question."
             if (ref.selection) context += "\n\n#### Highlighted Code:\n```python\n" + ref.selection + "\n```";
@@ -55,14 +65,49 @@ export class Component implements OnInit {
         }
 
         this.running = true;
-        this.messages.push({ mode: 'user', data: text, context: context });
+        this.messages.push({
+            mode: 'user',
+            data: this.showdown(text),
+            context: this.showdown(context)
+        });
         await this.service.render(this.query = '');
 
-        const { data } = await wiz.call("request", { query: text, context: context });
-        this.messages.push({ mode: 'system', data: data });
+        let element = this.scrollElement.nativeElement;
+        element.scrollTop = element.scrollHeight;
 
-        this.running = false;
-        await this.service.render();
+        const params = new URLSearchParams();
+        params.append('query', text);
+        params.append('context', context);
+        params.append('stream', true);
+
+        let item: any = { mode: 'system', data: '', stream: '' };
+        this.messages.push(item);
+
+        let response = await fetch(wiz.url("request"), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        let read: any = async () => {
+            let { done, value } = await reader.read();
+            if (done || !this.running) {
+                item.data = this.showdown(item.stream);
+                this.running = false;
+                await this.service.render();
+                return;
+            }
+            const chunk = decoder.decode(value);
+            item.stream += chunk;
+            item.data = this.showdown(item.stream);
+            await this.service.render();
+            await read();
+        }
+
+        await read();
     }
 
     public async clear() {
@@ -90,15 +135,15 @@ export class Component implements OnInit {
             let item = this.messages[i];
             if (item.mode == 'user') {
                 data += `<h4>Question</h4>`;
-                data += this.showdown(item.data);
+                data += item.data;
                 if (item.context) {
                     data += `<h5>Context</h5>`;
-                    data += this.showdown(item.context);
+                    data += item.context;
                 }
                 data += "<hr/>"
             } else {
                 data += `<h4>Answer</h4>`;
-                data += this.showdown(item.data);
+                data += item.data;
                 data += "<hr/>"
             }
         }
