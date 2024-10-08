@@ -87,11 +87,14 @@ div(
                             i.fa-solid.fa-floppy-disk(*ngIf="item.conf")
                     
                     div(class="flex-1 overflow-hidden")
-                        div(*ngIf="!['list', 'textarea', 'file', 'folder'].includes(item.inputtype)")
+                        div(*ngIf="!['list', 'textarea', 'file', 'folder', 'check'].includes(item.inputtype)")
                             input(
                                 class="px-1 text-center text-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
                                 [type]='item.inputtype', [placeholder]='item.description', [(ngModel)]="flow.data()[item.name]")
                         
+                        div(*ngIf="['check'].includes(item.inputtype)", class="flex w-full h-[24px] items-center justify-center")
+                            input(type="checkbox", class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600", [(ngModel)]="flow.data()[item.name]")
+
                         div(*ngIf="['textarea'].includes(item.inputtype)")
                             textarea(
                                 class="px-1 text-[14px] leading-[14px] w-full p-0 border-0 focus:outline-none focus:shadow-none focus:ring-0", 
@@ -133,13 +136,14 @@ div(
                                 option(value='date') Date
                                 option(value='time') Time
                                 option(value='list') List
+                                option(value='check') Check
                                 option(value='file') File
                         div(
                             class="h-[24px] text-sm items-center justify-center w-6 bg-red-400 text-white cursor-pointer flex", 
                             (click)="removeInput(item)")
                             i.fa-solid.fa-xmark
 
-                    div(class="flex items-center", *ngIf="item.inputtype != 'list'")
+                    div(class="flex items-center", *ngIf="!['list', 'check'].includes(item.inputtype)")
                         div(class="flex items-center justify-center w-[64px] h-[24px] pl-1 text-[14px] bg-indigo-400 text-white") Desc
                         div(class="flex flex-1 h-[24px]")
                             input(

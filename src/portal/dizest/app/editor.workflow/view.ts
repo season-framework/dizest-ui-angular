@@ -61,6 +61,7 @@ export class Component implements OnInit {
         if (this.dizest.config.use_ai == 'use')
             this.editor.actions.push({ id: 'ai', icon: 'fa-solid fa-wand-magic-sparkles', name: 'AI Assistant' });
         this.editor.actions.push({ id: 'pip', icon: 'fa-brands fa-python', name: 'Packages' });
+        this.editor.actions.push({ id: 'api', icon: 'fa-solid fa-link', name: 'API' });
         this.editor.actions.push({ id: 'save', icon: 'fa-solid fa-floppy-disk', name: 'Save' });
         this.editor.actions.push({ id: 'download', icon: 'fa-solid fa-circle-down', name: 'Download' });
 
