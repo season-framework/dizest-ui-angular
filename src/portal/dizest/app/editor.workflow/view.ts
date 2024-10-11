@@ -13,6 +13,7 @@ import SidebarAppsClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.app
 import SidebarCodeClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.code';
 import SidebarPipClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.pip';
 import SidebarAIClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.ai';
+import SidebarAPIClass from '@wiz/app/portal.dizest.editor.workflow.sidebar.api';
 
 export class Component implements OnInit {
     constructor(public service: Service, public ref: ViewContainerRef) { }
@@ -245,6 +246,7 @@ export class Component implements OnInit {
 
     public async run() {
         this.interrupt = false;
+        await this.editor.update();
         await this.workflow.api('run');
     }
 
@@ -284,6 +286,7 @@ export class Component implements OnInit {
             code: { id: 'code', cls: SidebarCodeClass },
             pip: { id: 'pip', cls: SidebarPipClass },
             ai: { id: 'ai', cls: SidebarAIClass },
+            api: { id: 'api', cls: SidebarAPIClass },
         };
 
         obj.get = (name: string) => {

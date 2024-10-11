@@ -32,6 +32,22 @@ div(class="w-full h-full overflow-auto bg-gray-100 px-6 py-5")
                                     class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
                     
                     div(class="flex gap-4 py-6")
+                        div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") External API Key
+                        div(class="w-full flex-1")
+                            div(class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600")
+                                input(
+                                    type="text", 
+                                    [(ngModel)]="data.external_api_key",
+                                    disabled,
+                                    placeholder="RANDOM HASH",
+                                    class="block flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
+                        div(class="flex")
+                            button(
+                                class="px-4 py-1.5 bg-slate-200 text-slate-700 cursor-pointer rounded-full hover:bg-slate-400",
+                                (click)="generateExternalAPIKey()")
+                                span Generate
+
+                    div(class="flex gap-4 py-6")
                         div(class="w-[120px] text-sm font-medium leading-6 text-gray-900 pt-1.5") Logo
                         div(class="w-full flex-1 bg-indigo-500 px-8 py-4 rounded-xl flex items-center justify-center")
                             img([attr.src]="data.logo ? data.logo : '/assets/brand/logo.png'", class="h-[32px]")

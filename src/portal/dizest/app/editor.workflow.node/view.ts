@@ -35,7 +35,19 @@ export class Component implements OnInit {
             this.log.push(data);
             this.log = this.log.splice(this.log.length - 51 > 0 ? this.log.length - 51 : 0);
             await this.service.render();
+
+            let debugIn = this.rootElement.nativeElement.querySelector('.debug-inner');
             let debug = this.rootElement.nativeElement.querySelector('.debug-message');
+
+            if (this.rootElement.nativeElement.style.height && debug.offsetHeight < 120) {
+                if (debugIn.offsetHeight + 8 > debug.offsetHeight) {
+                    let resize = debugIn.offsetHeight + 8 > 120 ? 120 : debugIn.offsetHeight + 8;
+                    resize = resize - debug.offsetHeight;
+                    this.flow.raw().height = this.flow.raw().height + resize;
+                    this.rootElement.nativeElement.style.height = this.flow.raw().height + "px";
+                }
+            }
+
             debug.scrollTop = debug.scrollHeight;
         } else if (eventname == 'flow.status') {
             this.status = data;
@@ -82,7 +94,7 @@ export class Component implements OnInit {
     }
 
     public async run() {
-        if (this.status != 'idle') {
+        if (!['idle', 'error'].includes(this.status)) {
             await this.stop();
         } else {
             this.workflow.app.interrupt = false;
@@ -101,6 +113,7 @@ export class Component implements OnInit {
         } else {
             this.workflow.app.interrupt = false;
             let flow_id: string = this.flow.id();
+            await this.workflow.update();
             await this.workflow.api('flow/stop', { flow_id: flow_id });
         }
     }
@@ -137,6 +150,7 @@ export class Component implements OnInit {
     }
 
     public async uimodeReload() {
+        await this.workflow.update();
         let flow_id = this.flow.id();
         let kernel_id = this.workflow.data().kernel_id;
         let url = `/ui/${kernel_id}/${flow_id}/render`;
@@ -146,6 +160,7 @@ export class Component implements OnInit {
     }
 
     public async uimodeOpen() {
+        await this.workflow.update();
         let flow_id = this.flow.id();
         let kernel_id = this.workflow.data().kernel_id;
         let url = `/ui/${kernel_id}/${flow_id}/render`;

@@ -30,6 +30,14 @@ export class Component implements OnInit {
     }
 
     // main settings
+    public async generateExternalAPIKey() {
+        let res = await this.service.modal.show({ actionBtn: 'warning', status: 'warning', message: "Do you really want to generate API Key?", cancel: 'Cancel', action: 'Generate' });
+        if (!res) return;
+        this.data.external_api_key = this.service.random(32);
+        await this.update();
+        await this.service.render();
+    }
+
     public async uploadLogo() {
         this.data.logo = await this.service.file.read({ type: 'image', accept: 'image/*', width: 180, quality: 1 });
         await this.service.render();

@@ -1,0 +1,11 @@
+{
+    "type": "app",
+    "mode": "portal",
+    "title": "editor.workflow.sidebar.api",
+    "id": "editor.workflow.sidebar.api",
+    "namespace": "editor.workflow.sidebar.api",
+    "viewuri": "",
+    "category": "",
+    "controller": "base",
+    "template": "wiz-portal-dizest-editor-workflow-sidebar-api([app]=\"\", [sidebar]=\"\")"
+}
