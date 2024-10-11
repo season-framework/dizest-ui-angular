@@ -22,7 +22,7 @@ div(class="w-[420px] flex flex-col h-full bg-white relative")
                         td(class="whitespace-nowrap px-3 py-2 text-sm text-gray-500") Stream
                         td(class="break-all whitespace-break-spaces px-3 py-2 text-sm text-gray-500") {{BASEURL}}/dizest/api/stream/{{PATH}}
 
-            ng-container(*ngIf="app.dizest.config.external_api_key")
+            ng-container
                 div(class="mt-4 text-lg font-bold px-3 py-2") Request Header
                 table(class="w-full divide-y divide-gray-300 border-b border-gray-300")
                     thead(class="bg-gray-50")
@@ -33,7 +33,7 @@ div(class="w-[420px] flex flex-col h-full bg-white relative")
                         tr
                             td(class="whitespace-nowrap px-3 py-2 text-sm text-gray-500") Authorization
                             td(class="break-all whitespace-break-spaces px-3 py-2 text-sm text-gray-500")
-                                | Authorization: Bearer {{app.dizest.config.external_api_key}}
+                                | Authorization: Bearer {{app.dizest.config.external_api_key ? app.dizest.config.external_api_key : '${Set API Key in Setting}'}}
 
             ng-container(*ngIf="inputs.length > 0")
                 div(class="mt-4 text-lg font-bold px-3 py-2") Query parameter
@@ -56,21 +56,21 @@ div(class="w-[420px] flex flex-col h-full bg-white relative")
                                         [(ngModel)]="values[item.name]",
                                         class="block w-full flex-1 border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 text-sm leading-6")
                 
-                div(class="mt-4 text-lg font-bold px-3 py-2") cURL Command
+            div(class="mt-4 text-lg font-bold px-3 py-2") cURL Command
 
-                div(class="px-3 py-2 break-all whitespace-break-spaces")
-                    | curl -H "Authorization: Bearer {{app.dizest.config.external_api_key}}" -d "{{valueString()}}" {{BASEURL}}/dizest/api/{{mode}}/{{PATH}}
+            div(class="px-3 py-2 break-all whitespace-break-spaces")
+                | curl -H "Authorization: Bearer {{app.dizest.config.external_api_key}}" -d "{{valueString()}}" {{BASEURL}}/dizest/api/{{mode}}/{{PATH}}
 
-                div(class="mt-2 px-3 py-2")
-                    button(
-                        class="flex items-center justify-center px-4 py-1 w-full text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
-                        (click)="testAPI()") 
-                        span(*ngIf="!running") Test
-                        svg(class="animate-spin h-[20px] w-[20px]", viewBox="0 0 24 24", *ngIf="running")
-                            circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
-                            path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
+            div(class="mt-2 px-3 py-2")
+                button(
+                    class="flex items-center justify-center px-4 py-1 w-full text-sm bg-indigo-500 text-white cursor-pointer rounded-full hover:bg-indigo-700",
+                    (click)="testAPI()") 
+                    span(*ngIf="!running") Test
+                    svg(class="animate-spin h-[20px] w-[20px]", viewBox="0 0 24 24", *ngIf="running")
+                        circle(class="opacity-25", cx="12", cy="12", r="10", stroke="currentColor", stroke-width="4")
+                        path(class="opacity-75", fill="currentColor", d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z")
 
-                ng-container(*ngIf="response")
-                    div(class="mt-4 text-lg font-bold px-3 py-2") Response                    
-                    div(class="mt-2 px-3 py-2 bg-slate-100 whitespace-pre overflow-auto")
-                        | {{response}}
+            ng-container(*ngIf="response")
+                div(class="mt-4 text-lg font-bold px-3 py-2") Response                    
+                div(class="mt-2 px-3 py-2 bg-slate-100 whitespace-pre overflow-auto")
+                    | {{response}}
