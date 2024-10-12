@@ -31,6 +31,9 @@ export class Component implements OnInit {
             if (categories.indexOf(category) == -1)
                 categories.push(category);
         }
+        categories.sort((a, b) => {
+            return a.localeCompare(b);
+        });
         return categories;
     }
 
