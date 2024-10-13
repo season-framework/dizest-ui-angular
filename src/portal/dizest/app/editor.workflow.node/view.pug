@@ -257,6 +257,6 @@ div(
     div(class="w-full flex-1 overflow-auto text-[14px] leading-[14px] p-1 bg-white cursor-auto font-light debug-message select-text", *ngIf="!isUIMode")
         div(class="debug-inner w-full")
             ng-container(*ngFor="let msg of log")
-                div([innerHtml]="msg")
+                div([innerHtml]="msg", class="whitespace-pre-wrap")
 
     div(class="resize-handle hidden lg:block", (mousedown)="resize($event)")
